@@ -1,0 +1,353 @@
+---
+title: "<b>Mapping with R:</b><br/><font size=5><b>Relevant notes from my short course</b></font>"
+author: Bob Batzinger<br>Computer Science Instructor Emeritus<br>Payap University,
+  Chiang Mai, Thailand
+date: "13 June 2017"
+output:
+  html_notebook:
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: haddock
+    number_sections: yes
+    theme: sandstone
+    toc: yes
+    toc_float: yes
+  html_document:
+    toc: yes
+---
+
+# Overview
+
+The following document describes the use of the R statistical package to generate map rendering of statistics. This document was developed as an interactive notebook using R Studio Desktop[^1] edition as the development and test environment. This allows the inclusion of the R[^2] source code blocks for each example provided. Both R and RStudio must be installed to experiment with the code. These software are free and fully supported by a vibrant user community. The urls for the installers for these software can be found in the [Bibliography](#bibliography). It is important to choose the installer that corresponds to the operating system you are using. (The basic, free versions are all you need.)
+
+[^1]: RStudio Team (2015). RStudio: Integrated Development for R. RStudio, Inc., Boston, MA URL http://www.rstudio.com/products/RStudio/.
+
+[^2]:  R Consortium (2017). R language downloaded from https://cran.r-project.org/mirrors.html
+
+# Basic Mapping Functions
+
+There are numerous ways to plot information on maps with R. The 3 packages described in this section represent the most common methods used. Each of them use latitude and longitude making it possible to combine the different techniques together as shown in the [next chapter](#Using the Maps). It should be noted that each technology will require the installation and load of specific packages. The code for this is given in the following sections.
+
+
+## World Map
+
+This mapping technology works from an outline of the world map and requires a specific package.
+
+### Installing the package
+
+You can install the package using the INSTALL button in the Packages in RStudio or copy and run the following code to download the package from the Internet. This copy only needs to be run once.
+
+```
+install.packages("maps")
+install.packages("mapdata")
+```
+
+### Loading the package 
+
+This package is not part of the core of R and must be loaded into the working library once before using its functions. The code to do this is given below:
+
+```{r}
+library(maps)
+library(mapdata)
+```
+
+### Key functions
+
+Maps are drawn merely by listing the names of the countries (or region) of interest as shown by these examples:
+
+1. The entire world.
+
+```{r}
+map('worldHires')
+```
+
+2. A region (as an array of countries).
+
+```{r}
+map('worldHires',
+  region=c("myanmar","thailand",
+    "laos","cambodia","vietnam",
+    "malaysia","singapore",
+    "indonesia","brunei",
+    "philippines"))
+```
+```{r}
+map('worldHires',
+  region=c("singapore", "china", "taiwan"))
+```
+
+3.1 A single country
+```{r,fig.width=8.5}
+map('worldHires','myanmar')
+```
+3.2 A single country
+```{r,fig.width=8.5}
+map('worldHires','singapore')
+```
+3.2 A single country
+```{r,fig.width=8.5}
+map('worldHires','malaysia')
+```
+3.3 A single country
+```{r,fig.width=8.5}
+map('worldHires',
+  region=c("singapore", 'malaysia', 'indonesia'))
+```
+
+It is also possible to fill each country with a different color.
+
+```{r}
+countries = c("myanmar","thailand",
+  "laos","cambodia","vietnam",
+  "malaysia","singapore",
+  "indonesia", "brunei",
+  "philippines")
+len = length(countries)
+colors = rainbow(len + 1)
+
+map('worldHires',
+  region=countries,
+  fill=TRUE,col=colors[1])
+map.scale(120,26,
+  relwidth=0.25,cex=0.6,
+  metric=TRUE,ratio=TRUE)
+for (i in c(2:6,8:10)) {
+  map('worldHires',
+    region=countries[i],
+    fill=TRUE,add=TRUE,
+    col=colors[i])
+}
+```
+
+
+```{r}
+countries = c("malaysia",
+  "indonesia")
+len = length(countries)
+colors = rainbow(len + 1)
+
+map('worldHires',
+  region=countries,
+  fill=TRUE,col=colors[1])
+map.scale(120,26,
+  relwidth=0.25,cex=0.6,
+  metric=TRUE,ratio=TRUE)
+for (i in c(1:2)) {
+  map('worldHires',
+    region=countries[i],
+    fill=TRUE,add=TRUE,
+    col=colors[i])
+}
+```
+## Google Maps
+
+Google maps are updated approximately every 9 months. These functions make if possible to capture a road map, satellite photo, or topographic map. Access to these maps requires the corresponding package.
+
+
+### Installing the package
+
+You can install the package using the INSTALL button in the Packages in RStudio or copy and run the following code to download the package from the Internet. This copy only needs to be run once.
+
+```
+install.packages("RgoogleMaps")
+```
+
+### Loading the package 
+
+This package is not part of the core of R and must be loaded into the working library once before using its functions. The code to do this is given below:
+
+```{r}
+library(RgoogleMaps)
+```
+
+### Key functions
+
+1. Getting a map: In Google maps one can search for a map by the name of a landmark or by its latitude and longitude. In the following code block, the Myanmar Bible House (next to Sule) in Yangon is referenced.
+
+```{r}
+map1 <- GetMap(
+ "Bible House, Yangon, Myanmar",
+ destfile = "MyTile1.png",
+ size=c(640,640), zoom=18,
+ maptype = "roadmap")
+```
+This creates a graphic file (named MyTile1.png) which is stored in the project directory.
+
+![map](MyTile1.png)
+
+2. Displaying the map. The map can be displayed in R using the following code.
+
+```{r}
+PlotOnStaticMap(map1)
+```
+3. Specifying other map types.
+Of course, satellite images can also be generated using the same function. In fact the range of possibilities are roadmap, mobile, satellite, terrain, hybrid, and  mapmaker-roadmap.
+
+```{r}
+map2 <- GetMap("Bible House, Yangon, Myanmar",
+ destfile = "MyTile2.png",size=c(640,640), zoom=18,
+ maptype = "satellite")
+PlotOnStaticMap(map2)
+```
+## GADM Mapping
+
+GADM[^3] is a geographic information system (GIS) collection of the shapes of 4 levels of political boundaries for most countries of the world (namely country, province/state, district, townships). The databases are free for non-commercial uses and use longitude/latitude coordinate system. Each country collection is available in many versions so it is important to download the RDS version which was designed for use with R. The current version (2.8) was released in Nov 2015 and Version 3 is expected in Aug 2017. These maps are ideally suited for epidemic, political and economic research.
+
+[^3]: Global Administrative Areas (2015). GADM database of Global Administrative Areas, version 2.8. available online at http://www.gadm.org.
+
+### Installing the package
+
+You can install the package using the INSTALL button in the Packages in RStudio or copy and run the following code to download the package from the Internet. This copy only needs to be run once.
+
+```
+install.packages("sp")
+```
+
+### Loading the package 
+
+This package is not part of the core of R and must be loaded into the working library once before using its functions. The code to do this is given below:
+
+```{r}
+library(sp)
+```
+
+### Key functions
+
+1. Reading the geopolitical boundaries file 
+```{r}
+gadm <- readRDS(
+  "datasets/MMR_adm2.rds")
+```
+
+2. Creating a map
+```{r,fig.width=8}
+colors = rainbow(100)
+plot(gadm, col = colors, border = 'darkgrey')
+```
+3. Selecting particular regions to color
+
+```{r,fig.width=8}
+gadm <- readRDS("datasets/MMR_adm1.rds")
+colors = rep("#00FF0022",70)
+colors[15] = "purple"
+colors[gadm@data$NAME_1 ==
+    "Naypyitaw"] = "red"
+plot(gadm, col = colors, 
+     border = FALSE)
+legend(99,19,
+  c("Yangon","Naypyitaw"),
+  fill=c("purple","red"))
+```
+
+
+The ADM file contains a database and by matching the ordering or by selecting a particular region it is possible to highlight selected regions of the country.
+
+# Using the Maps
+
+## Coloring the Maps
+
+In this example, the various states and regions of Myanmar are colored according to the local populations.[^4]
+
+[^4]:  Wikipedia contributors  (2017) Administrative divisions of Myanmar. in Wikipedia, The Free Encyclopedia.  Available [online](https://en.wikipedia.org/wiki/Administrative_divisions_of_Myanmar) 
+
+```{r,fig.width=8}
+gadm <- readRDS(
+ "datasets/MMR_adm1.rds")
+
+regions = c("Ayeyarwady","Bago",
+  "Chin", "Kachin", "Kayah",
+  "Kayin","Magway","Mandalay",
+  "Mon", "Naypyitaw","Rakhine",
+  "Sagaing", "Shan", "Tanintharyi",
+  "Yangon")
+
+pop = c(6184829, 4867373, 
+  478801, 1689441, 286627,
+  1574079, 3917055, 6165723, 
+  2054393, 1160242, 3188807, 
+  5325347, 5824432, 1408401,
+  1160242)
+
+colors = rainbow(10)
+
+plot(gadm, border = 'darkgrey',
+  col = colors[pop / 1000000],
+  main="Population by Region")
+legend(101,20, 
+  c("0.5M","1M","2M","4M","8M"),
+  fill = c(colors[1 + c(0.5,1,2,4,8)]))
+```
+
+### Saving a graph.
+
+Plotted graphs can be saved as graphic files that can be included in other documents and reports. The key is to activate a graphic output stream as shown in the following code block which re-plots the previous chart directly into a PNG file.
+
+```{r}
+png("./myanmarpop.png",
+    width=480,height=800)
+plot(gadm, border = 'darkgrey',
+  col = colors[pop / 1000000],
+  main="Population by Region")
+legend(101,20, 
+  c("0.5M","1M","2M","4M","8M"),
+  fill = c(colors[1 + c(0.5,1,2,4,8)]))
+dev.off()
+```
+
+The resulting graphic file can be loaded in the R notebook by referencing the external image.
+
+![Myanmar Population](myanmarpop.png)
+
+
+
+
+## Plotting on Maps
+
+The following example plots the location of Myanmar airports on a Google satellite image.
+The data was extracted from the master database of airport from Open Flight[^5]
+
+[^5]: Open Flights (2012). Airport, airline and route data. Available online at https://openflights.org/data.html
+
+```{r}
+library(knitr)
+airports = read.csv("datasets/myanmarairports.csv")
+kable(airports)
+```
+
+These data can be plotted on maps generated within R as per the following code.
+
+```{r}
+map3 <- GetMap("Naypyitaw, Myanmar",
+ destfile = "MyTile2.png",size=c(640,640), zoom=5,
+ maptype = "satellite")
+PlotOnStaticMap(map3,
+  airports$lat,airports$long,
+  col="yellow",pch=19)
+```
+
+
+```
+
+The following code plots the same airport information on a silhouette of Myanmar.
+
+```{r,fig.width=8}
+gadm <- readRDS(
+  "datasets/MMR_adm0.rds")
+plot(gadm, col = "#00FF0033", 
+  border = 'darkgreen')
+points(airports$long, airports$lat,
+  col="red",pch=19)
+title("Commerical Airports of Myanmar")
+```
+
+
+
+
+# Summary
+
+While this technical note has only covered on the basics of mapping in R, there are many more advanced functions to allow the user to generate a wide assortment of maps and projections. The online help for each package can be found by double clicking on the package name in the Packages tab of RStudio. If you get stuck, you are welcome to [contact me](mailto:robert_b@payap.ac.th). 
+
+Enjoy!
+
+# Bibliography
