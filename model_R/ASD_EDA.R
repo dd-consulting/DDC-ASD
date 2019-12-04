@@ -5,6 +5,9 @@
 ###########################################################
 
 # 2019 12 03
+# ----------------------------------
+# Set working directory
+# ----------------------------------
 setwd("/media/sf_vm_shared_folder/git/DDC/DDC-ASD/model_R")
 getwd()
 
@@ -243,7 +246,7 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
 
 
 # ----------------------------------
-# [National] Prevalence has changed over Time
+# [National] < Prevalence has changed over Time >
 # ----------------------------------
 # Prevalence over Year
 plot(ASD_National$Year, ASD_National$Prevalence)
@@ -330,7 +333,7 @@ par(mfrow=c(1, 1)) # Reset to one plot on one page
 # ----------------------------------
 
 # ----------------------------------
-# [National] Prevalence Varies over Time/Year by Data Source
+# [National] < Prevalence Varies over Time/Year by Data Source >
 # ----------------------------------
 # Create a first line
 plot(ASD_National$Year[ASD_National$Source == 'addm'], 
@@ -375,7 +378,7 @@ legend("topleft", legend=levels(ASD_National$Source),
        )
 
 # ----------------------------------
-# [addm] Prevalence Varies by Sex
+# [addm] < Prevalence Varies by Sex >
 # ----------------------------------
 # Create a first line
 plot(ASD_National$Year[ASD_National$Source == 'addm'], 
@@ -431,7 +434,7 @@ legend("topleft", legend=c('ADDM Average', 'Male with 95% CI', 'Female with 95% 
        )
 
 # ----------------------------------
-# [addm] Prevalence Varies by Race and Ethnicity
+# [addm] < Prevalence Varies by Race and Ethnicity >
 # ----------------------------------
 # Create a first line
 plot(ASD_National$Year[ASD_National$Source == 'addm'], 
@@ -442,14 +445,14 @@ plot(ASD_National$Year[ASD_National$Source == 'addm'],
      xlab="Year", 
      xlim=c(2000, 2016), # Set x axis value range
      ylab="Prevalence per 1000 Children", 
-     ylim=c(0, 20), # Set y axis value range
+     ylim=c(0, 30), # Set y axis value range
      main="Prevalence Estimates by Race/Ethnicity [ADDM]",
      col.main="black", col.lab="black", col.sub="grey",
      frame = FALSE, # Remove frame
      axes=FALSE # Remove x and y axis
 )
 axis(1, at=seq(2000, 2016, 1)) # Customize x axis
-axis(2, at=seq(0, 20, 5)) # Customize y axis
+axis(2, at=seq(0, 30, 5)) # Customize y axis
 
 # R plot colour list: https://www.r-graph-gallery.com/42-colors-names.html
 
@@ -510,8 +513,395 @@ plot(table(ASD_National$Source_Full2, ASD_National$Asian.or.Pacific.Islander.Pre
 # ----------------------------------
 library(ggplot2)
 
+# ----------------------------------
+# [National] < Years Data Available >
+# ----------------------------------
+barplot_Data_Source = ggplot(ASD_National, aes(x = Source, fill = Source)) + 
+  geom_bar() + theme(axis.text.x=element_blank(),  # Hide axis
+                     axis.ticks.x=element_blank(), # Hide axis
+                     axis.text.y=element_blank(),  # Hide axis
+                     axis.ticks.y=element_blank(), # Hide axis
+                     legend.position="top"
+  ) + 
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue")) +
+  facet_grid(facets = Source~Year)
+# Define captions
+captions = labs(x="",
+                y="",
+                title="Years Data Available")
+# Show plot
+barplot_Data_Source + captions # layers of graphics
 
-#
+
+# ----------------------------------
+# Barplot
+# ----------------------------------
+
+# Create bar chart using R graphics
+barplot(table(ASD_National$Source))
+
+# Create bar chart using ggplot2
+ggplot(ASD_National, aes(x = Source)) + geom_bar()
+# 
+ggplot(ASD_National, aes(x = Source, fill = factor(Year))) + 
+  geom_bar() + theme(legend.position="top")
+# facets = .~Year
+ggplot(ASD_National, aes(x = Source, fill = Source)) + 
+  geom_bar() + theme(legend.position="top") + 
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue")) +
+  facet_grid(facets = .~Year)
+# facets = Source~Year
+ggplot(ASD_National, aes(x = Source, fill = Source)) + 
+  geom_bar() + theme(legend.position="top") + 
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue")) +
+  facet_grid(facets = Source~Year)
+
+# ----------------------------------
+# Histogram
+# ----------------------------------
+
+# Create histogram using R graphics
+hist(ASD_National$Prevalence, breaks = 10)
+
+# Create histogram using ggplot2
+ggplot(ASD_National, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
+
+# Use color to differentiate sub-group data
+ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
+  geom_histogram(binwidth = 5) +
+  theme_bw() + theme(legend.position="top") +
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue"))
+
+# Plot sub-group data side by side
+ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
+  geom_histogram(binwidth = 5, position="dodge") +
+  theme_bw() + theme(legend.position="top") +
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue"))
+
+
+# Split plots using facet_grid()
+ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
+  geom_histogram(binwidth = 5) +
+  theme(legend.position="top") + 
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue")) +
+  facet_grid(facets = Source~.)
+
+# Display caption using ggplot2
+hist_Prevalence = ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
+  geom_histogram(binwidth = 5) +
+  theme(legend.position="top") + 
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue")) + 
+  facet_grid(facets = Source~.)
+# Define captions
+captions = labs(x="Prevalence per 1000 Children",
+                y="Occurrences",
+                title="Distribution of Prevalence by Data Source")
+# Show plot
+hist_Prevalence + captions # layers of graphics
+
+# ----------------------------------
+# Boxplot
+# ----------------------------------
+
+
+# Create box plot using R graphics
+# Create 'Prevalence' box plots break by 'Source'
+boxplot(ASD_National$Prevalence ~ ASD_National$Source,
+        main = "National ASD Prevalence by Data Source",
+        xlab = "Data Source",
+        ylab = "Prevalence per 1000 Children",
+        sub  = "Year 2000 - 2016",
+        col.main="blue", col.lab="black", col.sub="grey"
+)
+
+# Create box plot using ggplot2
+ggplot(ASD_National, aes(x = Source, y = Prevalence)) + 
+  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+  scale_y_continuous(name = "Prevalence per 1000 Children",
+                     breaks = seq(0, 30, 5),
+                     limits=c(0, 30)) +
+  scale_x_discrete(name = "Data Source (Year 2000 - 2016)") +
+  ggtitle("National ASD Prevalence by Data Source") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"))
+
+# ----------------------------------
+# Line chart
+# ----------------------------------
+
+# ----------------------------------
+# [National] < Prevalence Varies over Time/Year by Data Source >
+# ----------------------------------
+
+# ----------------------------------
+# Build chart/plot layer by layer
+# ----------------------------------
+
+# Define a ggplot graphic object; provide data and x y for use
+p <- ggplot(ASD_National, aes(x = Year, y = Prevalence, group = Source))
+# Show plot
+p
+# Select (add) line chart type:
+p <- p + geom_line(aes(color = Source),
+                   linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+                   size=1,
+                   alpha=0.5) 
+# Show plot
+p
+# Select (add) points to chart:
+p <- p + geom_point(aes(color = Source),
+                    size=3, 
+                    shape=20,
+                    alpha=0.5) 
+# Show plot
+p
+# Customize line color and legend name:
+p <- p + scale_color_manual("Data Source:", 
+                            labels = c('ADDM', 'MEDI', 'NSCH', 'SPED'),
+                            values = c("addm" = "blue", 
+                                       "medi" = "orange", 
+                                       "nsch" = "purple",
+                                       "sped" = "green"))
+# Show plot
+p
+# Adjust x and y axis, scale, limit and labels:
+p <- p + scale_y_continuous(name = "Prevalence per 1000 Children",
+                            breaks = seq(0, 30, 5),
+                            limits=c(0, 30)) +
+  scale_x_continuous(name = "Year", 
+                     breaks = seq(2000, 2016, 1), 
+                     limits = c(2000, 2016)) 
+# Show plot
+p
+# Customize chart title:
+p <- p + ggtitle("National ASD Prevalence by Data Source") 
+# Show plot
+p
+# Customize chart title and axis labels:
+p <- p + theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+               axis.title = element_text(face = 'plain', color = "darkslategrey")) 
+# Show plot
+p
+
+# ----------------------------------
+# Consolidate above code into one chunk
+# ----------------------------------
+p <- ggplot(ASD_National, aes(x = Year, y = Prevalence, group = Source)) +
+  geom_line(aes(color = Source),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(color = Source),
+             size=3, 
+             shape=20,
+             alpha=0.5) + 
+  scale_color_manual("Data Source:", 
+                     labels = c('ADDM', 'MEDI', 'NSCH', 'SPED'),
+                     values = c("addm" = "blue", 
+                                "medi" = "orange", 
+                                "nsch" = "purple",
+                                "sped" = "green")) +
+  scale_y_continuous(name = "Prevalence per 1000 Children",
+                     breaks = seq(0, 30, 5),
+                     limits=c(0, 30)) +
+  scale_x_continuous(name = "Year", 
+                     breaks = seq(2000, 2016, 1), 
+                     limits = c(2000, 2016)) +
+  ggtitle("National ASD Prevalence by Data Source") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"))
+# Show plot
+p
+# Optionally, add data values/labels
+p + geom_text(aes(label = round(Prevalence, 0)), # Values are rounded for display
+          vjust = "outward", 
+#          nudge_y = 0.2, # optionally life the text
+          hjust = "outward", 
+          check_overlap = TRUE,
+          size = 3, # size of textual data label
+          col = 'darkslategrey'
+          )
+
+# ----------------------------------
+# theme of the economist magazine
+# ----------------------------------
+library(ggthemes)
+p + theme_economist() + scale_colour_economist()
+
+# ----------------------------------
+# theme of the Wall Street Journal
+# ----------------------------------
+p + theme_wsj() + scale_colour_wsj("colors6")
+
+
+# ----------------------------------
+# [addm] < Prevalence Varies by Sex >
+# ----------------------------------
+
+# Filter only data of ADDM
+ASD_National_ADDM <- subset(ASD_National, Source == 'addm')
+
+#  Color:
+# 'ADDM_Average' "darkslategrey"
+# 'Female_Prevalence' "orange"
+# 'Male_Prevalence' "blue"
+
+p <- ggplot(ASD_National_ADDM, aes(x = Year, y = Prevalence)) +
+  geom_line(aes(y = Prevalence, colour = 'ADDM_Average'),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Prevalence, color = 'ADDM_Average'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  # Add line for Female
+  geom_line(aes(y = Female.Prevalence, colour = 'Female_Prevalence'),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Female.Prevalence, color = 'Female_Prevalence'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  # Add line for Male
+  geom_line(aes(y = Male.Prevalence, colour = 'Male_Prevalence'),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Male.Prevalence, color = 'Male_Prevalence'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  scale_colour_manual(name="",
+                      labels = c("ADDM Average", "Female Prevalence", "Male Prevalence"),
+                      values = c(ADDM_Average="darkslategrey", Female_Prevalence="orange", Male_Prevalence="blue"))
+# Add title, axis label, and axis scale
+p <- p + scale_y_continuous(name = "Prevalence per 1000 Children",
+                         breaks = seq(0, 30, 5),
+                         limits=c(0, 30)) +
+  scale_x_continuous(name = "Year", 
+                     breaks = seq(2000, 2016, 1), 
+                     limits = c(2000, 2016)) +
+  ggtitle("Prevalence Estimates by Sex [ADDM]") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey")) 
+# Show plot
+p
+# apply theme
+p + theme_economist() + scale_colour_economist() # p + theme_wsj() + scale_colour_wsj("colors6")
+
+
+# ----------------------------------
+# Quiz: Use ggplot to create other ASD prevalence visualizaiotns
+# ----------------------------------
+
+# ----------------------------------
+# [addm] < Prevalence Varies by Race and Ethnicity >
+# ----------------------------------
+
+#  Color:
+# 'ADDM_Average' "darkslategrey"
+# 'Asian_Pacific_Islander' "darkred"
+# 'Hispanic' "darkorchid3"
+# 'Non_Hispanic_Black' "deepskyblue3"
+# 'Non_Hispanic_White' "chartreuse3"
+
+p <- ggplot(ASD_National_ADDM, aes(x = Year, y = Prevalence)) +
+  geom_line(aes(y = Prevalence, colour = 'ADDM_Average'),
+            linetype = "dotted",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Prevalence, color = 'ADDM_Average'),
+             size=1, 
+             shape=20,
+             alpha=0) +
+  # Add line for Asian.or.Pacific.Islander.Prevalence
+  geom_line(aes(y = Asian.or.Pacific.Islander.Prevalence, colour = 'Asian_Pacific_Islander'),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Asian.or.Pacific.Islander.Prevalence, colour = 'Asian_Pacific_Islander'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  # Add line for Hispanic.Prevalence
+  geom_line(aes(y = Hispanic.Prevalence, colour = 'Hispanic'),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Hispanic.Prevalence, colour = 'Hispanic'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  # Add line for Non.hispanic.black.Prevalence
+  geom_line(aes(y = Non.hispanic.black.Prevalence, colour = 'Non_Hispanic_Black'),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Non.hispanic.black.Prevalence, colour = 'Non_Hispanic_Black'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  # Add line for Non.hispanic.white.Prevalence
+  geom_line(aes(y = Non.hispanic.white.Prevalence, colour = 'Non_Hispanic_White'),
+            linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+            size=1,
+            alpha=0.5) +
+  geom_point(aes(y = Non.hispanic.white.Prevalence, colour = 'Non_Hispanic_White'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  geom_point(aes(y = Asian.or.Pacific.Islander.Prevalence, colour = 'Asian_Pacific_Islander'),
+             size=3, 
+             shape=20,
+             alpha=0.5) +
+  scale_colour_manual(name="",
+                      labels = c("ADDM Average", 
+                                 "Asian/Pacific Islander", 
+                                 "Hispanic", 
+                                 "Non-Hispanic Black", 
+                                 "Non-Hispanic White"),
+                      values = c(ADDM_Average="darkslategrey", 
+                                 Asian_Pacific_Islander ="darkred", 
+                                 Hispanic ="darkorchid3", 
+                                 Non_Hispanic_Black ="deepskyblue3", 
+                                 Non_Hispanic_White ="chartreuse3"))
+# Add title, axis label, and axis scale
+p <- p + scale_y_continuous(name = "Prevalence per 1000 Children",
+                            breaks = seq(5, 20, 5),
+                            limits=c(5, 20)) +
+  scale_x_continuous(name = "Year", 
+                     breaks = seq(2000, 2016, 1), 
+                     limits = c(2000, 2016)) +
+  ggtitle("Prevalence Estimates by Race/Ethnicity [ADDM]") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey")) 
+# Show plot
+p
+# apply theme
+p + theme_economist() + scale_colour_economist() # p + theme_wsj() + scale_colour_wsj("colors6")
 
 
 # 2019 12 02
