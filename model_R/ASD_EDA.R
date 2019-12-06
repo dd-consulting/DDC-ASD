@@ -1022,13 +1022,13 @@ ASD_State_NSCH <- subset(ASD_State, Source_UC == 'NSCH')
 ASD_State_SPED <- subset(ASD_State, Source_UC == 'SPED')
 
 # < Years Data Available [State] [ADDM] >
-barplot_Data_Source = ggplot(ASD_State_ADDM, aes(x = 1, fill = Year_Factor)) + 
+barplot_Data_Source = ggplot(ASD_State_ADDM, aes(x = 1, fill = State_Full2)) + 
   geom_bar() + theme(axis.text.x=element_blank(),  # Hide axis
                      axis.ticks.x=element_blank(), # Hide axis
                      axis.text.y=element_blank(),  # Hide axis
                      axis.ticks.y=element_blank(), # Hide axis
                      panel.background = element_blank(), # Remove panel background
-                     legend.position="right",
+                     legend.position="none",
                      strip.text.y = element_text(angle=0) # Rotate text to horizontal
   ) +
   facet_grid(facets = State_Full2 ~ Year_Factor)
@@ -1039,8 +1039,8 @@ barplot_Data_Source + captions
 # Quiz: create < Years Data Available [State] [Source] > for other three data sources:
 
 
-# < State ASD Prevalence [ADDM] >
-ggplot(ASD_State_ADDM, aes(x = reorder(State_Full2, Prevalence, FUN = median), # Order States by median of Prevalence  
+# < ASD Prevalence by State [ADDM] > aggregated for different years
+p <- ggplot(ASD_State_ADDM, aes(x = reorder(State_Full2, Prevalence, FUN = median), # Order States by median of Prevalence  
                            y = Prevalence)) + 
   geom_boxplot(aes(fill = reorder(State_Full2, Prevalence, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
@@ -1049,45 +1049,105 @@ ggplot(ASD_State_ADDM, aes(x = reorder(State_Full2, Prevalence, FUN = median), #
                      breaks = seq(0, 30, 5),
                      limits=c(0, 30)) +
   scale_x_discrete(name = "") +
-  ggtitle("State ASD Prevalence [ADDM]") +
+  ggtitle("ASD Prevalence by State [ADDM]") +
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
-        axis.title = element_text(face = 'plain', color = "darkslategrey")) + 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"),
+        legend.position = 'none') + 
   coord_flip() + # Rotate chart
   geom_jitter(position=position_jitter(0.1)) # Add actual data points
+# Show plot
+p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist()
+
 
 # Quiz: create < State ASD Prevalence [Source] > for other three data sources:
 #
 
 
-# < State ASD Prevalence [ADDM] [Year 2014] >
+# < No. Children surveyed by State [ADDM] [Year 2014] >
 # All State Prevalence data with: Source_UC == 'ADDM' & Year == 2014
 ASD_State_Subset <- subset(ASD_State, Source_UC == 'ADDM' & Year == 2014)
 
-# Bar plot/chart for < State ASD Prevalence [ADDM] [Year 2014] >
-ggplot(ASD_State_Subset, aes(x = reorder(State_Full2, Prevalence, FUN = median), # Order States by median of Prevalence  
-                             y = Prevalence)) + 
-  geom_bar(stat="identity", aes(fill = reorder(State_Full2, Prevalence, FUN = median))) + # fill color by State
+# Bar plot/chart for < No. Children surveyed by State [ADDM] [Year 2014] >
+p <- ggplot(ASD_State_Subset, aes(x = reorder(State_Full1, Denominator, FUN = median), # Order States by median of Denominator  
+                             y = Denominator)) + 
+  geom_bar(stat="identity", aes(fill = reorder(State_Full1, Denominator, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
-  scale_y_continuous(name = "Prevalence per 1000 Children",
-                     breaks = seq(0, 30, 5),
-                     limits=c(0, 30)) +
-  scale_x_discrete(name = "") +
-  ggtitle("State ASD Prevalence [ADDM] [Year 2014]") +
+  scale_x_discrete(name = "US. States") +
+  scale_y_continuous(name = "No. Children (Denominator)") +
+  ggtitle("No. Children surveyed by State [ADDM] [Year 2014]") +
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
-        axis.title = element_text(face = 'plain', color = "darkslategrey")) +
-  geom_text(aes(label=Prevalence), hjust=1.6, color="darkslategrey", size=3.5) + # Show data label inside bars
-  coord_flip() # Rotate chart
+        axis.title = element_text(face = 'plain', color = "darkslategrey"),
+        legend.position="none") + 
+  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5)  # Show data label inside bars
+# Show plot
+p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist()
 
-# Quiz: create < State ASD Prevalence [ADDM] [Year XXXX] > for other years:
+# Quiz: create< No. Children surveyed by State [ADDM] [Year XXXX] > for other years:
+#
 #
 
-# < State ASD Prevalence [ADDM] [AZ-Arizona] >
-# All time Prevalence data with: Source_UC == 'ADDM' & State_Full2 == 'AZ-Arizona'
+
+# < ASD Prevalence with 95% CI by State [ADDM] [Year 2014] >
+
+# All State Prevalence data with: Source_UC == 'ADDM' & Year == 2014
+ASD_State_Subset <- subset(ASD_State, Source_UC == 'ADDM' & Year == 2014)
+
+# Point plot/chart 
+p = ggplot(ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, FUN = median), # Order States by median of Prevalence  
+                                 y = Prevalence)) + 
+  geom_point(stat="identity", aes(colour = reorder(State_Full1, Prevalence, FUN = median)), size = 1.5) + # fill color by State
+  scale_colour_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
+  scale_y_continuous(name = "Prevalence per 1000 Children",
+                     breaks = seq(10, 35, 5),
+                     limits=c(10, 35)) +
+  scale_x_discrete(name = "US. States") +
+  ggtitle("ASD Prevalence with 95% CI by State [ADDM] [Year 2014]") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"),
+        legend.position = 'top') +
+  geom_text(aes(label=Prevalence), hjust=-0.2, color="black", size=3.5)  # Show data label inside bars
+# geom_text(aes(label=Prevalence), hjust=-0.1, color="black", size=3.5)  # Show data label inside bars
+# Show plot
+p
+# Add Lower.CI
+p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Lower.CI,
+                                                shape=Source # point shape
+                                                ), 
+                   size = 2 # point size
+) +
+  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
+  scale_shape_manual(values=3)  # manual define point shape
+#  scale_color_manual(values='darkslategrey') # manual define point color
+# Show plot
+p
+# Add Upper.CI
+p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Upper.CI, 
+                                                shape=Source # point shape
+                                                ), 
+                   size = 2 # point size
+) +
+  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=-3, color="darkslategrey", size=2.5) # Show data label inside bars 
+# Show plot
+p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist() + scale_colour_discrete(guide = guide_legend(title = "US. States")) + theme(legend.position = 'none')
+
+
+# Quiz: create < State ASD Prevalence with 95% CI by State [ADDM] [Year XXXX] > for other years:
+#
+#
+
+
+# < ASD Prevalence by Year [ADDM] [AZ-Arizona] >
+# All year/time Prevalence data with: Source_UC == 'ADDM' & State_Full2 == 'AZ-Arizona'
 ASD_State_Subset <- subset(ASD_State, Source_UC == 'ADDM' & State_Full2 == 'AZ-Arizona')
 
 
 # Line plot/chart for < State ASD Prevalence [ADDM] [AZ-Arizona] >
-# p <- ggplot(ASD_State_Subset, aes(x = Year, y = Prevalence, group = State_Full2))
 p <- ggplot(ASD_State_Subset, aes(x = Year, y = Prevalence))
 # Select (add) line chart type:
 p <- p + geom_line(aes(color = State_Full2),
@@ -1109,27 +1169,23 @@ p <- p + scale_y_continuous(name = "Prevalence per 1000 Children",
                      breaks = seq(2000, 2016, 1), 
                      limits = c(2000, 2016)) 
 # Customize chart title:
-p <- p + ggtitle("State ASD Prevalence [ADDM] [AZ-Arizona]") 
+p <- p + ggtitle("ASD Prevalence by Year [ADDM] [AZ-Arizona]") 
 # Customize chart title and axis labels:
 p <- p + theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
                axis.title = element_text(face = 'plain', color = "darkslategrey")) 
 # Show plot
 p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist()
 
-
-# $ 2
-# Line plot/chart for < State ASD Prevalence [ADDM] [All States] >
+# Line plot/chart for < ASD Prevalence by Year [ADDM] [All States] >
 #p <- ggplot(ASD_State_ADDM, aes(x = Year, y = Prevalence, group = State_Full2))
 p <- ggplot(ASD_State_ADDM, aes(x = Year, y = Prevalence))
-# Show plot
-p
 # Select (add) line chart type:
 p <- p + geom_line(aes(color = State_Full2),
                    linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
                    size=1,
                    alpha=0.5) 
-# Show plot
-p
 # Select (add) points to chart:
 p <- p + geom_point(aes(color = State_Full2),
                     size=3, 
@@ -1139,118 +1195,33 @@ p <- p + geom_point(aes(color = State_Full2),
 p
 # Customize line color and legend name:
 p <- p + labs(color = "US. State")
-# Show plot
-p
 # Adjust x and y axis, scale, limit and labels:
 p <- p + scale_y_continuous(name = "Prevalence per 1000 Children",
                             breaks = seq(0, 30, 5),
                             limits=c(0, 30)) +
-  scale_x_continuous(name = "Year", 
+  scale_x_continuous(name = "Year (2000 - 2016)", 
                      breaks = seq(2000, 2016, 1), 
                      limits = c(2000, 2016)) 
-# Show plot
-p
 # Customize chart title:
-p <- p + ggtitle("State ASD Prevalence [ADDM] [All States]") 
-# Show plot
-p
+p <- p + ggtitle("ASD Prevalence by Year [ADDM] [All States]") 
 # Customize chart title and axis labels:
 p <- p + theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
                axis.title = element_text(face = 'plain', color = "darkslategrey"),
-               legend.position="bottom")
+               legend.position="right")
 # Show plot
 p
+
 # Show plot in facet_grid
-p + facet_grid(facets = . ~ State_Full2) + 
-  theme(axis.text.x=element_blank(),  # Hide axis
+p + facet_grid(facets = . ~ State_Full1) + 
+  theme(legend.position = "none", # Hide legend
+      axis.text.x=element_blank(),  # Hide axis
       axis.ticks.x=element_blank(), # Hide axis
       panel.background = element_blank() # Remove panel background
-      )
+      ) 
+
 
 # ----------------------------------
 # EDA - Visualization on map
 # ----------------------------------
-
-
-
-# 2019 12 02
-
-# ----------------------------------
-# Hypothesis Test - Proportion Test
-# ----------------------------------
-
-?prop.test
-
-# State	Denominator	Prevalence	Lower CI	Upper CI	Year	Source	State_Full	Numerator_Prevalence
-# AZ	45,322	6.5	5.8	7.3	2000	addm	Arizona	295
-# GA	43,593	6.5	5.8	7.3	2000	addm	Georgia	283
-# MD	21,532	5.5	4.6	6.6	2000	addm	Maryland	118
-# NJ	29,714	9.9	8.9	11.1	2000	addm	New Jersey	294
-
-
-# Confidence Interval
-ASD  <- c( 283 )
-Children <- c( 43593 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-ASD  <- c( 118 )
-Children <- c( 21532 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-ASD  <- c( 294 )
-Children <- c( 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-
-ASD  <- c( 295, 283 ) 
-Children <- c( 45322, 43593 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-ASD  <- c( 295, 283, 118, 294 ) 
-Children <- c( 45322, 43593, 21532, 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-
-ASD  <- c( 295 )
-Children <- c( 45322 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-# Different flavours of proportion test:
-if(!require(binom)){install.packages("binom")}
-library(binom)
-binom.confint (x=295, n=45322, conf.level =0.95, method="all")
-
-
-
-# 2019 12 05
-# ----------------------------------
-# EDA - Dynamic Visualization with plotly
-# ----------------------------------
-library(plotly)
-# install latest dev version of ggplot2 to work with plotly:
-# install.packages('devtools')
-# devtools::install_github('hadley/ggplot2')
-library(ggplot2)
-
-p <- ggplot(ASD_National, aes(x = Source, y = Prevalence)) + 
-  geom_boxplot(fill = 'darkslategrey', alpha = 0.2)
-
-p <- ggplotly(p)
-
-
-library(plotly)
-
-set.seed(1234)
-dat <- data.frame(cond = factor(rep(c("A","B"), each=200)), rating = c(rnorm(200),rnorm(200, mean=.8)))
-
-p <- ggplot(dat, aes(x=cond, y=rating, fill=cond)) + geom_boxplot()
-p
-p <- ggplotly(p)
 
 

@@ -10,11 +10,19 @@
 # ----------------------------------
 setwd("/media/sf_vm_shared_folder/git/DDC/DDC-ASD/model_R")
 getwd()
+options(warn=-1) # Turning off unnecessary warning messages. To reset: options(warn=0)
 
 # ----------------------------------
 # Read in data
 # ----------------------------------
+#
+# ----------------------------------
+# Dataset: US. National Level Children ASD Prevalence
+# ----------------------------------
 ASD_National <- read.csv("../dataset/ADV_ASD_National.csv", stringsAsFactors = FALSE)
+# ----------------------------------
+# Dataset: US. State Level Children ASD Prevalence
+# ----------------------------------
 ASD_State    <- read.csv("../dataset/ADV_ASD_State.csv", stringsAsFactors = FALSE)
 
 # Look at data stucture/schema
@@ -121,30 +129,49 @@ ASD_National = replace_with_na_all(ASD_National, condition = ~.x %in% na_strings
 # Count missing values in dataframe:
 sum(is.na(ASD_National))
 
-
 # ----------------------------------
 # Process invalid characters
 # ----------------------------------
 # Remove invalid unicode char/string: \x92
-ASD_National$Source_Full1[ASD_National$Source_Full1 == "National Survey of Children\x92s Health"] <- "National Survey of Children Health"
-ASD_National$Source_Full2[ASD_National$Source_Full2 == "nsch-National Survey of Children\x92s Health"] <- "nsch-National Survey of Children Health"
+ASD_National$Source_Full1[ASD_National$Source_Full1 == "National Survey of Children\x92s Health"] <- "National Survey of Children's Health"
+ASD_National$Source_Full2[ASD_National$Source_Full2 == "nsch-National Survey of Children\x92s Health"] <- "nsch-National Survey of Children's Health"
 
+# ----------------------------------
+# Delete/Drop dataframe variable
+# ----------------------------------
+# Delete/Drop duplicate variable: Prevalence_dup
+drop <- c("Prevalence_dup", "Dummy Variable Name")
+ASD_National = ASD_National[,!(names(ASD_National) %in% drop)]
+
+# ----------------------------------
+# Create/Add dataframe variable
+# ----------------------------------
+# Create one new variable: Source_Full3 by combining Source, space, and Source_Full1
+ASD_National$Source_UC <- paste(toupper(ASD_National$Source))
+# Create one new variable: Source_Full3 by combining Source and Source_Full1
+ASD_National$Source_Full3 <- paste(toupper(ASD_National$Source), ASD_National$Source_Full1)
 
 # ----------------------------------
 # Convert to correct data types
 # ----------------------------------
-
+# Review data structure and variable names:
 str(ASD_National)
-
-# Convert Prevalence and CIs from categorical/chr to numeric, column 9 to 26
 names(ASD_National)
-ix <- 9:26 # define an index
+
+# Convert Prevalence and CIs from categorical/chr to numeric, column 8 to 25
+ix <- 8:25 # define an index
 ASD_National[ix] <- lapply(ASD_National[ix], as.numeric)
 
-# Convert Source from categorical/chr to categorical/factor, column 1, 7, 8
-names(ASD_National)
-ix <- c(1, 7, 8) # define an index
+# Convert Source from categorical/chr to categorical/factor
+ix <- c(1, 6, 7, 26, 27) # define an index
 ASD_National[ix] <- lapply(ASD_National[ix], as.factor)
+
+# Create new ordered factor Year_Factor from Year
+ASD_National$Year_Factor <- factor(ASD_National$Year, ordered = TRUE)
+
+# Observe the difference of 'Levels' in below two factors
+ASD_National$Year_Factor # Ordinal categorical variable
+ASD_National$Source # Nominal categorical variable
 
 # Optionally, below is manual conversion examples:
 # ASD_National$Male.Prevalence = as.numeric(ASD_National$Male.Prevalence)
@@ -154,7 +181,7 @@ ASD_National[ix] <- lapply(ASD_National[ix], as.factor)
 # ----------------------------------
 # EDA - Descriptive Analysis
 # ----------------------------------
-
+# Look at high level data summary:
 summary(ASD_National)
 
 # ----------------------------------
@@ -182,26 +209,26 @@ table(ASD_National$Year)
 # ----------------------------------
 # Look at summary of categorical variables
 # ----------------------------------
-# categorical variables: Source, Source_Full1, Source_Full2
-
-# library(dplyr)
-summary(select_if(ASD_National, is.character)) # No categorical variable is character data type
-summary(select_if(ASD_National, is.factor)) # All categorical variables are factor data type
+# List of categorical variables
+names(select_if(ASD_National, is.factor)) # All categorical variables are factor data type
+names(select_if(ASD_National, is.character)) # No categorical variable is character data type
+# Look at summary
+summary(select_if(ASD_National, is.factor))
+summary(select_if(ASD_National, is.character))
 
 # Count occurrences of uniques values in a variable/column
 table(ASD_National$Source)
-table(ASD_National$Source_Full1)
-table(ASD_National$Source_Full2)
-table(ASD_National$Year) # numeric is also possible
+table(ASD_National$Source_Full3)
+table(ASD_National$Year_Factor)
 table(ASD_National$Prevalence) # numeric is also possible
 
 # Display unique values (levels) of a factor categrotical 
-lapply(ASD_National[c(1, 7, 8)], levels)
+lapply(select_if(ASD_National, is.factor), levels)
 # or using variable names
-lapply(ASD_National[c('Source', 'Source_Full1', 'Source_Full2')], levels)
+lapply(ASD_National[c('Source_UC', 'Year_Factor')], levels)
 
 # Pivot of counting occurrences
-table(ASD_National$Source_Full2, ASD_National$Year) # table(ASD_National$Year, ASD_National$Source_Full2)
+table(ASD_National$Source_Full3, ASD_National$Year) # table(ASD_National$Year, ASD_National$Source_Full3)
 
 
 # ----------------------------------
@@ -226,14 +253,21 @@ boxplot(ASD_National$Male.Prevalence) # Male children
 boxplot(ASD_National$Female.Prevalence) # Female children
 
 par(mfrow=c(1, 2)) # multiple plots on one page: row split to: 1,column split to: 2
+# Male prevalence and Female prevalence side by side:
+boxplot(ASD_National$Male.Prevalence) # Male children
+boxplot(ASD_National$Female.Prevalence) # Female children
+# All children prevalence with and without 95% confidence side by side:
+boxplot(ASD_National$Prevalence, notch = TRUE) # 95% confidence interval
 boxplot(ASD_National$Prevalence) # All children
-# with 95% confidence interval
-boxplot(ASD_National$Prevalence, notch = TRUE)
 par(mfrow=c(1, 1)) # Reset to one plot on one page
 
 # Display value ranges
-range(ASD_National$Year)
+# numeric:
 range(ASD_National$Prevalence)
+range(ASD_National$Year)
+# categorical:
+min(ASD_National$Year_Factor)
+max(ASD_National$Year_Factor)
 
 # Create 'Prevalence' box plots break by 'Source'
 boxplot(ASD_National$Prevalence ~ ASD_National$Source,
@@ -241,7 +275,7 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
         xlab = "Data Source",
         ylab = "Prevalence per 1000 Children",
         sub  = "Year 2000 - 2016",
-        col.main="blue", col.lab="black", col.sub="grey"
+        col.main="blue", col.lab="black", col.sub="darkgrey"
         )
 
 
@@ -249,9 +283,12 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
 # [National] < Prevalence has changed over Time >
 # ----------------------------------
 # Prevalence over Year
-plot(ASD_National$Year, ASD_National$Prevalence)
+# Use Year        as x-axis: y value Prevalence is NOT aggregated for differnt data scources
+plot(ASD_National$Year, ASD_National$Prevalence) 
+# Use Year_factor as x-axis: y value Prevalence is     aggregated for differnt data scources
+plot(ASD_National$Year_Factor, ASD_National$Prevalence) 
 
-table(ASD_National$Source_Full2)
+table(ASD_National$Source_Full3)
 
 par(mfrow=c(2, 2))
 # Prevalence over Year, from data source: 
@@ -277,6 +314,11 @@ plot(ASD_National$Year[ASD_National$Source == 'sped'],
 # ----------------------------------
 # Add more annotations to above plots
 # ----------------------------------
+# Color list
+# addm : darkblue
+# medi : orange
+# nsch : darkred
+# sped : skyblue
 
 # Prevalence over Year, from data source: 
 # addm-Autism & Developmental Disabilities Monitoring Network
@@ -285,12 +327,12 @@ plot(ASD_National$Year[ASD_National$Source == 'addm'],
      type="l", # dot/point type
      lty=1, # line type
      lwd=3, # line width
-     col="blue", # line color
+     col="darkblue", # line color
      xlab="Year", 
      ylab="Prevalence per 1000 Children", 
      main="[addm] Prevalence Estimates Over Time",
-     col.main="blue", col.lab="black", col.sub="grey"
-     )
+     sub  = "zhan.gu@nus.edu.sg",
+     col.main="blue", col.lab="black", col.sub="darkgrey")
 
 # Prevalence over Year, from data source: 
 # medi-Medicaid
@@ -300,30 +342,30 @@ plot(ASD_National$Year[ASD_National$Source == 'medi'],
      xlab="Year", 
      ylab="Prevalence per 1000 Children", 
      main="[medi] Prevalence Estimates Over Time",
-     col.main="blue", col.lab="black", col.sub="grey"
-     )
+     sub  = "zhan.gu@nus.edu.sg",
+     col.main="blue", col.lab="black", col.sub="darkgrey")
 
 # Prevalence over Year, from data source: 
 # nsch-National Survey of Children Health
 plot(ASD_National$Year[ASD_National$Source == 'nsch'], 
      ASD_National$Prevalence[ASD_National$Source == 'nsch'],
-     type="l", lty=2, lwd=3,  col="purple",
+     type="l", lty=2, lwd=3,  col="darkred",
      xlab="Year", 
      ylab="Prevalence per 1000 Children", 
      main="[nsch] Prevalence Estimates Over Time",
-     col.main="blue", col.lab="black", col.sub="grey"
-     )
+     sub  = "zhan.gu@nus.edu.sg",
+     col.main="blue", col.lab="black", col.sub="darkgrey")
 
 # Prevalence over Year, from data source: 
 # sped-Special Education Child Count
 plot(ASD_National$Year[ASD_National$Source == 'sped'], 
      ASD_National$Prevalence[ASD_National$Source == 'sped'],
-     type="l", lty=3, lwd=3,  col="green",
+     type="l", lty=3, lwd=3,  col="skyblue",
      xlab="Year", 
      ylab="Prevalence per 1000 Children", 
      main="[sped] Prevalence Estimates Over Time",
-     col.main="blue", col.lab="black", col.sub="grey"
-     )
+     sub  = "zhan.gu@nus.edu.sg",
+     col.main="blue", col.lab="black", col.sub="darkgrey")
 
 par(mfrow=c(1, 1)) # Reset to one plot on one page
 
@@ -338,7 +380,7 @@ par(mfrow=c(1, 1)) # Reset to one plot on one page
 # Create a first line
 plot(ASD_National$Year[ASD_National$Source == 'addm'], 
      ASD_National$Prevalence[ASD_National$Source == 'addm'], 
-     col = "blue", lty = 1, lwd = 1,
+     col = "darkblue", lty = 1, lwd = 2,
      type = "b", # use dot/point
      pch = 0, # dot/point type: http://www.endmemo.com/program/R/pchsymbols.php
      xlab="Year", 
@@ -356,21 +398,22 @@ axis(2, at=seq(0, 30, 5)) # Customize y axis
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'medi'], 
      ASD_National$Prevalence[ASD_National$Source == 'medi'], 
-     pch = 1, col = "orange", type = "b", lty = 1, lwd = 1
+     pch = 1, col = "orange", type = "b", lty = 1, lwd = 2
      )
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'nsch'], 
       ASD_National$Prevalence[ASD_National$Source == 'nsch'], 
-      pch = 2, col = "purple", type = "b", lty = 1, lwd = 1
+      pch = 2, col = "darkred", type = "b", lty = 1, lwd = 2
       )
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'sped'], 
       ASD_National$Prevalence[ASD_National$Source == 'sped'], 
-      pch = 5, col = "green", type = "b", lty = 1, lwd = 1
+      pch = 5, col = "skyblue", type = "b", lty = 1, lwd = 2
       )
 # Add a legend to the plot
 legend("topleft", legend=levels(ASD_National$Source),
-       col=c("blue", "orange", "purple", "green"), 
+       col=c("darkblue", "orange", "darkred", "skyblue"), 
+       pch = 20, # dot in a line
        lty = 1, # line type
        lwd = 2, # line width
        cex=0.8, # size of text
@@ -398,19 +441,6 @@ plot(ASD_National$Year[ASD_National$Source == 'addm'],
 axis(1, at=seq(2000, 2016, 1)) # Customize x axis
 axis(2, at=seq(0, 30, 5)) # Customize y axis
 
-# Add Male prevalence
-lines(ASD_National$Year[ASD_National$Source == 'addm'], 
-      ASD_National$Male.Prevalence[ASD_National$Source == 'addm'], 
-      pch = 1, col = "blue", type = "l", lty = 1, lwd = 2)
-# Add Male prevalence lower CI
-lines(ASD_National$Year[ASD_National$Source == 'addm'], 
-      ASD_National$Male.Lower.CI[ASD_National$Source == 'addm'], 
-      pch = 1, col = "blue", type = "l", lty = 3, lwd = 1)
-# Add Male prevalence upper CI
-lines(ASD_National$Year[ASD_National$Source == 'addm'], 
-      ASD_National$Male.Upper.CI[ASD_National$Source == 'addm'], 
-      pch = 1, col = "blue", type = "l", lty = 3, lwd = 1)
-
 # Add Female prevalence
 lines(ASD_National$Year[ASD_National$Source == 'addm'], 
       ASD_National$Female.Prevalence[ASD_National$Source == 'addm'], 
@@ -424,9 +454,24 @@ lines(ASD_National$Year[ASD_National$Source == 'addm'],
       ASD_National$Female.Upper.CI[ASD_National$Source == 'addm'], 
       pch = 1, col = "orange", type = "l", lty = 3, lwd = 1)
 
+# Add Male prevalence
+lines(ASD_National$Year[ASD_National$Source == 'addm'], 
+      ASD_National$Male.Prevalence[ASD_National$Source == 'addm'], 
+      pch = 1, col = "blue", type = "l", lty = 1, lwd = 2)
+# Add Male prevalence lower CI
+lines(ASD_National$Year[ASD_National$Source == 'addm'], 
+      ASD_National$Male.Lower.CI[ASD_National$Source == 'addm'], 
+      pch = 1, col = "blue", type = "l", lty = 3, lwd = 1)
+# Add Male prevalence upper CI
+lines(ASD_National$Year[ASD_National$Source == 'addm'], 
+      ASD_National$Male.Upper.CI[ASD_National$Source == 'addm'], 
+      pch = 1, col = "blue", type = "l", lty = 3, lwd = 1)
+
+
 # Add a legend to the plot
-legend("topleft", legend=c('ADDM Average', 'Male with 95% CI', 'Female with 95% CI'),
-       col=c("grey", "blue", "orange"), 
+legend("topleft", legend=c('ADDM Average', 'Female with 95% CI', 'Male with 95% CI'),
+       col=c("grey", "orange", "blue"), 
+#       pch = 20, # dot in a line
        lty = 1, # line type
        lwd = 2, # line width
        cex=0.8, # size of text
@@ -456,22 +501,22 @@ axis(2, at=seq(0, 30, 5)) # Customize y axis
 
 # R plot colour list: https://www.r-graph-gallery.com/42-colors-names.html
 
-# Add Non.hispanic.white.Prevalence
-lines(ASD_National$Year[ASD_National$Source == 'addm'], 
-      ASD_National$Non.hispanic.white.Prevalence[ASD_National$Source == 'addm'], 
-      pch = 20, col = "chartreuse3", type = "b", lty = 1, lwd = 2)
-# Add Non.hispanic.black.Prevalence
-lines(ASD_National$Year[ASD_National$Source == 'addm'], 
-      ASD_National$Non.hispanic.black.Prevalence[ASD_National$Source == 'addm'], 
-      pch = 20, col = "deepskyblue3", type = "b", lty = 1, lwd = 2)
-# Add Hispanic.Prevalence
-lines(ASD_National$Year[ASD_National$Source == 'addm'], 
-      ASD_National$Hispanic.Prevalence[ASD_National$Source == 'addm'], 
-      pch = 20, col = "darkorchid3", type = "b", lty = 1, lwd = 2)
 # Add Asian.or.Pacific.Islander.Prevalence
 lines(ASD_National$Year[ASD_National$Source == 'addm'], 
       ASD_National$Asian.or.Pacific.Islander.Prevalence[ASD_National$Source == 'addm'], 
       pch = 20, col = "darkred", type = "b", lty = 1, lwd = 2)
+# Add Hispanic.Prevalence
+lines(ASD_National$Year[ASD_National$Source == 'addm'], 
+      ASD_National$Hispanic.Prevalence[ASD_National$Source == 'addm'], 
+      pch = 20, col = "darkorchid3", type = "b", lty = 1, lwd = 2)
+# Add Non.hispanic.black.Prevalence
+lines(ASD_National$Year[ASD_National$Source == 'addm'], 
+      ASD_National$Non.hispanic.black.Prevalence[ASD_National$Source == 'addm'], 
+      pch = 20, col = "deepskyblue3", type = "b", lty = 1, lwd = 2)
+# Add Non.hispanic.white.Prevalence
+lines(ASD_National$Year[ASD_National$Source == 'addm'], 
+      ASD_National$Non.hispanic.white.Prevalence[ASD_National$Source == 'addm'], 
+      pch = 20, col = "chartreuse3", type = "b", lty = 1, lwd = 2)
 
 # Add a legend to the plot
 legend("topleft", legend=c('ADDM Average', 
@@ -480,6 +525,7 @@ legend("topleft", legend=c('ADDM Average',
                            'Hispanic', 
                            'Asian/Pacific Islander'),
        col=c("grey", "chartreuse3", "deepskyblue3", "darkorchid3", "darkred"), 
+       pch = 20, # dot in a line
        lty = 1, # line type
        lwd = 2, # line width
        cex=0.8, # size of text
@@ -490,19 +536,19 @@ legend("topleft", legend=c('ADDM Average',
 # Quiz: Add 95% Confidence Interval to above plot
 
 
-# count occurrences of catergorical variables
+# Quiz: Count occurrences of catergorical variables
 table(ASD_National$Source)
 barplot(table(ASD_National$Source))
 
-# Which data sources are available in which years
+# Quiz: Which data sources are available in which years
 table(ASD_National$Year, ASD_National$Source)
 plot(table(ASD_National$Year, ASD_National$Source))
 
-# Which data source has breakdown data by sex/gender
+# Quiz: Which data source has breakdown data by sex/gender
 table(ASD_National$Source_Full2, ASD_National$Male.Prevalence)
 plot(table(ASD_National$Source_Full2, ASD_National$Male.Prevalence))
 
-# Which data source has breakdown data by race and ethnicity
+# Quiz: Which data source has breakdown data by race and ethnicity
 table(ASD_National$Source_Full2, ASD_National$Asian.or.Pacific.Islander.Prevalence)
 plot(table(ASD_National$Source_Full2, ASD_National$Asian.or.Pacific.Islander.Prevalence))
 
@@ -516,11 +562,13 @@ library(ggplot2)
 # ----------------------------------
 # [National] < Years Data Available >
 # ----------------------------------
-barplot_Data_Source = ggplot(ASD_National, aes(x = Source, fill = Source)) + 
+
+barplot_Data_Source = ggplot(ASD_National, aes(x = 1, fill = Source)) + 
   geom_bar() + theme(axis.text.x=element_blank(),  # Hide axis
                      axis.ticks.x=element_blank(), # Hide axis
                      axis.text.y=element_blank(),  # Hide axis
                      axis.ticks.y=element_blank(), # Hide axis
+                     panel.background = element_blank(), # Remove panel background
                      legend.position="top"
   ) + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
@@ -528,13 +576,10 @@ barplot_Data_Source = ggplot(ASD_National, aes(x = Source, fill = Source)) +
                                                "nsch" = "darkred",
                                                "sped" = "skyblue")) +
   facet_grid(facets = Source~Year)
-# Define captions
-captions = labs(x="",
-                y="",
-                title="Years Data Available")
-# Show plot
-barplot_Data_Source + captions # layers of graphics
 
+captions = labs(x="", y="", title="Years Data Available") # layers of graphics
+# Show plot
+barplot_Data_Source + captions
 
 # ----------------------------------
 # Barplot
@@ -548,15 +593,15 @@ ggplot(ASD_National, aes(x = Source)) + geom_bar()
 # 
 ggplot(ASD_National, aes(x = Source, fill = factor(Year))) + 
   geom_bar() + theme(legend.position="top")
-# facets = .~Year
+# facets = . ~ Year
 ggplot(ASD_National, aes(x = Source, fill = Source)) + 
   geom_bar() + theme(legend.position="top") + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
                                                "medi" = "orange", 
                                                "nsch" = "darkred",
                                                "sped" = "skyblue")) +
-  facet_grid(facets = .~Year)
-# facets = Source~Year
+  facet_grid(facets = . ~ Year)
+# facets = Source ~ Year
 ggplot(ASD_National, aes(x = Source, fill = Source)) + 
   geom_bar() + theme(legend.position="top") + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
@@ -578,7 +623,7 @@ ggplot(ASD_National, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
 # Use color to differentiate sub-group data
 ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
   geom_histogram(binwidth = 5) +
-  theme_bw() + theme(legend.position="top") +
+  theme_bw() + theme(legend.position="right") +
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
                                                "medi" = "orange", 
                                                "nsch" = "darkred",
@@ -587,7 +632,7 @@ ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
 # Plot sub-group data side by side
 ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
   geom_histogram(binwidth = 5, position="dodge") +
-  theme_bw() + theme(legend.position="top") +
+  theme_bw() + theme(legend.position="right") +
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
                                                "medi" = "orange", 
                                                "nsch" = "darkred",
@@ -597,12 +642,12 @@ ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
 # Split plots using facet_grid()
 ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
   geom_histogram(binwidth = 5) +
-  theme(legend.position="top") + 
+  theme(legend.position="right") + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
                                                "medi" = "orange", 
                                                "nsch" = "darkred",
                                                "sped" = "skyblue")) +
-  facet_grid(facets = Source~.)
+  facet_grid(facets = Source ~ .)
 
 # Display caption using ggplot2
 hist_Prevalence = ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
@@ -612,7 +657,7 @@ hist_Prevalence = ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
                                                "medi" = "orange", 
                                                "nsch" = "darkred",
                                                "sped" = "skyblue")) + 
-  facet_grid(facets = Source~.)
+  facet_grid(facets = Source ~ .)
 # Define captions
 captions = labs(x="Prevalence per 1000 Children",
                 y="Occurrences",
@@ -623,16 +668,14 @@ hist_Prevalence + captions # layers of graphics
 # ----------------------------------
 # Boxplot
 # ----------------------------------
-
-
-# Create box plot using R graphics
 # Create 'Prevalence' box plots break by 'Source'
+# Create box plot using R graphics
 boxplot(ASD_National$Prevalence ~ ASD_National$Source,
         main = "National ASD Prevalence by Data Source",
         xlab = "Data Source",
         ylab = "Prevalence per 1000 Children",
         sub  = "Year 2000 - 2016",
-        col.main="blue", col.lab="black", col.sub="grey"
+        col.main="blue", col.lab="black", col.sub="darkgrey"
 )
 
 # Create box plot using ggplot2
@@ -679,10 +722,10 @@ p
 # Customize line color and legend name:
 p <- p + scale_color_manual("Data Source:", 
                             labels = c('ADDM', 'MEDI', 'NSCH', 'SPED'),
-                            values = c("addm" = "blue", 
+                            values = c("addm" = "darkblue", 
                                        "medi" = "orange", 
-                                       "nsch" = "purple",
-                                       "sped" = "green"))
+                                       "nsch" = "darkred",
+                                       "sped" = "skyblue"))
 # Show plot
 p
 # Adjust x and y axis, scale, limit and labels:
@@ -718,10 +761,10 @@ p <- ggplot(ASD_National, aes(x = Year, y = Prevalence, group = Source)) +
              alpha=0.5) + 
   scale_color_manual("Data Source:", 
                      labels = c('ADDM', 'MEDI', 'NSCH', 'SPED'),
-                     values = c("addm" = "blue", 
+                     values = c("addm" = "darkblue", 
                                 "medi" = "orange", 
-                                "nsch" = "purple",
-                                "sped" = "green")) +
+                                "nsch" = "darkred",
+                                "sped" = "skyblue")) +
   scale_y_continuous(name = "Prevalence per 1000 Children",
                      breaks = seq(0, 30, 5),
                      limits=c(0, 30)) +
@@ -744,14 +787,14 @@ p + geom_text(aes(label = round(Prevalence, 0)), # Values are rounded for displa
           )
 
 # ----------------------------------
-# theme of the economist magazine
+# Use themes as aesthetic template
 # ----------------------------------
 library(ggthemes)
+
+# theme of the economist magazine:
 p + theme_economist() + scale_colour_economist()
 
-# ----------------------------------
-# theme of the Wall Street Journal
-# ----------------------------------
+# theme of the Wall Street Journal:
 p + theme_wsj() + scale_colour_wsj("colors6")
 
 
@@ -904,55 +947,281 @@ p
 p + theme_economist() + scale_colour_economist() # p + theme_wsj() + scale_colour_wsj("colors6")
 
 
-# 2019 12 02
+# 2019 12 05
+# ----------------------------------
+# Dataset: US. State Level Children ASD Prevalence
+# ----------------------------------
+# ASD_State    <- read.csv("../dataset/ADV_ASD_State.csv", stringsAsFactors = FALSE)
+
+# Obtain number of rows and number of columns/features/variables
+dim(ASD_State)
+# Obtain overview (data structure/types)
+str(ASD_State)
 
 # ----------------------------------
-# Hypothesis Test - Proportion Test
+# Pre-Process data
+# ----------------------------------
+# Count missing values in dataframe:
+sum(is.na(ASD_State)) # No missing data recognized by R (NA)
+# Define several offending strings
+na_strings <- c("", "No data", "NA", "N A", "N / A", "N/A", "N/ A", "Not Available", "NOt available")
+# Replace these defined missing values to R's internal NA
+ASD_State = replace_with_na_all(ASD_State, condition = ~.x %in% na_strings)
+# Count missing values in dataframe:
+sum(is.na(ASD_State))
+# Remove invalid unicode char/string: \x92
+ASD_State$Source_Full1[ASD_State$Source_Full1 == "National Survey of Children\x92s Health"] <- "National Survey of Children's Health"
+
+# Delete/Drop variable by index: column from 14 to 26, 29, and 30
+names(ASD_State)
+ASD_State <- ASD_State[ -c(14:26, 29, 30) ]
+# Create one new variable: Source_UC as uppercase of Source
+ASD_State$Source_UC <- paste(toupper(ASD_State$Source))
+# Create one new variable: Source_Full3 by combining Source_UC and Source_Full1
+ASD_State$Source_Full3 <- paste(ASD_State$Source_UC, ASD_State$Source_Full1)
+# Convert to correct data types
+str(ASD_State)
+names(ASD_State)
+# Convert Prevalence and CIs from categorical/chr to numeric
+ix <- 13:33 # define an index
+ASD_State[ix] <- lapply(ASD_State[ix], as.numeric)
+# Convert Source from categorical/chr to categorical/factor
+ix <- c(1, 7, 8, 9, 10, 34, 35) # define an index
+ASD_State[ix] <- lapply(ASD_State[ix], as.factor)
+# Create new ordered factor Year_Factor from Year
+ASD_State$Year_Factor <- factor(ASD_State$Year, ordered = TRUE)
+# Display unique values (levels) of a factor categrotical 
+lapply(select_if(ASD_State, is.factor), levels)
+
+# EDA - Nicer Visualization with ggplot2
+# ----------------------------------
+# [State] < Years Data Available >
+# ----------------------------------
+barplot_Data_Source = ggplot(ASD_State, aes(x = Source, fill = Source)) + 
+  geom_bar() + theme(axis.text.x=element_blank(),  # Hide axis
+                     axis.ticks.x=element_blank(), # Hide axis
+                     axis.text.y=element_blank(),  # Hide axis
+                     axis.ticks.y=element_blank(), # Hide axis
+                     panel.background = element_blank(), # Remove panel background
+                     legend.position="top",
+                     strip.text.y = element_text(angle=0) # Rotate text to horizontal
+  ) + 
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue")) +
+  facet_grid(facets = State_Full2 ~ Year)
+captions = labs(x="", y="", title="Years Data Available [State]") # layers of graphics
+# Show plot
+barplot_Data_Source + captions
+
+# ASD_State_ADDM <- subset(ASD_State, Year == 2014 & Source == 'addm')
+ASD_State_ADDM <- subset(ASD_State, Source_UC == 'ADDM')
+ASD_State_MEDI <- subset(ASD_State, Source_UC == 'MEDI')
+ASD_State_NSCH <- subset(ASD_State, Source_UC == 'NSCH')
+ASD_State_SPED <- subset(ASD_State, Source_UC == 'SPED')
+
+# < Years Data Available [State] [ADDM] >
+barplot_Data_Source = ggplot(ASD_State_ADDM, aes(x = 1, fill = State_Full2)) + 
+  geom_bar() + theme(axis.text.x=element_blank(),  # Hide axis
+                     axis.ticks.x=element_blank(), # Hide axis
+                     axis.text.y=element_blank(),  # Hide axis
+                     axis.ticks.y=element_blank(), # Hide axis
+                     panel.background = element_blank(), # Remove panel background
+                     legend.position="none",
+                     strip.text.y = element_text(angle=0) # Rotate text to horizontal
+  ) +
+  facet_grid(facets = State_Full2 ~ Year_Factor)
+captions = labs(x="", y="", title="Years Data Available [State] [ADDM]") # layers of graphics
+# Show plot
+barplot_Data_Source + captions
+
+# Quiz: create < Years Data Available [State] [Source] > for other three data sources:
+
+
+# < ASD Prevalence by State [ADDM] > aggregated for different years
+p <- ggplot(ASD_State_ADDM, aes(x = reorder(State_Full2, Prevalence, FUN = median), # Order States by median of Prevalence  
+                           y = Prevalence)) + 
+  geom_boxplot(aes(fill = reorder(State_Full2, Prevalence, FUN = median))) + # fill color by State
+  scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
+#  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+  scale_y_continuous(name = "Prevalence per 1000 Children",
+                     breaks = seq(0, 30, 5),
+                     limits=c(0, 30)) +
+  scale_x_discrete(name = "") +
+  ggtitle("ASD Prevalence by State [ADDM]") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"),
+        legend.position = 'none') + 
+  coord_flip() + # Rotate chart
+  geom_jitter(position=position_jitter(0.1)) # Add actual data points
+# Show plot
+p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist()
+
+
+# Quiz: create < State ASD Prevalence [Source] > for other three data sources:
+#
+
+
+# < No. Children surveyed by State [ADDM] [Year 2014] >
+# All State Prevalence data with: Source_UC == 'ADDM' & Year == 2014
+ASD_State_Subset <- subset(ASD_State, Source_UC == 'ADDM' & Year == 2014)
+
+# Bar plot/chart for < No. Children surveyed by State [ADDM] [Year 2014] >
+p <- ggplot(ASD_State_Subset, aes(x = reorder(State_Full1, Denominator, FUN = median), # Order States by median of Denominator  
+                             y = Denominator)) + 
+  geom_bar(stat="identity", aes(fill = reorder(State_Full1, Denominator, FUN = median))) + # fill color by State
+  scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
+  scale_x_discrete(name = "US. States") +
+  scale_y_continuous(name = "No. Children (Denominator)") +
+  ggtitle("No. Children surveyed by State [ADDM] [Year 2014]") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"),
+        legend.position="none") + 
+  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5)  # Show data label inside bars
+# Show plot
+p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist()
+
+# Quiz: create< No. Children surveyed by State [ADDM] [Year XXXX] > for other years:
+#
+#
+
+
+# < ASD Prevalence with 95% CI by State [ADDM] [Year 2014] >
+
+# All State Prevalence data with: Source_UC == 'ADDM' & Year == 2014
+ASD_State_Subset <- subset(ASD_State, Source_UC == 'ADDM' & Year == 2014)
+
+# Point plot/chart 
+p = ggplot(ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, FUN = median), # Order States by median of Prevalence  
+                                 y = Prevalence)) + 
+  geom_point(stat="identity", aes(colour = reorder(State_Full1, Prevalence, FUN = median)), size = 1.5) + # fill color by State
+  scale_colour_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
+  scale_y_continuous(name = "Prevalence per 1000 Children",
+                     breaks = seq(10, 35, 5),
+                     limits=c(10, 35)) +
+  scale_x_discrete(name = "US. States") +
+  ggtitle("ASD Prevalence with 95% CI by State [ADDM] [Year 2014]") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"),
+        legend.position = 'top') +
+  geom_text(aes(label=Prevalence), hjust=-0.2, color="black", size=3.5)  # Show data label inside bars
+# geom_text(aes(label=Prevalence), hjust=-0.1, color="black", size=3.5)  # Show data label inside bars
+# Show plot
+p
+# Add Lower.CI
+p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Lower.CI,
+                                                shape=Source # point shape
+                                                ), 
+                   size = 2 # point size
+) +
+  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
+  scale_shape_manual(values=3)  # manual define point shape
+#  scale_color_manual(values='darkslategrey') # manual define point color
+# Show plot
+p
+# Add Upper.CI
+p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Upper.CI, 
+                                                shape=Source # point shape
+                                                ), 
+                   size = 2 # point size
+) +
+  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=-3, color="darkslategrey", size=2.5) # Show data label inside bars 
+# Show plot
+p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist() + scale_colour_discrete(guide = guide_legend(title = "US. States")) + theme(legend.position = 'none')
+
+
+# Quiz: create < State ASD Prevalence with 95% CI by State [ADDM] [Year XXXX] > for other years:
+#
+#
+
+
+# < ASD Prevalence by Year [ADDM] [AZ-Arizona] >
+# All year/time Prevalence data with: Source_UC == 'ADDM' & State_Full2 == 'AZ-Arizona'
+ASD_State_Subset <- subset(ASD_State, Source_UC == 'ADDM' & State_Full2 == 'AZ-Arizona')
+
+
+# Line plot/chart for < State ASD Prevalence [ADDM] [AZ-Arizona] >
+p <- ggplot(ASD_State_Subset, aes(x = Year, y = Prevalence))
+# Select (add) line chart type:
+p <- p + geom_line(aes(color = State_Full2),
+                   linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+                   size=1,
+                   alpha=0.5) 
+# Select (add) points to chart:
+p <- p + geom_point(aes(color = State_Full2),
+                    size=3, 
+                    shape=20,
+                    alpha=0.5) 
+# Customize legend name:
+p <- p + labs(color = "US. State")
+# Adjust x and y axis, scale, limit and labels:
+p <- p + scale_y_continuous(name = "Prevalence per 1000 Children",
+                            breaks = seq(0, 30, 5),
+                            limits=c(0, 30)) +
+  scale_x_continuous(name = "Year", 
+                     breaks = seq(2000, 2016, 1), 
+                     limits = c(2000, 2016)) 
+# Customize chart title:
+p <- p + ggtitle("ASD Prevalence by Year [ADDM] [AZ-Arizona]") 
+# Customize chart title and axis labels:
+p <- p + theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+               axis.title = element_text(face = 'plain', color = "darkslategrey")) 
+# Show plot
+p
+# theme of the economist magazine:
+p + theme_economist() + scale_colour_economist()
+
+# Line plot/chart for < ASD Prevalence by Year [ADDM] [All States] >
+#p <- ggplot(ASD_State_ADDM, aes(x = Year, y = Prevalence, group = State_Full2))
+p <- ggplot(ASD_State_ADDM, aes(x = Year, y = Prevalence))
+# Select (add) line chart type:
+p <- p + geom_line(aes(color = State_Full2),
+                   linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
+                   size=1,
+                   alpha=0.5) 
+# Select (add) points to chart:
+p <- p + geom_point(aes(color = State_Full2),
+                    size=3, 
+                    shape=20,
+                    alpha=0.5) 
+# Show plot
+p
+# Customize line color and legend name:
+p <- p + labs(color = "US. State")
+# Adjust x and y axis, scale, limit and labels:
+p <- p + scale_y_continuous(name = "Prevalence per 1000 Children",
+                            breaks = seq(0, 30, 5),
+                            limits=c(0, 30)) +
+  scale_x_continuous(name = "Year (2000 - 2016)", 
+                     breaks = seq(2000, 2016, 1), 
+                     limits = c(2000, 2016)) 
+# Customize chart title:
+p <- p + ggtitle("ASD Prevalence by Year [ADDM] [All States]") 
+# Customize chart title and axis labels:
+p <- p + theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+               axis.title = element_text(face = 'plain', color = "darkslategrey"),
+               legend.position="right")
+# Show plot
+p
+
+# Show plot in facet_grid
+p + facet_grid(facets = . ~ State_Full1) + 
+  theme(legend.position = "none", # Hide legend
+      axis.text.x=element_blank(),  # Hide axis
+      axis.ticks.x=element_blank(), # Hide axis
+      panel.background = element_blank() # Remove panel background
+      ) 
+
+
+# ----------------------------------
+# EDA - Visualization on map
 # ----------------------------------
 
-?prop.test
 
-# State	Denominator	Prevalence	Lower CI	Upper CI	Year	Source	State_Full	Numerator_Prevalence
-# AZ	45,322	6.5	5.8	7.3	2000	addm	Arizona	295
-# GA	43,593	6.5	5.8	7.3	2000	addm	Georgia	283
-# MD	21,532	5.5	4.6	6.6	2000	addm	Maryland	118
-# NJ	29,714	9.9	8.9	11.1	2000	addm	New Jersey	294
-
-
-# Confidence Interval
-ASD  <- c( 283 )
-Children <- c( 43593 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-ASD  <- c( 118 )
-Children <- c( 21532 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-ASD  <- c( 294 )
-Children <- c( 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-
-ASD  <- c( 295, 283 ) 
-Children <- c( 45322, 43593 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-ASD  <- c( 295, 283, 118, 294 ) 
-Children <- c( 45322, 43593, 21532, 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = F)
-
-
-ASD  <- c( 295 )
-Children <- c( 45322 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-# Different flavours of proportion test:
-if(!require(binom)){install.packages("binom")}
-library(binom)
-binom.confint (x=295, n=45322, conf.level =0.95, method="all")
