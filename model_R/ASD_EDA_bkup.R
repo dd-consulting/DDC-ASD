@@ -602,7 +602,7 @@ library(ggplot2)
 # ----------------------------------
 # [National] < Years Data Available >
 # ----------------------------------
-p = ggplot(ASD_National, aes(x = 1, fill = Source)) + 
+barplot_Data_Source = ggplot(ASD_National, aes(x = 1, fill = Source)) + 
   geom_bar() + theme(axis.text.x=element_blank(),  # Hide axis
                      axis.ticks.x=element_blank(), # Hide axis
                      axis.text.y=element_blank(),  # Hide axis
@@ -618,7 +618,7 @@ p = ggplot(ASD_National, aes(x = 1, fill = Source)) +
 # Add chart title
 captions = labs(x="", y="", title="Years Data Available") # layers of graphics
 # Show plot
-p + captions
+barplot_Data_Source + captions
 
 # ----------------------------------
 # Barplot
@@ -689,7 +689,7 @@ ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
   facet_grid(facets = Source ~ .)
 
 # Display caption using ggplot2
-p = ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
+hist_Prevalence = ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
   geom_histogram(binwidth = 5) +
   theme(legend.position="top") + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
@@ -702,7 +702,7 @@ captions = labs(x="Prevalence per 1000 Children",
                 y="Frequency",
                 title="Distribution of Prevalence by Data Source")
 # Show plot
-p + captions # layers of graphics
+hist_Prevalence + captions # layers of graphics
 
 
 # ----------------------------------
@@ -1283,11 +1283,11 @@ p <- ggplot(ASD_State_ADDM, aes(x = Year, y = Prevalence))
 # Select (add) line chart type:
 p <- p + geom_line(aes(color = State_Full2),
                    linetype = "solid",  # http://sape.inf.usi.ch/quick-reference/ggplot2/linetype
-                   size=1,
+                   size=2,
                    alpha=0.5) 
 # Select (add) points to chart:
 p <- p + geom_point(aes(color = State_Full2),
-                    size=3, 
+                    size=1, 
                     shape=20,
                     alpha=0.5) 
 # Show plot
@@ -1318,62 +1318,9 @@ p + facet_grid(facets = . ~ State_Full1) +
       panel.background = element_blank() # Remove panel background
       ) 
 
+
 # ----------------------------------
 # EDA - Visualization on map
 # ----------------------------------
-# https://cran.r-project.org/web/packages/usmap/vignettes/mapping.html
-if(!require(usmap)){install.packages("usmap")}
-library(usmap) # usmap: Mapping the US
-
-# ----------------------------------
-# < Prevalence Estimates by Geographic Area >
-# ----------------------------------
-
-# Available data in followng years by data sources:
-# ASD_State_ADDM # Year: 2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014
-# ASD_State_MEDI # Year: 2000 ~ 2012
-# ASD_State_NSCH # Year: 2004, 2008, 2012, 2016
-# ASD_State_SPED # Year: 2000 ~ 2016
-
-# Prepare data
-Map_Data_Source = 'addm' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
-Map_Data_Year = 2012 # must be integer
-Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-
-ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
-ASD_State_Subset$state = ASD_State_Subset$State
-
-# Show data on map
-plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + 
-  scale_fill_continuous(
-    low="lightblue", high = "darkblue", name = "Prevalence per 1,000 Children:", label = scales::comma,
-    limits=c(0, 40) #same colour levels/limits for plots
-  ) +
-  labs(title = "Prevalence Estimates by Geographic Area",
-       subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")
-  ) + 
-  theme(panel.background = element_rect(color = "white", fill = "white"),
-        legend.position = "right")
 
 
-# Prepare data (sped 2016)
-Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
-Map_Data_Year = 2016 # must be integer
-Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
-ASD_State_Subset$state = ASD_State_Subset$State
-plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + scale_fill_continuous(low="lightblue", high = "darkblue", name = "Prevalence per 1,000 Children:", label = scales::comma, limits=c(0, 40)) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
-# Prepare data (sped 2015)
-Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
-Map_Data_Year = 2015 # must be integer
-Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
-ASD_State_Subset$state = ASD_State_Subset$State
-plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + scale_fill_continuous(low="lightblue", high = "darkblue", name = "Prevalence per 1,000 Children:", label = scales::comma, limits=c(0, 40)) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
-# Prepare data (sped 2014)
-Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
-Map_Data_Year = 2014 # must be integer
-Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
-ASD_State_Subset$state = ASD_State_Subset$State
-plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + scale_fill_continuous(low="lightblue", high = "darkblue", name = "Prevalence per 1,000 Children:", label = scales::comma, limits=c(0, 40)) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
