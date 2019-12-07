@@ -650,7 +650,7 @@ ggplot(ASD_National, aes(x = Source, fill = Source)) + geom_bar() +
 
 
 # ----------------------------------
-# Histogram & Density Plot
+# Histogram (binned distribution)
 # ----------------------------------
 
 # Create histogram using R graphics
@@ -706,7 +706,7 @@ p + captions # layers of graphics
 
 
 # ----------------------------------
-# Density plot
+# Density plot (distribution for continuous variable)
 # ----------------------------------
 # Create plot using R graphics
 plot(density(ASD_National$Prevalence))
@@ -1381,57 +1381,266 @@ library(usmap) # usmap: Mapping the US
 # ASD_State_NSCH # Year: 2004, 2008, 2012, 2016
 # ASD_State_SPED # Year: 2000 ~ 2016
 
-# Prepare data
+# Prepare data - addm 2014
+#
 Map_Data_Source = 'addm' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
-Map_Data_Year = 2012 # must be integer
 Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-
+# or Prevalence of different groups
+Map_Data_Value = 'Male.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
+Map_Data_Value = 'Female.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
+Map_Data_Value = 'Asian.or.Pacific.Islander.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
+#
+Map_Data_Year = 2014 # must be integer
+#
 ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
 ASD_State_Subset$state = ASD_State_Subset$State
 
 # Show data on map
-p_map <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, 
+p_map_addm_2014 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, 
                     color = "white", # map line colour
                     labels = TRUE,  # State name shown
                     label_color = 'white' # State name colour
                     ) + 
   scale_fill_continuous(
     na.value = "lightgrey", # Set colour with no State data
-    low="lightblue1", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", label = scales::comma,
+    low="lightblue1", high = "darkblue", 
+    name = "Prevalence\nper 1,000\nChildren", 
     limits=c(0, 40) #same colour levels/limits for plots
   ) +
   labs(title = "Prevalence Estimates by Geographic Area",
-       subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")
+       subtitle = paste('[ Measure :', Map_Data_Value, "] [ Source :", Map_Data_Source, "] [ Year :", Map_Data_Year, "]")
   ) + 
   theme(panel.background = element_rect(color = "white", fill = "white"),
         legend.position = "right")
-# Show plot
-p_map
+# Show map
+p_map_addm_2014
 
-# Dynamic chart
-p_dynamic <- p_map
+# Dynamic map
+p_dynamic <- p_map_addm_2014
 p_dynamic <- ggplotly(p_dynamic)
 p_dynamic
 
 
-# Prepare data (sped 2016)
-Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
+# ----------------------------------
+# ASD_State_NSCH # Year: 2004, 2008, 2012, 2016
+# ----------------------------------
+#
+Map_Data_Source = 'nsch' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
+Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
+#
+# Prepare data - nsch 2004
+Map_Data_Year = 2004 # must be integer
+ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
+ASD_State_Subset$state = ASD_State_Subset$State
+p_map_nsch_2004 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "white", labels = TRUE, label_color = 'white' ) + scale_fill_continuous(na.value = "lightgrey", low="lightblue1", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", limits=c(0, 40) ) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste('[ Group :', Map_Data_Value, "] [ Source :", Map_Data_Source, "] [ Year :", Map_Data_Year, "]") ) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
+p_map_nsch_2004
+# Prepare data - nsch 2008
+Map_Data_Year = 2008 # must be integer
+ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
+ASD_State_Subset$state = ASD_State_Subset$State
+p_map_nsch_2008 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "white", labels = TRUE, label_color = 'white' ) + scale_fill_continuous(na.value = "lightgrey", low="lightblue1", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", limits=c(0, 40) ) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste('[ Group :', Map_Data_Value, "] [ Source :", Map_Data_Source, "] [ Year :", Map_Data_Year, "]") ) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
+p_map_nsch_2008
+# Prepare data - nsch 2012
+Map_Data_Year = 2012 # must be integer
+ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
+ASD_State_Subset$state = ASD_State_Subset$State
+p_map_nsch_2012 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "white", labels = TRUE, label_color = 'white' ) + scale_fill_continuous(na.value = "lightgrey", low="lightblue1", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", limits=c(0, 40) ) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste('[ Group :', Map_Data_Value, "] [ Source :", Map_Data_Source, "] [ Year :", Map_Data_Year, "]") ) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
+p_map_nsch_2012
+# Prepare data - nsch 2016
 Map_Data_Year = 2016 # must be integer
-Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
 ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
 ASD_State_Subset$state = ASD_State_Subset$State
+p_map_nsch_2016 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "white", labels = TRUE, label_color = 'white' ) + scale_fill_continuous(na.value = "lightgrey", low="lightblue1", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", limits=c(0, 40) ) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste('[ Group :', Map_Data_Value, "] [ Source :", Map_Data_Source, "] [ Year :", Map_Data_Year, "]") ) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
+p_map_nsch_2016
 
-# Prepare data (sped 2015)
-Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
-Map_Data_Year = 2015 # must be integer
-Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
-ASD_State_Subset$state = ASD_State_Subset$State
+# Dynamic map
+p_dynamic <- p_map_nsch_2016
+p_dynamic <- ggplotly(p_dynamic)
+p_dynamic
 
-# Prepare data (sped 2014)
-Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
-Map_Data_Year = 2014 # must be integer
-Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
-ASD_State_Subset$state = ASD_State_Subset$State
 
+# ----------------------------------
+# Combine mutiple plots 
+# ----------------------------------
+if(!require(cowplot)){install.packages("cowplot")}
+library('cowplot')
+cowplot::plot_grid(
+  p_map_nsch_2004,
+  p_map_nsch_2008,
+  p_map_nsch_2012,
+  p_map_nsch_2016,
+  nrow = 2)
+
+# ----------------------------------
+# Export current plot as image file
+# ----------------------------------
+ggsave("Prevalence Estimates by Geographic Area [NSCH] [2004-2016].png", width = 60, height = 30, units = 'cm')
+
+
+# ----------------------------------
+# Mean, Median, Central Tendency
+# ----------------------------------
+
+# Sample median [0]
+median(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+boxplot(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+#
+# Analyze/Estimate Population mean of Prevalence ( State: All , Source: ADDM, Year: 2014 )
+#
+# Sample mean [1]
+mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+hist(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+# Population mean [2]
+sum(ASD_State$Numerator_ASD[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sum(ASD_State$Denominator[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+1000*sum(ASD_State$Numerator_ASD[ASD_State$Source == 'addm' & ASD_State$Year == 2014])/sum(ASD_State$Denominator[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+#
+# (A/B + C/D) Not = (A+C)/(B+D)
+#
+# Population mean [3]
+mean(ASD_National$Prevalence[ASD_National$Source == 'addm' & ASD_National$Year == 2014])
+
+
+# ----------------------------------
+# Confidence Interval
+# ----------------------------------
+
+# ----------------------------------
+# CI using Z (Standard Normal) distribution
+# ----------------------------------
+# sample mean
+sample_mean = mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_mean
+# sample size n
+sample_size_n = length(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_size_n
+# sample standard deviation
+sample_sd = sd(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_sd
+# sample standard error
+sample_se = sample_sd / sqrt(sample_size_n)
+sample_se
+# 95% quantile (z score)
+z_score = qnorm(p = 0.975)
+z_score
+# CI using Z distribution
+sample_ci = z_score * sample_se
+sample_ci
+# Lower CI: mean + CI
+sample_mean - sample_ci
+# Upper CI: mean + CI
+sample_mean - sample_ci
+# Display
+cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+
+# ----------------------------------
+# CI using T distribution
+# ----------------------------------
+# sample mean
+sample_mean = mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_mean
+# sample size n
+sample_size_n = length(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_size_n
+# sample standard deviation
+sample_sd = sd(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_sd
+# sample standard error
+sample_se = sample_sd / sqrt(sample_size_n)
+sample_se
+# 95% quantile (t score)
+t_score = qt(p = 0.975, df = sample_size_n - 1)
+t_score
+# CI using T distribution
+sample_ci = t_score * sample_se
+sample_ci
+# Lower CI: mean + CI
+sample_mean - sample_ci
+# Upper CI: mean + CI
+sample_mean - sample_ci
+# Display
+cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+
+# Alternatively, calculate CI using t.test() function
+t.test(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+
+
+# ----------------------------------
+# Congratulations on the completion!
+# ----------------------------------
+#
+# ----------------------------------
+# 'The End'... is called 'The New Start'.
+# ----------------------------------
+# GU Zhan (Sam)
+# zhan.gu@nus.edu.sg
+# ----------------------------------
+
+
+# ----------------------------------
+# Appendix - Start
+# ----------------------------------
+
+
+# ----------------------------------
+# Hypothesis Test - Mean - Z Test & t.test()
+# ----------------------------------
+set.seed(0)
+sample_1 = rnorm(n = 1000)
+sample_2 = rchisq(n = 1000, df = 30)
+
+par(mfrow=c(1, 2))
+hist(sample_1)
+hist(sample_2)
+par(mfrow=c(1, 1))
+
+t.test(sample_1, sample_2)
+
+# ----------------------------------
+# Hypothesis Test - Proportion - prop.test()
+# ----------------------------------
+
+# State	Denominator	Prevalence	Lower CI	Upper CI	Year	Source	State_Full	Numerator_Prevalence
+# AZ	45,322	6.5	5.8	7.3	2000	addm	Arizona	295
+# GA	43,593	6.5	5.8	7.3	2000	addm	Georgia	283
+# MD	21,532	5.5	4.6	6.6	2000	addm	Maryland	118
+# NJ	29,714	9.9	8.9	11.1	2000	addm	New Jersey	294
+
+
+# Confidence Interval
+ASD  <- c( 295 ) 
+Children <- c( 45322 )
+prop.test(ASD, Children) # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD, Children, correct = FALSE) # Pearson's chi-squared test = Wilson score interval - wilson
+
+ASD  <- c( 283 )
+Children <- c( 43593 )
+prop.test(ASD, Children)
+prop.test(ASD, Children, correct = FALSE)
+
+ASD  <- c( 118 )
+Children <- c( 21532 )
+prop.test(ASD, Children)
+prop.test(ASD, Children, correct = FALSE)
+
+ASD  <- c( 294 )
+Children <- c( 29714 )
+prop.test(ASD, Children)
+prop.test(ASD, Children, correct = FALSE)
+
+?prop.test
+
+ASD  <- c( 295, 283, 118, 294 ) 
+Children <- c( 45322, 43593, 21532, 29714 )
+prop.test(ASD, Children)
+prop.test(ASD, Children, correct = FALSE)
+
+# Different flavours of proportion test:
+if(!require(binom)){install.packages("binom")}
+library(binom)
+binom.confint (x=295, n=45322, conf.level =0.95, method="all")
+
+
+# ----------------------------------
+# Appendix - End
+# ----------------------------------
