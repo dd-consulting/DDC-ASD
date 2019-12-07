@@ -311,3 +311,26 @@ scale_fill_continuous(
 
 ASD_State_Subset$Prevalence_bin = as.numeric(as.character(cut(ASD_State_Subset$Prevalence, breaks = b, labels = names)))
 
+
+# export df to csv
+ASD_National
+
+# ----------------------------------
+# Optionally, export the processed dataframe data to CSV file.
+# ----------------------------------
+write.table(ASD_National, file = "../dataset/ASD_National_R.csv", sep = ',', row.names = FALSE)
+ASD_National <- read.csv("../dataset/ASD_National_R.csv")
+ASD_National$Year_Factor <- factor(ASD_National$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+
+
+# ----------------------------------
+# Optionally, export the processed dataframe data to CSV file.
+# ----------------------------------
+write.table(ASD_State, file = "../dataset/ASD_State_R.csv", sep = ',', row.names = FALSE)
+ASD_State <- read.csv("../dataset/ASD_State_R.csv")
+ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+
+str(ASD_State)
+
+
+
