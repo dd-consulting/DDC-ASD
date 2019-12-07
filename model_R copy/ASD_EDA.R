@@ -1390,14 +1390,9 @@ ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Dat
 ASD_State_Subset$state = ASD_State_Subset$State
 
 # Show data on map
-p_map <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, 
-                    color = "white", # map line colour
-                    labels = TRUE,  # State name shown
-                    label_color = 'white' # State name colour
-                    ) + 
+p_map <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + 
   scale_fill_continuous(
-    na.value = "lightgrey", # Set colour with no State data
-    low="lightblue1", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", label = scales::comma,
+    low="lightblue", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", label = scales::comma,
     limits=c(0, 40) #same colour levels/limits for plots
   ) +
   labs(title = "Prevalence Estimates by Geographic Area",
@@ -1420,18 +1415,18 @@ Map_Data_Year = 2016 # must be integer
 Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
 ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
 ASD_State_Subset$state = ASD_State_Subset$State
-
+plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + scale_fill_continuous(low="lightblue", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", label = scales::comma, limits=c(0, 40)) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
 # Prepare data (sped 2015)
 Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
 Map_Data_Year = 2015 # must be integer
 Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
 ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
 ASD_State_Subset$state = ASD_State_Subset$State
-
+plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + scale_fill_continuous(low="lightblue", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", label = scales::comma, limits=c(0, 40)) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
 # Prepare data (sped 2014)
 Map_Data_Source = 'sped' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
 Map_Data_Year = 2014 # must be integer
 Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
 ASD_State_Subset = subset(ASD_State, Source == Map_Data_Source & Year == Map_Data_Year)
 ASD_State_Subset$state = ASD_State_Subset$State
-
+plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, color = "darkgrey") + scale_fill_continuous(low="lightblue", high = "darkblue", name = "Prevalence\nper 1,000\nChildren", label = scales::comma, limits=c(0, 40)) + labs(title = "Prevalence Estimates by Geographic Area", subtitle = paste("Prevalence by US. State    Source [", Map_Data_Source, "] Year [", Map_Data_Year, "]")) + theme(panel.background = element_rect(color = "white", fill = "white"), legend.position = "right")
