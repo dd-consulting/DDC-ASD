@@ -158,8 +158,11 @@ set.seed(1234)
 dat <- data.frame(cond = factor(rep(c("A","B"), each=200)), rating = c(rnorm(200),rnorm(200, mean=.8)))
 
 p <- ggplot(dat, aes(x=cond, y=rating, fill=cond)) + geom_boxplot()
-p
+
+library(plotly)
+p = p + captions
 p <- ggplotly(p)
+p
 
 
 
@@ -171,3 +174,57 @@ names <- c(5, 15, 25, 35)
 
 ASD_State_Subset$Prevalence_bin = cut(ASD_State_Subset$Prevalence, breaks = b, labels = names)
 ASD_State_Subset$Prevalence = as.numeric(as.character(cut(ASD_State_Subset$Prevalence, breaks = b, labels = names)))
+
+
+
+
+
+setwd("/media/sf_vm_shared_folder/git/DDC-ASD/model_R")
+
+
+library(plotly)
+p = ggplot(ASD_National, aes(x = Source, y = Prevalence)) + 
+  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+  scale_y_continuous(name = "Prevalence per 1000 Children",
+                     breaks = seq(0, 30, 5),
+                     limits=c(0, 30)) +
+  scale_x_discrete(name = "Data Source (Year 2000 - 2016)") +
+  ggtitle("National ASD Prevalence by Data Source") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"))
+
+
+p = p + theme_economist() + scale_colour_economist()
+
+p <- ggplotly(p)
+p
+
+
+
+# ----------------------------------
+# Dynamic Visualization with plotly
+# ----------------------------------
+if(!require(plotly)){install.packages("plotly")}
+library(plotly)
+p_dynamic <- ggplotly(p)
+p_dynamic
+
+
+# Dynamic chart
+p_dynamic <- ggplotly(p)
+p_dynamic
+
+library('ggthemes')
+library('ggplot2')
+library('usmap')
+library('plotly')
+
+
+devtools::install_github('hadley/ggplot2')
+# Dynamic chart
+p_dynamic <- p_map
+p_dynamic <- ggplotly(p_dynamic)
+p_dynamic
+
+
+
