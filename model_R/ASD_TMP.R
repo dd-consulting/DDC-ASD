@@ -162,3 +162,12 @@ p
 p <- ggplotly(p)
 
 
+
+
+# binning
+# factor to numeric
+b <- c(-Inf, 10, 20, 30, Inf) 
+names <- c(5, 15, 25, 35)
+
+ASD_State_Subset$Prevalence_bin = cut(ASD_State_Subset$Prevalence, breaks = b, labels = names)
+ASD_State_Subset$Prevalence = as.numeric(as.character(cut(ASD_State_Subset$Prevalence, breaks = b, labels = names)))
