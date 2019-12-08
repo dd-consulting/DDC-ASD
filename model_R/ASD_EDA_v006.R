@@ -759,8 +759,8 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
 )
 
 # Create box plot using ggplot2
-ggplot(ASD_National, aes(x = Source, y = Prevalence)) + 
-  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+ggplot(ASD_National, aes(x = Source, y = Prevalence, fill = Source)) + 
+  geom_boxplot(alpha = 0.5) + 
   scale_y_continuous(name = "Prevalence per 1,000 Children",
                      breaks = seq(0, 30, 5),
                      limits=c(0, 30)) +
@@ -1129,7 +1129,7 @@ p <- ggplot(ASD_State, aes(x = Source, fill = Source)) +
 # Show plot
 p
 
-# ASD_State_ADDM <- subset(ASD_State, Year == 2014 & Source == 'addm')
+# Filter and create dataframe of different data sources
 ASD_State_ADDM <- subset(ASD_State, Source == 'addm')
 ASD_State_MEDI <- subset(ASD_State, Source == 'medi')
 ASD_State_NSCH <- subset(ASD_State, Source == 'nsch')
@@ -1563,8 +1563,8 @@ clt_sample_k_mean <- apply(clt_sample_k, 2, mean)
 clt_sample_k_mean[1:6]
 
 # histogram of sample means
-plot(density(clt_sample_k_mean), col="grey", lwd=2) 
-hist(clt_sample_k_mean, probability = T, add = T)
+plot(density(clt_sample_k_mean), col="red", lwd=2) 
+hist(clt_sample_k_mean, probability = T, add = T, breaks = 500)
 
 # k *Sample* (sample size = n) mean Prevalence
 mean(clt_sample_k_mean)
@@ -1677,38 +1677,46 @@ shapiro.test(ASD_State_SPED_2016$Prevalence)
 # ----------------------------------
 # Estimation : Mean & Confidence Interval (CI)
 # ----------------------------------
-#
-# Analyze/Estimate Population mean of Prevalence ( State: Available ones , Source: ADDM, Year: 2014 )
-#
-# Sample mean [1]
-mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-hist(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-# Population mean [2]
-sum(ASD_State$Numerator_ASD[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sum(ASD_State$Denominator[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-1000*sum(ASD_State$Numerator_ASD[ASD_State$Source == 'addm' & ASD_State$Year == 2014])/sum(ASD_State$Denominator[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-#
-# (A/B + C/D) Not = (A+C)/(B+D)
-#
-# Population mean [3]
-mean(ASD_National$Prevalence[ASD_National$Source == 'addm' & ASD_National$Year == 2014])
-
 
 # ----------------------------------
-# Calculate Confidence Interval
+# Use a sample of a few US. State's ASD prevalence (mean) to estimate:
+# Average prevalence of ALL US. States (the *Population*) [Source SPED, Year 2016]
+# ----------------------------------
+ASD_State_SPED_2016
+dim(ASD_State_SPED_2016)
+
+# Create a *Sample* from ASD_State_SPED_2016$Prevalence,
+# with sample size n =
+clt_n = 10
+# clt_n = 40
+
+set.seed(88)
+clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
+clt_sample_1
+plot(density(clt_sample_1), col="grey", lwd=2) 
+hist(clt_sample_1, probability = T, add = T)
+
+# Sample mean Prevalence
+mean(clt_sample_1)
+
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+
+# ----------------------------------
+# Calculate Confidence Interval for mean
 # ----------------------------------
 
 # ----------------------------------
 # CI using Z (Standard Normal) distribution
 # ----------------------------------
 # sample mean
-sample_mean = mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_mean = mean(clt_sample_1)
 sample_mean
 # sample size n
-sample_size_n = length(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_size_n = length(clt_sample_1)
 sample_size_n
 # sample standard deviation
-sample_sd = sd(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_sd = sd(clt_sample_1)
 sample_sd
 # sample standard error
 sample_se = sample_sd / sqrt(sample_size_n)
@@ -1722,21 +1730,21 @@ sample_ci
 # Lower CI: mean + CI
 sample_mean - sample_ci
 # Upper CI: mean + CI
-sample_mean - sample_ci
+sample_mean + sample_ci
 # Display
-cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
 
 # ----------------------------------
 # CI using T distribution
 # ----------------------------------
 # sample mean
-sample_mean = mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_mean = mean(clt_sample_1)
 sample_mean
 # sample size n
-sample_size_n = length(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_size_n = length(clt_sample_1)
 sample_size_n
 # sample standard deviation
-sample_sd = sd(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+sample_sd = sd(clt_sample_1)
 sample_sd
 # sample standard error
 sample_se = sample_sd / sqrt(sample_size_n)
@@ -1750,12 +1758,76 @@ sample_ci
 # Lower CI: mean + CI
 sample_mean - sample_ci
 # Upper CI: mean + CI
-sample_mean - sample_ci
+sample_mean + sample_ci
 # Display
-cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
 
 # Alternatively, calculate CI using t.test() function
-t.test(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+t.test(clt_sample_1)
+
+# Two group hypothesis test : sample mean vs. population mean
+t.test(clt_sample_1, mu = mean(ASD_State_SPED_2016$Prevalence))
+
+
+# ----------------------------------
+# Estimation : Proportion & Confidence Interval (CI)
+# ----------------------------------
+
+# ----------------------------------
+# Use a sample of one US. State's ASD prevalence (proportion) to estimate:
+# Prevalence of THAT US. State's ALL Children (the *Population*) [Source SPED, Year 2016] 
+# ----------------------------------
+
+# ----------------------------------
+# CI using Z (Standard Normal) distribution
+# ----------------------------------
+# No. Children with ASD
+ASD  <- ASD_State_SPED$Numerator_ASD[ASD_State_SPED$Year == 2016]
+# No. Children with ASD of first US. State (AL-Alabama)
+ASD[1]
+# No. Children surveyed
+Children  <- ASD_State_SPED$Denominator[ASD_State_SPED$Year == 2016]
+# No. Children surveyed of first US. State (AL-Alabama)
+Children[1]
+# sample proportion of first US. State (AL-Alabama) in year 2016 of source SPED
+sample_proportion = mean(ASD[1]/Children[1])
+sample_proportion
+# sample size n
+sample_size_n = Children[1]
+sample_size_n
+# 95% quantile (z score)
+z_score = qnorm(p = 0.975)
+z_score
+# CI using Z distribution
+# https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+sample_ci = z_score * sqrt(sample_proportion * (1 - sample_proportion) / sample_size_n)
+sample_ci
+# Lower CI: mean + CI
+sample_proportion - sample_ci
+# Upper CI: mean + CI
+sample_proportion + sample_ci
+# Display
+cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_proportion - sample_ci, '\tMean : ', sample_proportion, '\tUpper CI : ',  sample_proportion + sample_ci)
+# Display * 1000 -> Prevalence
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  1000*(sample_proportion - sample_ci), '\tMean : ', 1000*sample_proportion, '\tUpper CI : ',  1000*(sample_proportion + sample_ci))
+
+# Based on above calculation, we have 95% confidence that:
+# The actual AL-Alabama state level prevalence (if ALL childrens
+# were surveyed) would be in the above calculated CI range 95% times.
+
+
+# ----------------------------------
+# CI using Chi-squared distribution (wilson score interval)
+# ----------------------------------
+
+# https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+
+ASD[1]
+Children[1]
+# Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD[1], Children[1]) 
+# Pearson's chi-squared test = Wilson score interval - wilson
+prop.test(ASD[1], Children[1], correct = FALSE) 
 
 
 # ----------------------------------
@@ -1776,11 +1848,63 @@ t.test(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014]
 
 
 # ----------------------------------
+# Interactive workshops: < Learning R inside R > using swirl()
+# ----------------------------------
+if(!require(swirl)){install.packages("swirl")}
+library("swirl")
+install_course("R Programming")
+install_course("Exploratory Data Analysis")
+install_course("Regression Models")
+install_course("Statistical Inference")
+swirl()
+
+
+# ----------------------------------
+# Neural Network 101 using nnet()
+# ----------------------------------
+if(!require(nnet)){install.packages("nnet")}
+library("nnet")
+?nnet
+
+# < Case: predict three different iris flower types >
+
+# https://en.wikipedia.org/wiki/Iris_flower_data_set
+# https://archive.ics.uci.edu/ml/datasets/iris
+
+# Data preparation: split iris data in two halves, for training & testing respectively.
+ir <- rbind(iris3[,,1],iris3[,,2],iris3[,,3])
+targets <- class.ind( c(rep("s", 50), rep("c", 50), rep("v", 50)) )
+samp <- c(sample(1:50,25), sample(51:100,25), sample(101:150,25))
+# Model training (machine learning / data fitting)
+ir1 <- nnet(ir[samp,], targets[samp,], size = 2, rang = 0.1,
+            decay = 5e-4, maxit = 200)
+# Model prediciton
+test.cl <- function(true, pred) {
+  true <- max.col(true)
+  cres <- max.col(pred)
+  table(true, cres)
+}
+
+# Model evaluation
+test.cl(targets[-samp,], predict(ir1, ir[-samp,]))
+
+
+# ----------------------------------
 # Hypothesis Test - Mean - Z Test & t.test()
 # ----------------------------------
-set.seed(0)
-sample_1 = rnorm(n = 1000)
-sample_2 = rchisq(n = 1000, df = 30)
+
+# Create sample 1
+set.seed(88)
+sample_1 = rnorm(n = 10)
+# sample_1 = rnorm(n = 1000)
+
+# Create sample 2
+set.seed(88)
+sample_2 = rchisq(n = 10, df = 30) - 29
+# sample_2 = rchisq(n = 1000, df = 30) - 29
+
+mean(sample_1)
+mean(sample_2)
 
 par(mfrow=c(1, 2))
 hist(sample_1)
@@ -1789,49 +1913,19 @@ par(mfrow=c(1, 1))
 
 t.test(sample_1, sample_2)
 
+
 # ----------------------------------
 # Hypothesis Test - Proportion - prop.test()
 # ----------------------------------
-
-# State	Denominator	Prevalence	Lower CI	Upper CI	Year	Source	State_Full	Numerator_Prevalence
-# AZ	45,322	6.5	5.8	7.3	2000	addm	Arizona	295
-# GA	43,593	6.5	5.8	7.3	2000	addm	Georgia	283
-# MD	21,532	5.5	4.6	6.6	2000	addm	Maryland	118
-# NJ	29,714	9.9	8.9	11.1	2000	addm	New Jersey	294
-
-
-# Confidence Interval
-ASD  <- c( 295 ) 
-Children <- c( 45322 )
-prop.test(ASD, Children) # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
-prop.test(ASD, Children, correct = FALSE) # Pearson's chi-squared test = Wilson score interval - wilson
-
-ASD  <- c( 283 )
-Children <- c( 43593 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-ASD  <- c( 118 )
-Children <- c( 21532 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-ASD  <- c( 294 )
-Children <- c( 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-?prop.test
-
-ASD  <- c( 295, 283, 118, 294 ) 
-Children <- c( 45322, 43593, 21532, 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
+if(!require(binom)){install.packages("binom")}
+library('binom')
 
 # Different flavours of proportion test:
-if(!require(binom)){install.packages("binom")}
-library(binom)
-binom.confint (x=295, n=45322, conf.level =0.95, method="all")
+binom.confint (x=ASD[1], n=Children[1], conf.level =0.95, method="all")
+
+# Multiple group hypothesis test : proportions (Prevalvence) among all US. States
+prop.test(ASD, Children) # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD, Children, correct = FALSE) # Pearson's chi-squared test = Wilson score interval - wilson
 
 
 # ----------------------------------

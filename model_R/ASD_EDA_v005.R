@@ -759,8 +759,8 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
 )
 
 # Create box plot using ggplot2
-ggplot(ASD_National, aes(x = Source, y = Prevalence)) + 
-  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+ggplot(ASD_National, aes(x = Source, y = Prevalence, fill = Source)) + 
+  geom_boxplot(alpha = 0.5) + 
   scale_y_continuous(name = "Prevalence per 1,000 Children",
                      breaks = seq(0, 30, 5),
                      limits=c(0, 30)) +
@@ -1129,7 +1129,7 @@ p <- ggplot(ASD_State, aes(x = Source, fill = Source)) +
 # Show plot
 p
 
-# ASD_State_ADDM <- subset(ASD_State, Year == 2014 & Source == 'addm')
+# Filter and create dataframe of different data sources
 ASD_State_ADDM <- subset(ASD_State, Source == 'addm')
 ASD_State_MEDI <- subset(ASD_State, Source == 'medi')
 ASD_State_NSCH <- subset(ASD_State, Source == 'nsch')
@@ -1563,8 +1563,8 @@ clt_sample_k_mean <- apply(clt_sample_k, 2, mean)
 clt_sample_k_mean[1:6]
 
 # histogram of sample means
-plot(density(clt_sample_k_mean), col="grey", lwd=2) 
-hist(clt_sample_k_mean, probability = T, add = T)
+plot(density(clt_sample_k_mean), col="red", lwd=2) 
+hist(clt_sample_k_mean, probability = T, add = T, breaks = 500)
 
 # k *Sample* (sample size = n) mean Prevalence
 mean(clt_sample_k_mean)
@@ -1732,7 +1732,7 @@ sample_mean - sample_ci
 # Upper CI: mean + CI
 sample_mean + sample_ci
 # Display
-cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
 
 # ----------------------------------
 # CI using T distribution
@@ -1760,10 +1760,11 @@ sample_mean - sample_ci
 # Upper CI: mean + CI
 sample_mean + sample_ci
 # Display
-cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
 
 # Alternatively, calculate CI using t.test() function
 t.test(clt_sample_1)
+
 # Two group hypothesis test : sample mean vs. population mean
 t.test(clt_sample_1, mu = mean(ASD_State_SPED_2016$Prevalence))
 
@@ -1782,11 +1783,13 @@ t.test(clt_sample_1, mu = mean(ASD_State_SPED_2016$Prevalence))
 # ----------------------------------
 # No. Children with ASD
 ASD  <- ASD_State_SPED$Numerator_ASD[ASD_State_SPED$Year == 2016]
+# No. Children with ASD of first US. State (AL-Alabama)
 ASD[1]
 # No. Children surveyed
 Children  <- ASD_State_SPED$Denominator[ASD_State_SPED$Year == 2016]
+# No. Children surveyed of first US. State (AL-Alabama)
 Children[1]
-# sample proportion for first US. State (AL-Alabama) in year 2016 of source SPED
+# sample proportion of first US. State (AL-Alabama) in year 2016 of source SPED
 sample_proportion = mean(ASD[1]/Children[1])
 sample_proportion
 # sample size n
@@ -1808,15 +1811,23 @@ cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_proportion - sample
 # Display * 1000 -> Prevalence
 cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  1000*(sample_proportion - sample_ci), '\tMean : ', 1000*sample_proportion, '\tUpper CI : ',  1000*(sample_proportion + sample_ci))
 
+# Based on above calculation, we have 95% confidence that:
+# The actual AL-Alabama state level prevalence (if ALL childrens
+# were surveyed) would be in the above calculated CI range 95% times.
+
+
 # ----------------------------------
 # CI using Chi-squared distribution (wilson score interval)
 # ----------------------------------
 
+# https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+
 ASD[1]
 Children[1]
-
-prop.test(ASD[1], Children[1]) # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
-prop.test(ASD[1], Children[1], correct = FALSE) # Pearson's chi-squared test = Wilson score interval - wilson
+# Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD[1], Children[1]) 
+# Pearson's chi-squared test = Wilson score interval - wilson
+prop.test(ASD[1], Children[1], correct = FALSE) 
 
 
 # ----------------------------------
@@ -1906,6 +1917,8 @@ t.test(sample_1, sample_2)
 # ----------------------------------
 # Hypothesis Test - Proportion - prop.test()
 # ----------------------------------
+if(!require(binom)){install.packages("binom")}
+library('binom')
 
 # Different flavours of proportion test:
 binom.confint (x=ASD[1], n=Children[1], conf.level =0.95, method="all")
