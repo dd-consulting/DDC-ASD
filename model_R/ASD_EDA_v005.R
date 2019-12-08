@@ -1,4 +1,3 @@
-
 ###########################################################
 # Study of Autism Spectrum Disorder (ASD)
 # https://www.cdc.gov/ncbddd/autism/data/index.html#explore
@@ -43,7 +42,7 @@ str(ASD_State)
 head(ASD_National)
 head(ASD_State)
 
-# Look at data stucture/schema (Selected columns)
+# Look at data structure/schema (Selected columns)
 str(ASD_National[, c(1:8, 24, 25, 26)])
 
 
@@ -118,8 +117,8 @@ ASD_National[c(1:10, 20, 30:35), c(1:3, 9, 12)] # row 1 to 10, 20, and 20 to 25 
 # ----------------------------------
 
 # Count missing values in dataframe:
-sum(is.na(ASD_National)) # No missing data recognized by R (NA)
-sum(is.na(ASD_State)) # Some missing data recognized by R (NA)
+sum(is.na(ASD_National)) # No missing data recognised by R (NA)
+sum(is.na(ASD_State)) # Some missing data recognised by R (NA)
 
 # Define several offending strings
 na_strings <- c("", "No data", "NA", "N A", "N / A", "N/A", "N/ A", "Not Available", "NOt available")
@@ -187,9 +186,10 @@ ASD_National$Source # Nominal categorical variable
 # ----------------------------------
 # Optionally, export the processed dataframe data to CSV file.
 # ----------------------------------
-write.table(ASD_National, file = "../dataset/ASD_National_R.csv", sep = ',', row.names = FALSE)
-ASD_National <- read.csv("../dataset/ASD_National_R.csv")
-ASD_National$Year_Factor <- factor(ASD_National$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+write.csv(ASD_National, file = "../dataset/ADV_ASD_National_R.csv", sep = ',', row.names = FALSE)
+# Read back in above saved file:
+# ASD_National <- read.csv("../dataset/ADV_ASD_National_R.csv")
+# ASD_National$Year_Factor <- factor(ASD_National$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
 
 
 # ----------------------------------
@@ -206,13 +206,13 @@ select_if(ASD_National, is.numeric) # library(dplyr)
 # Data summarization
 summary(select_if(ASD_National, is.numeric))
 
-# Calculate agerage Prevalence, no error
+# Calculate average Prevalence, no error
 mean(ASD_National$Prevalence)
 mean(ASD_National$Prevalence[ASD_National$Source == 'addm'])
 mean(ASD_National$Prevalence[ASD_National$Source == 'medi'])
 mean(ASD_National$Prevalence[ASD_National$Source == 'nsch'])
 mean(ASD_National$Prevalence[ASD_National$Source == 'sped'])
-# Calculate agerage Male.Prevalence, there is error!
+# Calculate average Male.Prevalence, there is error!
 mean(ASD_National$Male.Prevalence)
 # Because of NA, mean() cannot process, thus we use na.rm to ignore NAs
 mean(ASD_National$Male.Prevalence, na.rm = TRUE)
@@ -237,7 +237,7 @@ table(ASD_National$Source_Full3)
 table(ASD_National$Year_Factor)
 table(ASD_National$Prevalence) # numeric is also possible
 
-# Display unique values (levels) of a factor categrotical 
+# Display unique values (levels) of a factor categorical 
 lapply(select_if(ASD_National, is.factor), levels)
 # or using variable names
 lapply(ASD_National[c('Source_UC', 'Year_Factor')], levels)
@@ -247,7 +247,7 @@ table(ASD_National$Source_Full3, ASD_National$Year) # table(ASD_National$Year, A
 
 
 # ----------------------------------
-# EDA - Visualization
+# EDA - Visualisation
 # ----------------------------------
 
 # Histogram
@@ -256,11 +256,11 @@ hist(ASD_National$Male.Prevalence)
 hist(ASD_National$Female.Prevalence)
 # Histogram with annotations
 hist(ASD_National$Prevalence,
-     main = "Frequency of National ASD Prevalence",
-     xlab = "Prevalence per 1,000 Children",
-     ylab = "Frequency or Occurrences",
-     sub  = "Year 2000 - 2016",
-     col.main="blue", col.lab="black", col.sub="darkgrey")
+        main = "Frequency of National ASD Prevalence",
+        xlab = "Prevalence per 1,000 Children",
+        ylab = "Frequency or Occurrences",
+        sub  = "Year 2000 - 2016",
+        col.main="blue", col.lab="black", col.sub="darkgrey")
 
 
 # Density plot
@@ -302,16 +302,16 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
         ylab = "Prevalence per 1,000 Children",
         sub  = "Year 2000 - 2016",
         col.main="blue", col.lab="black", col.sub="darkgrey"
-)
+        )
 
 
 # ----------------------------------
 # [National] < Prevalence has changed over Time >
 # ----------------------------------
 # Prevalence over Year
-# Use Year        as x-axis: y value Prevalence is NOT aggregated for differnt data scources
+# Use Year        as x-axis: y value Prevalence is NOT aggregated for different data sources
 plot(ASD_National$Year, ASD_National$Prevalence) 
-# Use Year_factor as x-axis: y value Prevalence is     aggregated for differnt data scources
+# Use Year_factor as x-axis: y value Prevalence is     aggregated for different data sources
 plot(ASD_National$Year_Factor, ASD_National$Prevalence) 
 
 table(ASD_National$Source_Full3)
@@ -421,25 +421,25 @@ plot(ASD_National$Year[ASD_National$Source == 'addm'],
      col.main="black", col.lab="black", col.sub="grey",
      frame = FALSE, # Remove frame
      axes=FALSE # Remove x and y axis
-)
+     )
 axis(1, at=seq(2000, 2016, 1)) # Customize x axis
 axis(2, at=seq(0, 30, 5)) # Customize y axis
 
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'medi'], 
-      ASD_National$Prevalence[ASD_National$Source == 'medi'], 
-      pch = 1, col = "orange", type = "b", lty = 1, lwd = 2
-)
+     ASD_National$Prevalence[ASD_National$Source == 'medi'], 
+     pch = 1, col = "orange", type = "b", lty = 1, lwd = 2
+     )
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'nsch'], 
       ASD_National$Prevalence[ASD_National$Source == 'nsch'], 
       pch = 2, col = "darkred", type = "b", lty = 1, lwd = 2
-)
+      )
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'sped'], 
       ASD_National$Prevalence[ASD_National$Source == 'sped'], 
       pch = 5, col = "skyblue", type = "b", lty = 1, lwd = 2
-)
+      )
 # Add a legend to the plot
 legend("topleft", legend=levels(ASD_National$Source),
        col=c("darkblue", "orange", "darkred", "skyblue"), 
@@ -448,7 +448,7 @@ legend("topleft", legend=levels(ASD_National$Source),
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-)
+       )
 
 # ----------------------------------
 # [addm] < Prevalence Varies by Sex >
@@ -499,12 +499,12 @@ lines(ASD_National$Year[ASD_National$Source == 'addm'],
 # Add a legend to the plot
 legend("topleft", legend=c('ADDM Average', 'Female with 95% CI', 'Male with 95% CI'),
        col=c("grey", "orange", "blue"), 
-       #       pch = 20, # dot in a line
+#       pch = 20, # dot in a line
        lty = 1, # line type
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-)
+       )
 
 # ----------------------------------
 # [addm] < Prevalence Varies by Race and Ethnicity >
@@ -558,7 +558,7 @@ legend("topleft", legend=c('ADDM Average',
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-)
+       )
 
 
 # ----------------------------------
@@ -570,7 +570,7 @@ legend("topleft", legend=c('ADDM Average',
 
 
 # ----------------------------------
-# Quiz: Count occurrences of catergorical variables
+# Quiz: Count occurrences of categorical variables
 # ----------------------------------
 # Write your code here:
 #
@@ -605,7 +605,7 @@ plot(table(ASD_National$Source, ASD_National$Asian.or.Pacific.Islander.Prevalenc
 
 
 # ----------------------------------
-# EDA - Nicer Visualization with ggplot2
+# EDA - Nicer Visualisation with ggplot2
 # ----------------------------------
 if(!require(ggplot2)){install.packages("ggplot2")}
 library(ggplot2)
@@ -715,8 +715,10 @@ ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
 # ----------------------------------
 # Create plot using R graphics
 plot(density(ASD_National$Prevalence))
+# Optionally, overlay histogram
+hist(ASD_National$Prevalence, probability = TRUE, add = TRUE)
 
-# Create box plot using ggplot2
+# Create plot using ggplot2
 # Prevelance distribution by Data Source
 ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 0.5) + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
@@ -740,7 +742,7 @@ ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 
        title="Density of Prevalence by Data Source") +
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
         axis.title = element_text(face = 'plain', color = "darkslategrey")) + 
-  facet_wrap(~Source)
+facet_wrap(~Source)
 
 
 # ----------------------------------
@@ -816,11 +818,11 @@ p <- p + scale_y_continuous(name = "Prevalence per 1,000 Children",
                      limits = c(2000, 2016)) 
 # Show plot
 p
-# Customize chart title:
+# Customise chart title:
 p <- p + ggtitle("National ASD Prevalence by Data Source") 
 # Show plot
 p
-# Customize chart title and axis labels:
+# Customise chart title and axis labels:
 p <- p + theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
                axis.title = element_text(face = 'plain', color = "darkslategrey")) 
 # Show plot
@@ -857,17 +859,17 @@ p <- ggplot(ASD_National, aes(x = Year, y = Prevalence)) +
 p
 # Optionally, add data values/labels
 p + geom_text(aes(label = round(Prevalence, 1)), # Values are rounded for display
-              vjust = "outward", 
-              #          nudge_y = 0.2, # optionally life the text
-              hjust = "outward", 
-              check_overlap = TRUE,
-              size = 3, # size of textual data label
-              col = 'darkslategrey'
-)
+          vjust = "outward", 
+#          nudge_y = 0.2, # optionally life the text
+          hjust = "outward", 
+          check_overlap = TRUE,
+          size = 3, # size of textual data label
+          col = 'darkslategrey'
+          )
 
 
 # ----------------------------------
-# Dynamic Visualization with plotly
+# Dynamic Visualisation with plotly
 # ----------------------------------
 if(!require(plotly)){install.packages("plotly")}
 library(plotly)
@@ -935,8 +937,8 @@ p <- ggplot(ASD_National_ADDM, aes(x = Year, y = Prevalence)) +
                       values = c(ADDM_Average="darkslategrey", Female_Prevalence="orange", Male_Prevalence="blue"))
 # Add title, axis label, and axis scale
 p <- p + scale_y_continuous(name = "Prevalence per 1,000 Children",
-                            breaks = seq(0, 30, 5),
-                            limits=c(0, 30)) +
+                         breaks = seq(0, 30, 5),
+                         limits=c(0, 30)) +
   scale_x_continuous(name = "Year", 
                      breaks = seq(2000, 2016, 1), 
                      limits = c(2000, 2016)) +
@@ -955,7 +957,7 @@ p_dynamic
 
 
 # ----------------------------------
-# Quiz: Use ggplot to create other ASD prevalence visualizaiotns
+# Quiz: Use ggplot to create other ASD prevalence visualisations
 # ----------------------------------
 
 # ----------------------------------
@@ -1061,7 +1063,7 @@ str(ASD_State)
 # Pre-Process data
 # ----------------------------------
 # Count missing values in dataframe:
-sum(is.na(ASD_State)) # No missing data recognized by R (NA)
+sum(is.na(ASD_State)) # No missing data recognised by R (NA)
 # Define several offending strings
 na_strings <- c("", "No data", "NA", "N A", "N / A", "N/A", "N/ A", "Not Available", "NOt available")
 # Replace these defined missing values to R's internal NA
@@ -1095,13 +1097,14 @@ lapply(select_if(ASD_State, is.factor), levels)
 # ----------------------------------
 # Optionally, export the processed dataframe data to CSV file.
 # ----------------------------------
-write.table(ASD_State, file = "../dataset/ASD_State_R.csv", sep = ',', row.names = FALSE)
-ASD_State <- read.csv("../dataset/ASD_State_R.csv")
-ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+write.csv(ASD_State, file = "../dataset/ADV_ASD_State_R.csv", sep = ',', row.names = FALSE)
+# Read back in above saved file:
+# ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+# ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
 
 
 # ----------------------------------
-# EDA - Visualization of US. State level data
+# EDA - Visualisation of US. State level data
 # ----------------------------------
 
 # Below plot may run for a while
@@ -1160,10 +1163,10 @@ p
 # ----------------------------------
 
 p <- ggplot(ASD_State_ADDM, aes(x = reorder(State_Full2, Prevalence, FUN = median), # Order States by median of Prevalence  
-                                y = Prevalence)) + 
+                           y = Prevalence)) + 
   geom_boxplot(aes(fill = reorder(State_Full2, Prevalence, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
-  #  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+#  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
   scale_y_continuous(name = "Prevalence per 1,000 Children",
                      breaks = seq(0, 30, 5),
                      limits=c(0, 30)) +
@@ -1205,13 +1208,13 @@ ASD_State_Subset <- subset(ASD_State, Source == 'addm' & Year == 2014)
 
 # Bar plot/chart for < No. Children surveyed by State [ADDM] [Year 2014] >
 p <- ggplot(ASD_State_Subset, aes(x = reorder(State_Full1, Denominator, FUN = median), # Order States by median of Denominator  
-                                  y = Denominator)) + 
+                             y = Denominator)) + 
   geom_bar(stat="identity", aes(fill = reorder(State_Full1, Denominator, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
   scale_x_discrete(name = "US. States") +
   scale_y_continuous(name = "No. Children (Denominator)") +
   ggtitle("No. Children surveyed by State [ADDM] [Year 2014]") +
-  #  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5) + # Show data label inside bars
+#  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5) + # Show data label inside bars
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
         axis.title = element_text(face = 'plain', color = "darkslategrey"),
         legend.position="none") 
@@ -1266,18 +1269,18 @@ p
 # Add Lower.CI
 p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Lower.CI,
                                                 shape=Source # point shape
-), 
-size = 2 # point size
+                                                ), 
+                   size = 2 # point size
 ) +
-  #  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
+#  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
   scale_shape_manual(values=3)  # manual define point shape
 # Show plot
 p
 # Add Upper.CI
 p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Upper.CI, 
                                                 shape=Source # point shape
-), 
-size = 2 # point size
+                                                ), 
+                   size = 2 # point size
 ) 
 #  geom_text(aes(label=Upper.CI), hjust=-0.1, vjust=-3, color="darkslategrey", size=2.5) # Show data label inside bars 
 # Show plot
@@ -1379,14 +1382,14 @@ p_dynamic
 # Show plot in facet_grid
 p + facet_grid(facets = . ~ State_Full1) + 
   theme(legend.position = "none", # Hide legend
-        axis.text.x=element_blank(),  # Hide axis
-        axis.ticks.x=element_blank(), # Hide axis
-        panel.background = element_blank() # Remove panel background
-  ) 
+      axis.text.x=element_blank(),  # Hide axis
+      axis.ticks.x=element_blank(), # Hide axis
+      panel.background = element_blank() # Remove panel background
+      ) 
 
 
 # ----------------------------------
-# EDA - Visualization on map
+# EDA - Visualisation on map
 # ----------------------------------
 # https://cran.r-project.org/web/packages/usmap/vignettes/mapping.html
 if(!require(usmap)){install.packages("usmap")}
@@ -1418,10 +1421,10 @@ ASD_State_Subset$state = ASD_State_Subset$State
 
 # Show data on map
 p_map_addm_2014 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, 
-                              color = "white", # map line colour
-                              labels = TRUE,  # State name shown
-                              label_color = 'white' # State name colour
-) + 
+                    color = "white", # map line colour
+                    labels = TRUE,  # State name shown
+                    label_color = 'white' # State name colour
+                    ) + 
   scale_fill_continuous(
     na.value = "lightgrey", # Set colour with no State data
     low="lightblue1", high = "darkblue", 
@@ -1481,7 +1484,7 @@ p_dynamic
 
 
 # ----------------------------------
-# Combine mutiple plots 
+# Combine multiple plots 
 # ----------------------------------
 if(!require(cowplot)){install.packages("cowplot")}
 library('cowplot')
@@ -1495,208 +1498,29 @@ cowplot::plot_grid(
 # ----------------------------------
 # Export current plot as image file
 # ----------------------------------
-ggsave("Prevalence Estimates by Geographic Area [NSCH] [2004-2016].png", width = 60, height = 30, units = 'cm')
+ggsave("plot Map Prevalence Estimates by Geographic Area [NSCH] [2004-2016].png", width = 60, height = 30, units = 'cm')
 
 
-# ----------------------------------
-# Mean, Median, Central Tendency
-# ----------------------------------
-
-# Sample median [0]
-median(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-boxplot(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-#
-# Analyze/Estimate Population mean of Prevalence ( State: All , Source: ADDM, Year: 2014 )
-#
-# Sample mean [1]
-mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-hist(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-# Population mean [2]
-sum(ASD_State$Numerator_ASD[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sum(ASD_State$Denominator[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-1000*sum(ASD_State$Numerator_ASD[ASD_State$Source == 'addm' & ASD_State$Year == 2014])/sum(ASD_State$Denominator[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-#
-# (A/B + C/D) Not = (A+C)/(B+D)
-#
-# Population mean [3]
-mean(ASD_National$Prevalence[ASD_National$Source == 'addm' & ASD_National$Year == 2014])
-
-
-# ----------------------------------
-# Confidence Interval
-# ----------------------------------
-
-# ----------------------------------
-# CI using Z (Standard Normal) distribution
-# ----------------------------------
-# sample mean
-sample_mean = mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sample_mean
-# sample size n
-sample_size_n = length(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sample_size_n
-# sample standard deviation
-sample_sd = sd(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sample_sd
-# sample standard error
-sample_se = sample_sd / sqrt(sample_size_n)
-sample_se
-# 95% quantile (z score)
-z_score = qnorm(p = 0.975)
-z_score
-# CI using Z distribution
-sample_ci = z_score * sample_se
-sample_ci
-# Lower CI: mean + CI
-sample_mean - sample_ci
-# Upper CI: mean + CI
-sample_mean - sample_ci
-# Display
-cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
-
-# ----------------------------------
-# CI using T distribution
-# ----------------------------------
-# sample mean
-sample_mean = mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sample_mean
-# sample size n
-sample_size_n = length(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sample_size_n
-# sample standard deviation
-sample_sd = sd(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-sample_sd
-# sample standard error
-sample_se = sample_sd / sqrt(sample_size_n)
-sample_se
-# 95% quantile (t score)
-t_score = qt(p = 0.975, df = sample_size_n - 1)
-t_score
-# CI using T distribution
-sample_ci = t_score * sample_se
-sample_ci
-# Lower CI: mean + CI
-sample_mean - sample_ci
-# Upper CI: mean + CI
-sample_mean - sample_ci
-# Display
-cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
-
-# Alternatively, calculate CI using t.test() function
-t.test(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-
-
-# ----------------------------------
-# Congratulations on the completion!
-# ----------------------------------
-#
-# ----------------------------------
-# 'The End'... is called 'The New Start'.
-# ----------------------------------
-# GU Zhan (Sam)
-# zhan.gu@nus.edu.sg
-# ----------------------------------
-
-
-# ----------------------------------
-# Appendix - Start
-# ----------------------------------
-
-
-# ----------------------------------
-# Hypothesis Test - Mean - Z Test & t.test()
-# ----------------------------------
-set.seed(0)
-sample_1 = rnorm(n = 1000)
-sample_2 = rchisq(n = 1000, df = 30)
-
-par(mfrow=c(1, 2))
-hist(sample_1)
-hist(sample_2)
-par(mfrow=c(1, 1))
-
-t.test(sample_1, sample_2)
-
-# ----------------------------------
-# Hypothesis Test - Proportion - prop.test()
-# ----------------------------------
-
-# State	Denominator	Prevalence	Lower CI	Upper CI	Year	Source	State_Full	Numerator_Prevalence
-# AZ	45,322	6.5	5.8	7.3	2000	addm	Arizona	295
-# GA	43,593	6.5	5.8	7.3	2000	addm	Georgia	283
-# MD	21,532	5.5	4.6	6.6	2000	addm	Maryland	118
-# NJ	29,714	9.9	8.9	11.1	2000	addm	New Jersey	294
-
-
-# Confidence Interval
-ASD  <- c( 295 ) 
-Children <- c( 45322 )
-prop.test(ASD, Children) # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
-prop.test(ASD, Children, correct = FALSE) # Pearson's chi-squared test = Wilson score interval - wilson
-
-ASD  <- c( 283 )
-Children <- c( 43593 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-ASD  <- c( 118 )
-Children <- c( 21532 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-ASD  <- c( 294 )
-Children <- c( 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-?prop.test
-
-ASD  <- c( 295, 283, 118, 294 ) 
-Children <- c( 45322, 43593, 21532, 29714 )
-prop.test(ASD, Children)
-prop.test(ASD, Children, correct = FALSE)
-
-# Different flavours of proportion test:
-if(!require(binom)){install.packages("binom")}
-library(binom)
-binom.confint (x=295, n=45322, conf.level =0.95, method="all")
-
-
-# ----------------------------------
-# Appendix - End
-# ----------------------------------
-
-
-# 2019 12 08
 # ----------------------------------
 # Sampling & Normality
 # ----------------------------------
 
 # ----------------------------------
-# Optionally, export the processed dataframe data to CSV file.
-# ----------------------------------
-# write.csv(ASD_State, file = "../dataset/ADV_ASD_State_R.csv", sep = ',', row.names = FALSE)
-ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
-ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
-
-# ASD_State_ADDM <- subset(ASD_State, Year == 2014 & Source == 'addm')
-ASD_State_ADDM <- subset(ASD_State, Source == 'addm')
-ASD_State_MEDI <- subset(ASD_State, Source == 'medi')
-ASD_State_NSCH <- subset(ASD_State, Source == 'nsch')
-ASD_State_SPED <- subset(ASD_State, Source == 'sped')
-
-
 # Create a *Population* of US. State level ASD Prevalence from Source SPED in Year 2016 
+# ----------------------------------
 ASD_State_SPED_2016 <- subset(ASD_State, Source == 'sped' & Year == 2016, select=c('State', 'Prevalence'))
 dim(ASD_State_SPED_2016)
 # *Population* mean Prevalence
 mean(ASD_State_SPED_2016$Prevalence)
 
+# ----------------------------------
 # Central Limit Theorem (CLT)
+# ----------------------------------
 # Create a *Sample* from ASD_State_SPED_2016$Prevalence,
 # with sample size n =
 clt_n = 10
-clt_n = 40
+# clt_n = 40
+
 set.seed(88)
 clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
 clt_sample_1
@@ -1750,7 +1574,7 @@ mean(ASD_State_SPED_2016$Prevalence)
 
 
 # ----------------------------------
-# Visualization: Sampling distribution vs. Population distribution
+# Visualisation: Sampling distribution vs. Population distribution
 # ----------------------------------
 
 # < Make transparent colors in R >
@@ -1779,7 +1603,7 @@ lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2)
 
 
 # ----------------------------------
-# Visualization: Central Limit Theorem (CLT)
+# Visualisation: Central Limit Theorem (CLT)
 # ----------------------------------
 
 # ----------------------------------
@@ -1797,16 +1621,16 @@ hist(ASD_State_SPED_2016$Prevalence, probability = T,
 # Population (Prevalence) density
 lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2) 
 
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="red", lwd=2) 
+
 # Overlay curve:
 # # Z-Norm with mean = mean of Population (Prevalence) & std-dev = std-dev of Population (Prevalence)
 curve(dnorm(x, 
             mean(ASD_State_SPED_2016$Prevalence),
             sd(ASD_State_SPED_2016$Prevalence)), 
       add=TRUE, col="red", lwd=2)
-
-# Overlay line:
-# mean = mean of Population (Prevalence)
-abline(v=mean(ASD_State_SPED_2016$Prevalence), col="red", lwd=2) 
 
 # Overlay:
 # Overlay curve:
@@ -1820,7 +1644,7 @@ abline(v=mean(clt_sample_k_mean), col="cyan2", lwd=2, lty=3)
 mean(clt_sample_k_mean)
 mean(ASD_State_SPED_2016$Prevalence)
 
-# Actual SE (for mean prevalence) = Population standard deviation / SQRT(sample size)
+# Actual SE (for mean prevalence) = Population standard deviation / square root of sample size
 sd(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)
 # Estimated SE (for mean prevalence) = std-dev of Sampling distribution
 sd(clt_sample_k_mean)
@@ -1851,200 +1675,246 @@ shapiro.test(ASD_State_SPED_2016$Prevalence)
 
 
 # ----------------------------------
-# 
+# Estimation : Mean & Confidence Interval (CI)
+# ----------------------------------
+
+# ----------------------------------
+# Use a sample of a few US. State's ASD prevalence (mean) to estimate:
+# Average prevalence of ALL US. States (the *Population*) [Source SPED, Year 2016]
+# ----------------------------------
+ASD_State_SPED_2016
+dim(ASD_State_SPED_2016)
+
+# Create a *Sample* from ASD_State_SPED_2016$Prevalence,
+# with sample size n =
+clt_n = 10
+# clt_n = 40
+
+set.seed(88)
+clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
+clt_sample_1
+plot(density(clt_sample_1), col="grey", lwd=2) 
+hist(clt_sample_1, probability = T, add = T)
+
+# Sample mean Prevalence
+mean(clt_sample_1)
+
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+
+# ----------------------------------
+# Calculate Confidence Interval for mean
+# ----------------------------------
+
+# ----------------------------------
+# CI using Z (Standard Normal) distribution
+# ----------------------------------
+# sample mean
+sample_mean = mean(clt_sample_1)
+sample_mean
+# sample size n
+sample_size_n = length(clt_sample_1)
+sample_size_n
+# sample standard deviation
+sample_sd = sd(clt_sample_1)
+sample_sd
+# sample standard error
+sample_se = sample_sd / sqrt(sample_size_n)
+sample_se
+# 95% quantile (z score)
+z_score = qnorm(p = 0.975)
+z_score
+# CI using Z distribution
+sample_ci = z_score * sample_se
+sample_ci
+# Lower CI: mean + CI
+sample_mean - sample_ci
+# Upper CI: mean + CI
+sample_mean + sample_ci
+# Display
+cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+
+# ----------------------------------
+# CI using T distribution
+# ----------------------------------
+# sample mean
+sample_mean = mean(clt_sample_1)
+sample_mean
+# sample size n
+sample_size_n = length(clt_sample_1)
+sample_size_n
+# sample standard deviation
+sample_sd = sd(clt_sample_1)
+sample_sd
+# sample standard error
+sample_se = sample_sd / sqrt(sample_size_n)
+sample_se
+# 95% quantile (t score)
+t_score = qt(p = 0.975, df = sample_size_n - 1)
+t_score
+# CI using T distribution
+sample_ci = t_score * sample_se
+sample_ci
+# Lower CI: mean + CI
+sample_mean - sample_ci
+# Upper CI: mean + CI
+sample_mean + sample_ci
+# Display
+cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
+
+# Alternatively, calculate CI using t.test() function
+t.test(clt_sample_1)
+# Two group hypothesis test : sample mean vs. population mean
+t.test(clt_sample_1, mu = mean(ASD_State_SPED_2016$Prevalence))
+
+
+# ----------------------------------
+# Estimation : Proportion & Confidence Interval (CI)
+# ----------------------------------
+
+# ----------------------------------
+# Use a sample of one US. State's ASD prevalence (proportion) to estimate:
+# Prevalence of THAT US. State's ALL Children (the *Population*) [Source SPED, Year 2016] 
+# ----------------------------------
+
+# ----------------------------------
+# CI using Z (Standard Normal) distribution
+# ----------------------------------
+# No. Children with ASD
+ASD  <- ASD_State_SPED$Numerator_ASD[ASD_State_SPED$Year == 2016]
+ASD[1]
+# No. Children surveyed
+Children  <- ASD_State_SPED$Denominator[ASD_State_SPED$Year == 2016]
+Children[1]
+# sample proportion for first US. State (AL-Alabama) in year 2016 of source SPED
+sample_proportion = mean(ASD[1]/Children[1])
+sample_proportion
+# sample size n
+sample_size_n = Children[1]
+sample_size_n
+# 95% quantile (z score)
+z_score = qnorm(p = 0.975)
+z_score
+# CI using Z distribution
+# https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+sample_ci = z_score * sqrt(sample_proportion * (1 - sample_proportion) / sample_size_n)
+sample_ci
+# Lower CI: mean + CI
+sample_proportion - sample_ci
+# Upper CI: mean + CI
+sample_proportion + sample_ci
+# Display
+cat('\t< Confidence Interval >\n',  '\tLower CI : ',  sample_proportion - sample_ci, '\tMean : ', sample_proportion, '\tUpper CI : ',  sample_proportion + sample_ci)
+# Display * 1000 -> Prevalence
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  1000*(sample_proportion - sample_ci), '\tMean : ', 1000*sample_proportion, '\tUpper CI : ',  1000*(sample_proportion + sample_ci))
+
+# ----------------------------------
+# CI using Chi-squared distribution (wilson score interval)
+# ----------------------------------
+
+ASD[1]
+Children[1]
+
+prop.test(ASD[1], Children[1]) # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD[1], Children[1], correct = FALSE) # Pearson's chi-squared test = Wilson score interval - wilson
+
+
+# ----------------------------------
+# Congratulations on the completion!
+# ----------------------------------
+#
+# ----------------------------------
+# 'The End'... is called 'The New Start'.
+# ----------------------------------
+# GU Zhan (Sam)
+# zhan.gu@nus.edu.sg
 # ----------------------------------
 
 
-# t distribution
-curve(dt(x, df=24), from = -5, to = 5, col = "blue", 
-      xlab = "t statistic", ylab = "density", lwd = 2)
-abline(v=qt( 0.01, df=24), col="blue", lwd=2) # left area under curve:    1% probability
-abline(v=qt(0.025, df=24), col="blue", lwd=2) # left area under curve:  2.5% probability
-abline(v=qt( 0.05, df=24), col="blue", lwd=2) # left area under curve:    5% probability
-abline(v=qt( 0.25, df=24), col="blue", lwd=2) # left area under curve:   25% probability
-abline(v=qt(  0.5, df=24), col="blue", lwd=2) # left area under curve:   50% probability
-abline(v=qt( 0.75, df=24), col="blue", lwd=2) # left area under curve:   75% probability
-abline(v=qt( 0.95, df=24), col="blue", lwd=2) # left area under curve:   95% probability
-abline(v=qt(0.975, df=24), col="blue", lwd=2) # left area under curve: 97.5% probability
-abline(v=qt( 0.99, df=24), col="blue", lwd=2) # left area under curve:   99% probability
-abline(v=t_score, col="dark orange", lwd=2)
-abline(v=t_score*-1, col="dark orange", lwd=2)
-
-
 # ----------------------------------
-# 
+# Appendix - Start
 # ----------------------------------
 
 
-
-
-x <- ASD_State_SPED_2016$Prevalence
-set.seed(0)
-mat1 <- do.call(rbind,lapply(1:5, function(y) sample(x,10)))
-mat1
-#or
-mat2 <- matrix(0,ncol=3,nrow=1000)
-set.seed(49)
-for(i in seq_len(nrow(mat2))) mat2[i,] <- sample(x,3)
-all.equal(mat1,mat2)
-#[1] TRUE
-
-#or
-set.seed(49)
-
-?t()
-
-mat3 <- t(replicate(1000,sample(x,3)))
-all.equal(mat2,mat3)
-#[1] TRUE
+# ----------------------------------
+# Interactive workshops: < Learning R inside R > using swirl()
+# ----------------------------------
+if(!require(swirl)){install.packages("swirl")}
+library("swirl")
+install_course("R Programming")
+install_course("Exploratory Data Analysis")
+install_course("Regression Models")
+install_course("Statistical Inference")
+swirl()
 
 
 # ----------------------------------
-# 
+# Neural Network 101 using nnet()
+# ----------------------------------
+if(!require(nnet)){install.packages("nnet")}
+library("nnet")
+?nnet
+
+# < Case: predict three different iris flower types >
+
+# https://en.wikipedia.org/wiki/Iris_flower_data_set
+# https://archive.ics.uci.edu/ml/datasets/iris
+
+# Data preparation: split iris data in two halves, for training & testing respectively.
+ir <- rbind(iris3[,,1],iris3[,,2],iris3[,,3])
+targets <- class.ind( c(rep("s", 50), rep("c", 50), rep("v", 50)) )
+samp <- c(sample(1:50,25), sample(51:100,25), sample(101:150,25))
+# Model training (machine learning / data fitting)
+ir1 <- nnet(ir[samp,], targets[samp,], size = 2, rang = 0.1,
+            decay = 5e-4, maxit = 200)
+# Model prediciton
+test.cl <- function(true, pred) {
+  true <- max.col(true)
+  cres <- max.col(pred)
+  table(true, cres)
+}
+
+# Model evaluation
+test.cl(targets[-samp,], predict(ir1, ir[-samp,]))
+
+
+# ----------------------------------
+# Hypothesis Test - Mean - Z Test & t.test()
 # ----------------------------------
 
+# Create sample 1
+set.seed(88)
+sample_1 = rnorm(n = 10)
+# sample_1 = rnorm(n = 1000)
 
+# Create sample 2
+set.seed(88)
+sample_2 = rchisq(n = 10, df = 30) - 29
+# sample_2 = rchisq(n = 1000, df = 30) - 29
 
-par(mfrow=c(2, 3))
-lapply(clt_sample_k[,1:4], FUN=hist)
+mean(sample_1)
+mean(sample_2)
 
-hist(clt_sample_k[,1], probability = T)
-
-hist(clt_sample_k[,2], probability = T)
-hist(clt_sample_k[,3], probability = T)
-hist(clt_sample_k[,4], probability = T)
-hist(clt_sample_k[,5], probability = T)
-hist(clt_sample_k[,6], probability = T)
-
+par(mfrow=c(1, 2))
+hist(sample_1)
+hist(sample_2)
 par(mfrow=c(1, 1))
 
-
-
-
-
-
-list <-lapply(1:ncol(mtcars),
-              function(col) ggplot2::qplot(mtcars[[col]],
-                                           geom = "histogram",
-                                           binwidth = 1))
-
-cowplot::plot_grid(plotlist = list)
-
-dim(clt_sample_k)
-
-ncol(clt_sample_k)
-clt_sample_k[,1]
-
-list <-lapply(1:6,
-              function(k) ggplot2::qplot(clt_sample_k[,k],
-                                           geom = "histogram",
-                                           binwidth = 2))
-
-cowplot::plot_grid(plotlist = list)
-
-
-
-
-# Add mean line to the histogram plot.
-# Change fill color and line color
-ggplot2.histogram(data=weight, xName='weight',
-                  fill="white", color="black",
-                  addMeanLine=TRUE, meanLineColor="red",
-                  meanLineType="dashed", meanLineSize=1)
-# Add density curve
-ggplot2.histogram(data=weight, xName='weight',
-                  fill="white", color="black",
-                  addDensityCurve=TRUE, densityFill='#FF6666')
-
-
-
-
-# Create histogram using ggplot2
-ggplot(ASD_National, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
-
-ggplot(ASD_State_SPED_2016, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
-
-ggplot() + 
-  geom_histogram(clt_sample_k[,1], aes(x=Prevalence), binwidth = 5)
-
-ggplot(ASD_State_SPED_2016, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
-
-ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
-  geom_histogram(binwidth = 5) +
-  theme_bw() + theme(legend.position="right") +
-  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
-                                               "medi" = "orange", 
-                                               "nsch" = "darkred",
-                                               "sped" = "skyblue"))
-
-
-
-
-# Use color to differentiate sub-group data
-ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
-  geom_histogram(binwidth = 5) +
-  theme_bw() + theme(legend.position="right") +
-  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
-                                               "medi" = "orange", 
-                                               "nsch" = "darkred",
-                                               "sped" = "skyblue"))
-
+t.test(sample_1, sample_2)
 
 
 # ----------------------------------
-# Density plot (distribution for continuous variable)
+# Hypothesis Test - Proportion - prop.test()
 # ----------------------------------
-# Create plot using R graphics
-plot(density(ASD_National$Prevalence))
-# Optionally, overlay histogram
-hist(ASD_National$Prevalence, probability = TRUE, add = TRUE)
 
+# Different flavours of proportion test:
+binom.confint (x=ASD[1], n=Children[1], conf.level =0.95, method="all")
 
-
-# Create plot using ggplot2
-# Prevelance distribution by Data Source
-ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 0.5) + 
-  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
-                                               "medi" = "orange", 
-                                               "nsch" = "darkred",
-                                               "sped" = "skyblue")) +
-  labs(x="Prevalence per 1,000 Children",
-       y="Density",
-       title="Density of Prevalence by Data Source") +
-  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
-        axis.title = element_text(face = 'plain', color = "darkslategrey"))
-
-
-
+# Multiple group hypothesis test : proportions (Prevalvence) among all US. States
+prop.test(ASD, Children) # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD, Children, correct = FALSE) # Pearson's chi-squared test = Wilson score interval - wilson
 
 
 # ----------------------------------
-# 
+# Appendix - End
 # ----------------------------------
-
-## import data
-BondFunds = read.csv("BondFunds.csv")
-
-attach(BondFunds)
-
-## histogram with normal curve
-hist(Return2009, breaks=15, prob=T)
-curve(dnorm(x, mean(Return2009), sd(Return2009)),
-      add=TRUE, col="red", lwd=2)
-lines(density(Return2009), col="blue")
-
-detach(BondFunds)
-
-
-
-attach(BondFunds)
-
-## construct a q-q plot
-qqnorm(Return2009, col="blue", xlab="z Value", 
-       ylab="Return2009")
-qqline(Return2009, col="red", lwd=2)
-
-detach(BondFunds)
-
-
-
