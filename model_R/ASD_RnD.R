@@ -185,8 +185,8 @@ ASD_National$Source # Nominal categorical variable
 # ----------------------------------
 # Optionally, export the processed dataframe data to CSV file.
 # ----------------------------------
-write.csv(ASD_National, file = "../dataset/ADV_ASD_National_R.csv", sep = ',', row.names = FALSE)
-ASD_National <- read.csv("../dataset/ADV_ASD_National_R.csv")
+write.table(ASD_National, file = "../dataset/ASD_National_R.csv", sep = ',', row.names = FALSE)
+ASD_National <- read.csv("../dataset/ASD_National_R.csv")
 ASD_National$Year_Factor <- factor(ASD_National$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
 
 
@@ -254,11 +254,11 @@ hist(ASD_National$Male.Prevalence)
 hist(ASD_National$Female.Prevalence)
 # Histogram with annotations
 hist(ASD_National$Prevalence,
-        main = "Frequency of National ASD Prevalence",
-        xlab = "Prevalence per 1,000 Children",
-        ylab = "Frequency or Occurrences",
-        sub  = "Year 2000 - 2016",
-        col.main="blue", col.lab="black", col.sub="darkgrey")
+     main = "Frequency of National ASD Prevalence",
+     xlab = "Prevalence per 1,000 Children",
+     ylab = "Frequency or Occurrences",
+     sub  = "Year 2000 - 2016",
+     col.main="blue", col.lab="black", col.sub="darkgrey")
 
 
 # Density plot
@@ -300,7 +300,7 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
         ylab = "Prevalence per 1,000 Children",
         sub  = "Year 2000 - 2016",
         col.main="blue", col.lab="black", col.sub="darkgrey"
-        )
+)
 
 
 # ----------------------------------
@@ -419,25 +419,25 @@ plot(ASD_National$Year[ASD_National$Source == 'addm'],
      col.main="black", col.lab="black", col.sub="grey",
      frame = FALSE, # Remove frame
      axes=FALSE # Remove x and y axis
-     )
+)
 axis(1, at=seq(2000, 2016, 1)) # Customize x axis
 axis(2, at=seq(0, 30, 5)) # Customize y axis
 
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'medi'], 
-     ASD_National$Prevalence[ASD_National$Source == 'medi'], 
-     pch = 1, col = "orange", type = "b", lty = 1, lwd = 2
-     )
+      ASD_National$Prevalence[ASD_National$Source == 'medi'], 
+      pch = 1, col = "orange", type = "b", lty = 1, lwd = 2
+)
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'nsch'], 
       ASD_National$Prevalence[ASD_National$Source == 'nsch'], 
       pch = 2, col = "darkred", type = "b", lty = 1, lwd = 2
-      )
+)
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'sped'], 
       ASD_National$Prevalence[ASD_National$Source == 'sped'], 
       pch = 5, col = "skyblue", type = "b", lty = 1, lwd = 2
-      )
+)
 # Add a legend to the plot
 legend("topleft", legend=levels(ASD_National$Source),
        col=c("darkblue", "orange", "darkred", "skyblue"), 
@@ -446,7 +446,7 @@ legend("topleft", legend=levels(ASD_National$Source),
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-       )
+)
 
 # ----------------------------------
 # [addm] < Prevalence Varies by Sex >
@@ -497,12 +497,12 @@ lines(ASD_National$Year[ASD_National$Source == 'addm'],
 # Add a legend to the plot
 legend("topleft", legend=c('ADDM Average', 'Female with 95% CI', 'Male with 95% CI'),
        col=c("grey", "orange", "blue"), 
-#       pch = 20, # dot in a line
+       #       pch = 20, # dot in a line
        lty = 1, # line type
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-       )
+)
 
 # ----------------------------------
 # [addm] < Prevalence Varies by Race and Ethnicity >
@@ -556,7 +556,7 @@ legend("topleft", legend=c('ADDM Average',
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-       )
+)
 
 
 # ----------------------------------
@@ -713,10 +713,8 @@ ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
 # ----------------------------------
 # Create plot using R graphics
 plot(density(ASD_National$Prevalence))
-# Optionally, overlay histogram
-hist(ASD_National$Prevalence, probability = TRUE, add = TRUE)
 
-# Create plot using ggplot2
+# Create box plot using ggplot2
 # Prevelance distribution by Data Source
 ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 0.5) + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
@@ -740,7 +738,7 @@ ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 
        title="Density of Prevalence by Data Source") +
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
         axis.title = element_text(face = 'plain', color = "darkslategrey")) + 
-facet_wrap(~Source)
+  facet_wrap(~Source)
 
 
 # ----------------------------------
@@ -857,13 +855,13 @@ p <- ggplot(ASD_National, aes(x = Year, y = Prevalence)) +
 p
 # Optionally, add data values/labels
 p + geom_text(aes(label = round(Prevalence, 1)), # Values are rounded for display
-          vjust = "outward", 
-#          nudge_y = 0.2, # optionally life the text
-          hjust = "outward", 
-          check_overlap = TRUE,
-          size = 3, # size of textual data label
-          col = 'darkslategrey'
-          )
+              vjust = "outward", 
+              #          nudge_y = 0.2, # optionally life the text
+              hjust = "outward", 
+              check_overlap = TRUE,
+              size = 3, # size of textual data label
+              col = 'darkslategrey'
+)
 
 
 # ----------------------------------
@@ -935,8 +933,8 @@ p <- ggplot(ASD_National_ADDM, aes(x = Year, y = Prevalence)) +
                       values = c(ADDM_Average="darkslategrey", Female_Prevalence="orange", Male_Prevalence="blue"))
 # Add title, axis label, and axis scale
 p <- p + scale_y_continuous(name = "Prevalence per 1,000 Children",
-                         breaks = seq(0, 30, 5),
-                         limits=c(0, 30)) +
+                            breaks = seq(0, 30, 5),
+                            limits=c(0, 30)) +
   scale_x_continuous(name = "Year", 
                      breaks = seq(2000, 2016, 1), 
                      limits = c(2000, 2016)) +
@@ -1095,8 +1093,8 @@ lapply(select_if(ASD_State, is.factor), levels)
 # ----------------------------------
 # Optionally, export the processed dataframe data to CSV file.
 # ----------------------------------
-write.csv(ASD_State, file = "../dataset/ADV_ASD_State_R.csv", sep = ',', row.names = FALSE)
-ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+write.table(ASD_State, file = "../dataset/ASD_State_R.csv", sep = ',', row.names = FALSE)
+ASD_State <- read.csv("../dataset/ASD_State_R.csv")
 ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
 
 
@@ -1160,10 +1158,10 @@ p
 # ----------------------------------
 
 p <- ggplot(ASD_State_ADDM, aes(x = reorder(State_Full2, Prevalence, FUN = median), # Order States by median of Prevalence  
-                           y = Prevalence)) + 
+                                y = Prevalence)) + 
   geom_boxplot(aes(fill = reorder(State_Full2, Prevalence, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
-#  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+  #  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
   scale_y_continuous(name = "Prevalence per 1,000 Children",
                      breaks = seq(0, 30, 5),
                      limits=c(0, 30)) +
@@ -1205,13 +1203,13 @@ ASD_State_Subset <- subset(ASD_State, Source == 'addm' & Year == 2014)
 
 # Bar plot/chart for < No. Children surveyed by State [ADDM] [Year 2014] >
 p <- ggplot(ASD_State_Subset, aes(x = reorder(State_Full1, Denominator, FUN = median), # Order States by median of Denominator  
-                             y = Denominator)) + 
+                                  y = Denominator)) + 
   geom_bar(stat="identity", aes(fill = reorder(State_Full1, Denominator, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
   scale_x_discrete(name = "US. States") +
   scale_y_continuous(name = "No. Children (Denominator)") +
   ggtitle("No. Children surveyed by State [ADDM] [Year 2014]") +
-#  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5) + # Show data label inside bars
+  #  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5) + # Show data label inside bars
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
         axis.title = element_text(face = 'plain', color = "darkslategrey"),
         legend.position="none") 
@@ -1266,18 +1264,18 @@ p
 # Add Lower.CI
 p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Lower.CI,
                                                 shape=Source # point shape
-                                                ), 
-                   size = 2 # point size
+), 
+size = 2 # point size
 ) +
-#  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
+  #  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
   scale_shape_manual(values=3)  # manual define point shape
 # Show plot
 p
 # Add Upper.CI
 p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Upper.CI, 
                                                 shape=Source # point shape
-                                                ), 
-                   size = 2 # point size
+), 
+size = 2 # point size
 ) 
 #  geom_text(aes(label=Upper.CI), hjust=-0.1, vjust=-3, color="darkslategrey", size=2.5) # Show data label inside bars 
 # Show plot
@@ -1379,10 +1377,10 @@ p_dynamic
 # Show plot in facet_grid
 p + facet_grid(facets = . ~ State_Full1) + 
   theme(legend.position = "none", # Hide legend
-      axis.text.x=element_blank(),  # Hide axis
-      axis.ticks.x=element_blank(), # Hide axis
-      panel.background = element_blank() # Remove panel background
-      ) 
+        axis.text.x=element_blank(),  # Hide axis
+        axis.ticks.x=element_blank(), # Hide axis
+        panel.background = element_blank() # Remove panel background
+  ) 
 
 
 # ----------------------------------
@@ -1418,10 +1416,10 @@ ASD_State_Subset$state = ASD_State_Subset$State
 
 # Show data on map
 p_map_addm_2014 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, 
-                    color = "white", # map line colour
-                    labels = TRUE,  # State name shown
-                    label_color = 'white' # State name colour
-                    ) + 
+                              color = "white", # map line colour
+                              labels = TRUE,  # State name shown
+                              label_color = 'white' # State name colour
+) + 
   scale_fill_continuous(
     na.value = "lightgrey", # Set colour with no State data
     low="lightblue1", high = "darkblue", 
@@ -1665,3 +1663,116 @@ binom.confint (x=295, n=45322, conf.level =0.95, method="all")
 # ----------------------------------
 # Appendix - End
 # ----------------------------------
+
+
+# 2019 12 08
+# ----------------------------------
+# Sampling & Normality
+# ----------------------------------
+
+# Create a *Population* of US. State level ASD Prevalence from Source SPED in Year 2016 
+ASD_State_SPED_2016 <- subset(ASD_State, Source == 'sped' & Year == 2016, select=c('State', 'Prevalence'))
+dim(ASD_State_SPED_2016)
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+
+# Central Limit Theorem (CLT)
+# Create a *Sample* from ASD_State_SPED_2016$Prevalence,
+# with sample size n = 10
+clt_n = 10
+set.seed(0)
+clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
+plot(density(clt_sample_1))
+# Repeatedly sample for k times, create a matrix/array to store these samples
+clt_k = 1000000
+set.seed(0)
+clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = 10)))
+clt_sample_k
+
+clt_sample_k[,1]
+clt_sample_k[,2]
+clt_sample_k[,clt_k]
+
+mean(clt_sample_k[,1])
+mean(clt_sample_k[,2])
+mean(clt_sample_k[,3])
+mean(clt_sample_k[,clt_k])
+
+# Calculate sample mean value for k samples
+clt_sample_k_mean <- apply(clt_sample_k, 2, mean)
+# clt_sample_k_mean
+hist(clt_sample_k_mean, breaks = 50)
+
+# k *Sample* (sample size = n) mean Prevalence
+mean(clt_sample_k_mean)
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+
+#########################
+
+
+x <- ASD_State_SPED_2016$Prevalence
+set.seed(0)
+mat1 <- do.call(rbind,lapply(1:5, function(y) sample(x,10)))
+mat1
+#or
+mat2 <- matrix(0,ncol=3,nrow=1000)
+set.seed(49)
+for(i in seq_len(nrow(mat2))) mat2[i,] <- sample(x,3)
+all.equal(mat1,mat2)
+#[1] TRUE
+
+#or
+set.seed(49)
+
+?t()
+
+mat3 <- t(replicate(1000,sample(x,3)))
+all.equal(mat2,mat3)
+#[1] TRUE
+
+
+
+# Create histogram using ggplot2
+ggplot(ASD_National, aes(x=Prevalence, alpha = 0.1)) + geom_histogram(binwidth = 5)
+
+# Use color to differentiate sub-group data
+ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
+  geom_histogram(binwidth = 5) +
+  theme_bw() + theme(legend.position="right") +
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue"))
+
+
+
+# ----------------------------------
+# Density plot (distribution for continuous variable)
+# ----------------------------------
+# Create plot using R graphics
+plot(density(ASD_National$Prevalence))
+# Optionally, overlay histogram
+hist(ASD_National$Prevalence, probability = TRUE, add = TRUE)
+
+
+
+# Create plot using ggplot2
+# Prevelance distribution by Data Source
+ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 0.5) + 
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue")) +
+  labs(x="Prevalence per 1,000 Children",
+       y="Density",
+       title="Density of Prevalence by Data Source") +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"))
+
+
+
+
+
+
+
