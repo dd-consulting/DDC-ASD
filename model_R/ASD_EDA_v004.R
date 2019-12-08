@@ -42,7 +42,7 @@ str(ASD_State)
 head(ASD_National)
 head(ASD_State)
 
-# Look at data stucture/schema (Selected columns)
+# Look at data structure/schema (Selected columns)
 str(ASD_National[, c(1:8, 24, 25, 26)])
 
 
@@ -117,8 +117,8 @@ ASD_National[c(1:10, 20, 30:35), c(1:3, 9, 12)] # row 1 to 10, 20, and 20 to 25 
 # ----------------------------------
 
 # Count missing values in dataframe:
-sum(is.na(ASD_National)) # No missing data recognized by R (NA)
-sum(is.na(ASD_State)) # Some missing data recognized by R (NA)
+sum(is.na(ASD_National)) # No missing data recognised by R (NA)
+sum(is.na(ASD_State)) # Some missing data recognised by R (NA)
 
 # Define several offending strings
 na_strings <- c("", "No data", "NA", "N A", "N / A", "N/A", "N/ A", "Not Available", "NOt available")
@@ -206,13 +206,13 @@ select_if(ASD_National, is.numeric) # library(dplyr)
 # Data summarization
 summary(select_if(ASD_National, is.numeric))
 
-# Calculate agerage Prevalence, no error
+# Calculate average Prevalence, no error
 mean(ASD_National$Prevalence)
 mean(ASD_National$Prevalence[ASD_National$Source == 'addm'])
 mean(ASD_National$Prevalence[ASD_National$Source == 'medi'])
 mean(ASD_National$Prevalence[ASD_National$Source == 'nsch'])
 mean(ASD_National$Prevalence[ASD_National$Source == 'sped'])
-# Calculate agerage Male.Prevalence, there is error!
+# Calculate average Male.Prevalence, there is error!
 mean(ASD_National$Male.Prevalence)
 # Because of NA, mean() cannot process, thus we use na.rm to ignore NAs
 mean(ASD_National$Male.Prevalence, na.rm = TRUE)
@@ -237,7 +237,7 @@ table(ASD_National$Source_Full3)
 table(ASD_National$Year_Factor)
 table(ASD_National$Prevalence) # numeric is also possible
 
-# Display unique values (levels) of a factor categrotical 
+# Display unique values (levels) of a factor categorical 
 lapply(select_if(ASD_National, is.factor), levels)
 # or using variable names
 lapply(ASD_National[c('Source_UC', 'Year_Factor')], levels)
@@ -247,7 +247,7 @@ table(ASD_National$Source_Full3, ASD_National$Year) # table(ASD_National$Year, A
 
 
 # ----------------------------------
-# EDA - Visualization
+# EDA - Visualisation
 # ----------------------------------
 
 # Histogram
@@ -309,9 +309,9 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
 # [National] < Prevalence has changed over Time >
 # ----------------------------------
 # Prevalence over Year
-# Use Year        as x-axis: y value Prevalence is NOT aggregated for differnt data scources
+# Use Year        as x-axis: y value Prevalence is NOT aggregated for different data sources
 plot(ASD_National$Year, ASD_National$Prevalence) 
-# Use Year_factor as x-axis: y value Prevalence is     aggregated for differnt data scources
+# Use Year_factor as x-axis: y value Prevalence is     aggregated for different data sources
 plot(ASD_National$Year_Factor, ASD_National$Prevalence) 
 
 table(ASD_National$Source_Full3)
@@ -570,7 +570,7 @@ legend("topleft", legend=c('ADDM Average',
 
 
 # ----------------------------------
-# Quiz: Count occurrences of catergorical variables
+# Quiz: Count occurrences of categorical variables
 # ----------------------------------
 # Write your code here:
 #
@@ -605,7 +605,7 @@ plot(table(ASD_National$Source, ASD_National$Asian.or.Pacific.Islander.Prevalenc
 
 
 # ----------------------------------
-# EDA - Nicer Visualization with ggplot2
+# EDA - Nicer Visualisation with ggplot2
 # ----------------------------------
 if(!require(ggplot2)){install.packages("ggplot2")}
 library(ggplot2)
@@ -818,11 +818,11 @@ p <- p + scale_y_continuous(name = "Prevalence per 1,000 Children",
                      limits = c(2000, 2016)) 
 # Show plot
 p
-# Customize chart title:
+# Customise chart title:
 p <- p + ggtitle("National ASD Prevalence by Data Source") 
 # Show plot
 p
-# Customize chart title and axis labels:
+# Customise chart title and axis labels:
 p <- p + theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
                axis.title = element_text(face = 'plain', color = "darkslategrey")) 
 # Show plot
@@ -869,7 +869,7 @@ p + geom_text(aes(label = round(Prevalence, 1)), # Values are rounded for displa
 
 
 # ----------------------------------
-# Dynamic Visualization with plotly
+# Dynamic Visualisation with plotly
 # ----------------------------------
 if(!require(plotly)){install.packages("plotly")}
 library(plotly)
@@ -957,7 +957,7 @@ p_dynamic
 
 
 # ----------------------------------
-# Quiz: Use ggplot to create other ASD prevalence visualizaiotns
+# Quiz: Use ggplot to create other ASD prevalence visualisations
 # ----------------------------------
 
 # ----------------------------------
@@ -1063,7 +1063,7 @@ str(ASD_State)
 # Pre-Process data
 # ----------------------------------
 # Count missing values in dataframe:
-sum(is.na(ASD_State)) # No missing data recognized by R (NA)
+sum(is.na(ASD_State)) # No missing data recognised by R (NA)
 # Define several offending strings
 na_strings <- c("", "No data", "NA", "N A", "N / A", "N/A", "N/ A", "Not Available", "NOt available")
 # Replace these defined missing values to R's internal NA
@@ -1104,7 +1104,7 @@ write.csv(ASD_State, file = "../dataset/ADV_ASD_State_R.csv", sep = ',', row.nam
 
 
 # ----------------------------------
-# EDA - Visualization of US. State level data
+# EDA - Visualisation of US. State level data
 # ----------------------------------
 
 # Below plot may run for a while
@@ -1389,7 +1389,7 @@ p + facet_grid(facets = . ~ State_Full1) +
 
 
 # ----------------------------------
-# EDA - Visualization on map
+# EDA - Visualisation on map
 # ----------------------------------
 # https://cran.r-project.org/web/packages/usmap/vignettes/mapping.html
 if(!require(usmap)){install.packages("usmap")}
@@ -1484,7 +1484,7 @@ p_dynamic
 
 
 # ----------------------------------
-# Combine mutiple plots 
+# Combine multiple plots 
 # ----------------------------------
 if(!require(cowplot)){install.packages("cowplot")}
 library('cowplot')
@@ -1574,7 +1574,7 @@ mean(ASD_State_SPED_2016$Prevalence)
 
 
 # ----------------------------------
-# Visualization: Sampling distribution vs. Population distribution
+# Visualisation: Sampling distribution vs. Population distribution
 # ----------------------------------
 
 # < Make transparent colors in R >
@@ -1603,7 +1603,7 @@ lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2)
 
 
 # ----------------------------------
-# Visualization: Central Limit Theorem (CLT)
+# Visualisation: Central Limit Theorem (CLT)
 # ----------------------------------
 
 # ----------------------------------
