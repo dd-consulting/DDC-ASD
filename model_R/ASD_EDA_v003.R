@@ -8,6 +8,7 @@
 # ----------------------------------
 # Set working directory
 # ----------------------------------
+setwd("~/Desktop/admin-desktop/vm_shared_folder/git/DDC-ASD/model_R")
 setwd("/media/sf_vm_shared_folder/git/DDC/DDC-ASD/model_R")
 getwd()
 options(warn=-1) # Turning off unnecessary warning messages. To reset: options(warn=0)
@@ -186,8 +187,9 @@ ASD_National$Source # Nominal categorical variable
 # Optionally, export the processed dataframe data to CSV file.
 # ----------------------------------
 write.csv(ASD_National, file = "../dataset/ADV_ASD_National_R.csv", sep = ',', row.names = FALSE)
-ASD_National <- read.csv("../dataset/ADV_ASD_National_R.csv")
-ASD_National$Year_Factor <- factor(ASD_National$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+# Read back in above saved file:
+# ASD_National <- read.csv("../dataset/ADV_ASD_National_R.csv")
+# ASD_National$Year_Factor <- factor(ASD_National$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
 
 
 # ----------------------------------
@@ -1096,8 +1098,9 @@ lapply(select_if(ASD_State, is.factor), levels)
 # Optionally, export the processed dataframe data to CSV file.
 # ----------------------------------
 write.csv(ASD_State, file = "../dataset/ADV_ASD_State_R.csv", sep = ',', row.names = FALSE)
-ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
-ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+# Read back in above saved file:
+# ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+# ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
 
 
 # ----------------------------------
@@ -1495,18 +1498,187 @@ cowplot::plot_grid(
 # ----------------------------------
 # Export current plot as image file
 # ----------------------------------
-ggsave("Prevalence Estimates by Geographic Area [NSCH] [2004-2016].png", width = 60, height = 30, units = 'cm')
+ggsave("plot Map Prevalence Estimates by Geographic Area [NSCH] [2004-2016].png", width = 60, height = 30, units = 'cm')
 
 
 # ----------------------------------
-# Mean, Median, Central Tendency
+# Sampling & Normality
 # ----------------------------------
 
-# Sample median [0]
-median(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
-boxplot(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
+# ----------------------------------
+# Create a *Population* of US. State level ASD Prevalence from Source SPED in Year 2016 
+# ----------------------------------
+ASD_State_SPED_2016 <- subset(ASD_State, Source == 'sped' & Year == 2016, select=c('State', 'Prevalence'))
+dim(ASD_State_SPED_2016)
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+
+# ----------------------------------
+# Central Limit Theorem (CLT)
+# ----------------------------------
+# Create a *Sample* from ASD_State_SPED_2016$Prevalence,
+# with sample size n =
+clt_n = 10
+# clt_n = 40
+
+set.seed(88)
+clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
+clt_sample_1
+plot(density(clt_sample_1), col="grey", lwd=2) 
+hist(clt_sample_1, probability = T, add = T)
+
+# Repeatedly sample for k times, create a matrix/array to store these samples
+clt_k = 100000
+set.seed(88)
+clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = 10)))
+# first few samples
+clt_sample_k[, 1:6]
+# last sample
+clt_sample_k[,clt_k]
+
+# mean values of first few samples
+mean(clt_sample_k[, 1:6])
+# or use apply() function to loop
+apply(clt_sample_k[, 1:6], 2, mean)
+
+# ----------------------------------
+# k sample's distributions (k many)
+# ----------------------------------
+# Show the first few sample's histogram
+par(mfrow=c(2, 3))
+apply(clt_sample_k[, 1:6], 2, FUN=hist)
+# Reset
+par(mfrow=c(1, 1))
+
+# We can see that sample's distributions are quite different.
+
+# ----------------------------------
+# Sampling distribution (only one)
+# ----------------------------------
+
+# Calculate sample mean value for k samples
+clt_sample_k_mean <- apply(clt_sample_k, 2, mean)
+
+# Show first few sample means
+clt_sample_k_mean[1:6]
+
+# histogram of sample means
+plot(density(clt_sample_k_mean), col="grey", lwd=2) 
+hist(clt_sample_k_mean, probability = T, add = T)
+
+# k *Sample* (sample size = n) mean Prevalence
+mean(clt_sample_k_mean)
+
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+
+
+# ----------------------------------
+# Visualization: Sampling distribution vs. Population distribution
+# ----------------------------------
+
+# < Make transparent colors in R >
+# https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+# col2rgb(c("cyan", "grey", "red")) / 255
+
+# Sample means histogram in probability (Sampling disribution)
+hist(clt_sample_k_mean, probability = T, 
+     col=rgb(0,1,1,0.5), # https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.5)),
+     main = 'Sampling Distribution vs. Population distribution')
+# Overlay curve:
+# Sample (Prevalence) density (Sampling disribution)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Population Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.5)),
+     main = 'Population Distribution', add = T)
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2) 
+
+
+# ----------------------------------
+# Visualization: Central Limit Theorem (CLT)
+# ----------------------------------
+
+# ----------------------------------
+# Sampling distribution vs. Population distribution vs. Z-Norm
+# ----------------------------------
+# Create:
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.5)),
+     main = 'Visualize Central Limit Theorem (CLT)')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2) 
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="red", lwd=2) 
+
+# Overlay curve:
+# # Z-Norm with mean = mean of Population (Prevalence) & std-dev = std-dev of Population (Prevalence)
+curve(dnorm(x, 
+            mean(ASD_State_SPED_2016$Prevalence),
+            sd(ASD_State_SPED_2016$Prevalence)), 
+      add=TRUE, col="red", lwd=2)
+
+# Overlay:
+# Overlay curve:
+# Sample (Prevalence) density (Sampling disribution)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+# Overlay line:
+# mean of Sampling distribution (of Prevelance, sample size n) 
+abline(v=mean(clt_sample_k_mean), col="cyan2", lwd=2, lty=3) 
+
+# mean estimation is good (values are close).
+mean(clt_sample_k_mean)
+mean(ASD_State_SPED_2016$Prevalence)
+
+# Actual SE (for mean prevalence) = Population standard deviation / square root of sample size
+sd(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)
+# Estimated SE (for mean prevalence) = std-dev of Sampling distribution
+sd(clt_sample_k_mean)
+
+
+# ----------------------------------
+# Evaluate normality
+# ----------------------------------
+# Construct a Quantile-Quantile Plot (QQ plot)
+# https://youtu.be/okjYjClSjOg
+
+par(mfrow=c(1, 2))
+# Sample means
+qqnorm(clt_sample_k_mean, col="grey", 
+       xlab="z Value", ylab="Prevalence")
+qqline(clt_sample_k_mean, col="red", lwd=2)
+# Population
+qqnorm(ASD_State_SPED_2016$Prevalence, col="grey4", 
+       xlab="z Value", ylab="Prevalence")
+qqline(ASD_State_SPED_2016$Prevalence, col="red", lwd=2)
+# Reset
+par(mfrow=c(1, 1))
+
+# Alternatively, use shapiro.test() to test Normality
+set.seed(88)
+shapiro.test(sample(x = clt_sample_k_mean, size = 1000))
+shapiro.test(ASD_State_SPED_2016$Prevalence)
+
+
+# ----------------------------------
+# Estimation : Mean & Confidence Interval (CI)
+# ----------------------------------
 #
-# Analyze/Estimate Population mean of Prevalence ( State: All , Source: ADDM, Year: 2014 )
+# Analyze/Estimate Population mean of Prevalence ( State: Available ones , Source: ADDM, Year: 2014 )
 #
 # Sample mean [1]
 mean(ASD_State$Prevalence[ASD_State$Source == 'addm' & ASD_State$Year == 2014])
@@ -1523,7 +1695,7 @@ mean(ASD_National$Prevalence[ASD_National$Source == 'addm' & ASD_National$Year =
 
 
 # ----------------------------------
-# Confidence Interval
+# Calculate Confidence Interval
 # ----------------------------------
 
 # ----------------------------------

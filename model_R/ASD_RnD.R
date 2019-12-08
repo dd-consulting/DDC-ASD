@@ -1,3 +1,4 @@
+
 ###########################################################
 # Study of Autism Spectrum Disorder (ASD)
 # https://www.cdc.gov/ncbddd/autism/data/index.html#explore
@@ -8,6 +9,7 @@
 # ----------------------------------
 # Set working directory
 # ----------------------------------
+setwd("~/Desktop/admin-desktop/vm_shared_folder/git/DDC-ASD/model_R")
 setwd("/media/sf_vm_shared_folder/git/DDC/DDC-ASD/model_R")
 getwd()
 options(warn=-1) # Turning off unnecessary warning messages. To reset: options(warn=0)
@@ -1670,6 +1672,20 @@ binom.confint (x=295, n=45322, conf.level =0.95, method="all")
 # Sampling & Normality
 # ----------------------------------
 
+# ----------------------------------
+# Optionally, export the processed dataframe data to CSV file.
+# ----------------------------------
+# write.csv(ASD_State, file = "../dataset/ADV_ASD_State_R.csv", sep = ',', row.names = FALSE)
+ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+
+# ASD_State_ADDM <- subset(ASD_State, Year == 2014 & Source == 'addm')
+ASD_State_ADDM <- subset(ASD_State, Source == 'addm')
+ASD_State_MEDI <- subset(ASD_State, Source == 'medi')
+ASD_State_NSCH <- subset(ASD_State, Source == 'nsch')
+ASD_State_SPED <- subset(ASD_State, Source == 'sped')
+
+
 # Create a *Population* of US. State level ASD Prevalence from Source SPED in Year 2016 
 ASD_State_SPED_2016 <- subset(ASD_State, Source == 'sped' & Year == 2016, select=c('State', 'Prevalence'))
 dim(ASD_State_SPED_2016)
@@ -1678,37 +1694,188 @@ mean(ASD_State_SPED_2016$Prevalence)
 
 # Central Limit Theorem (CLT)
 # Create a *Sample* from ASD_State_SPED_2016$Prevalence,
-# with sample size n = 10
+# with sample size n =
 clt_n = 10
-set.seed(0)
+clt_n = 40
+set.seed(88)
 clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
-plot(density(clt_sample_1))
-# Repeatedly sample for k times, create a matrix/array to store these samples
-clt_k = 1000000
-set.seed(0)
-clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = 10)))
-clt_sample_k
+clt_sample_1
+plot(density(clt_sample_1), col="grey", lwd=2) 
+hist(clt_sample_1, probability = T, add = T)
 
-clt_sample_k[,1]
-clt_sample_k[,2]
+# Repeatedly sample for k times, create a matrix/array to store these samples
+clt_k = 100000
+set.seed(88)
+clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = 10)))
+# first few samples
+clt_sample_k[, 1:6]
+# last sample
 clt_sample_k[,clt_k]
 
-mean(clt_sample_k[,1])
-mean(clt_sample_k[,2])
-mean(clt_sample_k[,3])
-mean(clt_sample_k[,clt_k])
+# mean values of first few samples
+mean(clt_sample_k[, 1:6])
+# or use apply() function to loop
+apply(clt_sample_k[, 1:6], 2, mean)
+
+# ----------------------------------
+# k sample's distributions (k many)
+# ----------------------------------
+# Show the first few sample's histogram
+par(mfrow=c(2, 3))
+apply(clt_sample_k[, 1:6], 2, FUN=hist)
+# Reset
+par(mfrow=c(1, 1))
+
+# We can see that sample's distributions are quite different.
+
+# ----------------------------------
+# Sampling distribution (only one)
+# ----------------------------------
 
 # Calculate sample mean value for k samples
 clt_sample_k_mean <- apply(clt_sample_k, 2, mean)
-# clt_sample_k_mean
-hist(clt_sample_k_mean, breaks = 50)
+
+# Show first few sample means
+clt_sample_k_mean[1:6]
+
+# histogram of sample means
+plot(density(clt_sample_k_mean), col="grey", lwd=2) 
+hist(clt_sample_k_mean, probability = T, add = T)
 
 # k *Sample* (sample size = n) mean Prevalence
 mean(clt_sample_k_mean)
+
 # *Population* mean Prevalence
 mean(ASD_State_SPED_2016$Prevalence)
 
-#########################
+
+# ----------------------------------
+# Visualization: Sampling distribution vs. Population distribution
+# ----------------------------------
+
+# < Make transparent colors in R >
+# https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+# col2rgb(c("cyan", "grey", "red")) / 255
+
+# Sample means histogram in probability (Sampling disribution)
+hist(clt_sample_k_mean, probability = T, 
+     col=rgb(0,1,1,0.5), # https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.5)),
+     main = 'Sampling Distribution vs. Population distribution')
+# Overlay curve:
+# Sample (Prevalence) density (Sampling disribution)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Population Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.5)),
+     main = 'Population Distribution', add = T)
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2) 
+
+
+# ----------------------------------
+# Visualization: Central Limit Theorem (CLT)
+# ----------------------------------
+
+# ----------------------------------
+# Sampling distribution vs. Population distribution vs. Z-Norm
+# ----------------------------------
+# Create:
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.5)),
+     main = 'Visualize Central Limit Theorem (CLT)')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2) 
+
+# Overlay curve:
+# # Z-Norm with mean = mean of Population (Prevalence) & std-dev = std-dev of Population (Prevalence)
+curve(dnorm(x, 
+            mean(ASD_State_SPED_2016$Prevalence),
+            sd(ASD_State_SPED_2016$Prevalence)), 
+      add=TRUE, col="red", lwd=2)
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="red", lwd=2) 
+
+# Overlay:
+# Overlay curve:
+# Sample (Prevalence) density (Sampling disribution)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+# Overlay line:
+# mean of Sampling distribution (of Prevelance, sample size n) 
+abline(v=mean(clt_sample_k_mean), col="cyan2", lwd=2, lty=3) 
+
+# mean estimation is good (values are close).
+mean(clt_sample_k_mean)
+mean(ASD_State_SPED_2016$Prevalence)
+
+# Actual SE (for mean prevalence) = Population standard deviation / SQRT(sample size)
+sd(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)
+# Estimated SE (for mean prevalence) = std-dev of Sampling distribution
+sd(clt_sample_k_mean)
+
+
+# ----------------------------------
+# Evaluate normality
+# ----------------------------------
+# Construct a Quantile-Quantile Plot (QQ plot)
+# https://youtu.be/okjYjClSjOg
+
+par(mfrow=c(1, 2))
+# Sample means
+qqnorm(clt_sample_k_mean, col="grey", 
+       xlab="z Value", ylab="Prevalence")
+qqline(clt_sample_k_mean, col="red", lwd=2)
+# Population
+qqnorm(ASD_State_SPED_2016$Prevalence, col="grey4", 
+       xlab="z Value", ylab="Prevalence")
+qqline(ASD_State_SPED_2016$Prevalence, col="red", lwd=2)
+# Reset
+par(mfrow=c(1, 1))
+
+# Alternatively, use shapiro.test() to test Normality
+set.seed(88)
+shapiro.test(sample(x = clt_sample_k_mean, size = 1000))
+shapiro.test(ASD_State_SPED_2016$Prevalence)
+
+
+# ----------------------------------
+# 
+# ----------------------------------
+
+
+# t distribution
+curve(dt(x, df=24), from = -5, to = 5, col = "blue", 
+      xlab = "t statistic", ylab = "density", lwd = 2)
+abline(v=qt( 0.01, df=24), col="blue", lwd=2) # left area under curve:    1% probability
+abline(v=qt(0.025, df=24), col="blue", lwd=2) # left area under curve:  2.5% probability
+abline(v=qt( 0.05, df=24), col="blue", lwd=2) # left area under curve:    5% probability
+abline(v=qt( 0.25, df=24), col="blue", lwd=2) # left area under curve:   25% probability
+abline(v=qt(  0.5, df=24), col="blue", lwd=2) # left area under curve:   50% probability
+abline(v=qt( 0.75, df=24), col="blue", lwd=2) # left area under curve:   75% probability
+abline(v=qt( 0.95, df=24), col="blue", lwd=2) # left area under curve:   95% probability
+abline(v=qt(0.975, df=24), col="blue", lwd=2) # left area under curve: 97.5% probability
+abline(v=qt( 0.99, df=24), col="blue", lwd=2) # left area under curve:   99% probability
+abline(v=t_score, col="dark orange", lwd=2)
+abline(v=t_score*-1, col="dark orange", lwd=2)
+
+
+# ----------------------------------
+# 
+# ----------------------------------
+
+
 
 
 x <- ASD_State_SPED_2016$Prevalence
@@ -1732,9 +1899,86 @@ all.equal(mat2,mat3)
 #[1] TRUE
 
 
+# ----------------------------------
+# 
+# ----------------------------------
+
+
+
+par(mfrow=c(2, 3))
+lapply(clt_sample_k[,1:4], FUN=hist)
+
+hist(clt_sample_k[,1], probability = T)
+
+hist(clt_sample_k[,2], probability = T)
+hist(clt_sample_k[,3], probability = T)
+hist(clt_sample_k[,4], probability = T)
+hist(clt_sample_k[,5], probability = T)
+hist(clt_sample_k[,6], probability = T)
+
+par(mfrow=c(1, 1))
+
+
+
+
+
+
+list <-lapply(1:ncol(mtcars),
+              function(col) ggplot2::qplot(mtcars[[col]],
+                                           geom = "histogram",
+                                           binwidth = 1))
+
+cowplot::plot_grid(plotlist = list)
+
+dim(clt_sample_k)
+
+ncol(clt_sample_k)
+clt_sample_k[,1]
+
+list <-lapply(1:6,
+              function(k) ggplot2::qplot(clt_sample_k[,k],
+                                           geom = "histogram",
+                                           binwidth = 2))
+
+cowplot::plot_grid(plotlist = list)
+
+
+
+
+# Add mean line to the histogram plot.
+# Change fill color and line color
+ggplot2.histogram(data=weight, xName='weight',
+                  fill="white", color="black",
+                  addMeanLine=TRUE, meanLineColor="red",
+                  meanLineType="dashed", meanLineSize=1)
+# Add density curve
+ggplot2.histogram(data=weight, xName='weight',
+                  fill="white", color="black",
+                  addDensityCurve=TRUE, densityFill='#FF6666')
+
+
+
 
 # Create histogram using ggplot2
-ggplot(ASD_National, aes(x=Prevalence, alpha = 0.1)) + geom_histogram(binwidth = 5)
+ggplot(ASD_National, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
+
+ggplot(ASD_State_SPED_2016, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
+
+ggplot() + 
+  geom_histogram(clt_sample_k[,1], aes(x=Prevalence), binwidth = 5)
+
+ggplot(ASD_State_SPED_2016, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
+
+ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
+  geom_histogram(binwidth = 5) +
+  theme_bw() + theme(legend.position="right") +
+  scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
+                                               "medi" = "orange", 
+                                               "nsch" = "darkred",
+                                               "sped" = "skyblue"))
+
+
+
 
 # Use color to differentiate sub-group data
 ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
@@ -1773,6 +2017,34 @@ ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 
 
 
 
+
+# ----------------------------------
+# 
+# ----------------------------------
+
+## import data
+BondFunds = read.csv("BondFunds.csv")
+
+attach(BondFunds)
+
+## histogram with normal curve
+hist(Return2009, breaks=15, prob=T)
+curve(dnorm(x, mean(Return2009), sd(Return2009)),
+      add=TRUE, col="red", lwd=2)
+lines(density(Return2009), col="blue")
+
+detach(BondFunds)
+
+
+
+attach(BondFunds)
+
+## construct a q-q plot
+qqnorm(Return2009, col="blue", xlab="z Value", 
+       ylab="Return2009")
+qqline(Return2009, col="red", lwd=2)
+
+detach(BondFunds)
 
 
 
