@@ -4,7 +4,6 @@
 # https://www.cdc.gov/ncbddd/autism/index.html
 ###########################################################
 
-# 2019 12 03
 # ----------------------------------
 # Set working directory
 # ----------------------------------
@@ -256,11 +255,11 @@ hist(ASD_National$Male.Prevalence)
 hist(ASD_National$Female.Prevalence)
 # Histogram with annotations
 hist(ASD_National$Prevalence,
-        main = "Frequency of National ASD Prevalence",
-        xlab = "Prevalence per 1,000 Children",
-        ylab = "Frequency or Occurrences",
-        sub  = "Year 2000 - 2016",
-        col.main="blue", col.lab="black", col.sub="darkgrey")
+     main = "Frequency of National ASD Prevalence",
+     xlab = "Prevalence per 1,000 Children",
+     ylab = "Frequency or Occurrences",
+     sub  = "Year 2000 - 2016",
+     col.main="blue", col.lab="black", col.sub="darkgrey")
 
 
 # Density plot
@@ -302,7 +301,7 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
         ylab = "Prevalence per 1,000 Children",
         sub  = "Year 2000 - 2016",
         col.main="blue", col.lab="black", col.sub="darkgrey"
-        )
+)
 
 
 # ----------------------------------
@@ -421,25 +420,25 @@ plot(ASD_National$Year[ASD_National$Source == 'addm'],
      col.main="black", col.lab="black", col.sub="grey",
      frame = FALSE, # Remove frame
      axes=FALSE # Remove x and y axis
-     )
+)
 axis(1, at=seq(2000, 2016, 1)) # Customize x axis
 axis(2, at=seq(0, 30, 5)) # Customize y axis
 
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'medi'], 
-     ASD_National$Prevalence[ASD_National$Source == 'medi'], 
-     pch = 1, col = "orange", type = "b", lty = 1, lwd = 2
-     )
+      ASD_National$Prevalence[ASD_National$Source == 'medi'], 
+      pch = 1, col = "orange", type = "b", lty = 1, lwd = 2
+)
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'nsch'], 
       ASD_National$Prevalence[ASD_National$Source == 'nsch'], 
       pch = 2, col = "darkred", type = "b", lty = 1, lwd = 2
-      )
+)
 # Add another line
 lines(ASD_National$Year[ASD_National$Source == 'sped'], 
       ASD_National$Prevalence[ASD_National$Source == 'sped'], 
       pch = 5, col = "skyblue", type = "b", lty = 1, lwd = 2
-      )
+)
 # Add a legend to the plot
 legend("topleft", legend=levels(ASD_National$Source),
        col=c("darkblue", "orange", "darkred", "skyblue"), 
@@ -448,7 +447,7 @@ legend("topleft", legend=levels(ASD_National$Source),
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-       )
+)
 
 # ----------------------------------
 # [addm] < Prevalence Varies by Sex >
@@ -499,12 +498,12 @@ lines(ASD_National$Year[ASD_National$Source == 'addm'],
 # Add a legend to the plot
 legend("topleft", legend=c('ADDM Average', 'Female with 95% CI', 'Male with 95% CI'),
        col=c("grey", "orange", "blue"), 
-#       pch = 20, # dot in a line
+       #       pch = 20, # dot in a line
        lty = 1, # line type
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-       )
+)
 
 # ----------------------------------
 # [addm] < Prevalence Varies by Race and Ethnicity >
@@ -558,7 +557,7 @@ legend("topleft", legend=c('ADDM Average',
        lwd = 2, # line width
        cex=0.8, # size of text
        bty = 'n' # Without frame
-       )
+)
 
 
 # ----------------------------------
@@ -711,7 +710,7 @@ ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
 
 
 # ----------------------------------
-# Density plot (distribution for continuous variable)
+# Density plot (normalized distribution for continuous variable)
 # ----------------------------------
 # Create plot using R graphics
 plot(density(ASD_National$Prevalence))
@@ -742,7 +741,7 @@ ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 
        title="Density of Prevalence by Data Source") +
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
         axis.title = element_text(face = 'plain', color = "darkslategrey")) + 
-facet_wrap(~Source)
+  facet_wrap(~Source)
 
 
 # ----------------------------------
@@ -859,13 +858,13 @@ p <- ggplot(ASD_National, aes(x = Year, y = Prevalence)) +
 p
 # Optionally, add data values/labels
 p + geom_text(aes(label = round(Prevalence, 1)), # Values are rounded for display
-          vjust = "outward", 
-#          nudge_y = 0.2, # optionally life the text
-          hjust = "outward", 
-          check_overlap = TRUE,
-          size = 3, # size of textual data label
-          col = 'darkslategrey'
-          )
+              vjust = "outward", 
+              #          nudge_y = 0.2, # optionally life the text
+              hjust = "outward", 
+              check_overlap = TRUE,
+              size = 3, # size of textual data label
+              col = 'darkslategrey'
+)
 
 
 # ----------------------------------
@@ -937,8 +936,8 @@ p <- ggplot(ASD_National_ADDM, aes(x = Year, y = Prevalence)) +
                       values = c(ADDM_Average="darkslategrey", Female_Prevalence="orange", Male_Prevalence="blue"))
 # Add title, axis label, and axis scale
 p <- p + scale_y_continuous(name = "Prevalence per 1,000 Children",
-                         breaks = seq(0, 30, 5),
-                         limits=c(0, 30)) +
+                            breaks = seq(0, 30, 5),
+                            limits=c(0, 30)) +
   scale_x_continuous(name = "Year", 
                      breaks = seq(2000, 2016, 1), 
                      limits = c(2000, 2016)) +
@@ -1163,10 +1162,10 @@ p
 # ----------------------------------
 
 p <- ggplot(ASD_State_ADDM, aes(x = reorder(State_Full2, Prevalence, FUN = median), # Order States by median of Prevalence  
-                           y = Prevalence)) + 
+                                y = Prevalence)) + 
   geom_boxplot(aes(fill = reorder(State_Full2, Prevalence, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
-#  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
+  #  geom_boxplot(fill = 'darkslategrey', alpha = 0.2) + 
   scale_y_continuous(name = "Prevalence per 1,000 Children",
                      breaks = seq(0, 30, 5),
                      limits=c(0, 30)) +
@@ -1208,13 +1207,13 @@ ASD_State_Subset <- subset(ASD_State, Source == 'addm' & Year == 2014)
 
 # Bar plot/chart for < No. Children surveyed by State [ADDM] [Year 2014] >
 p <- ggplot(ASD_State_Subset, aes(x = reorder(State_Full1, Denominator, FUN = median), # Order States by median of Denominator  
-                             y = Denominator)) + 
+                                  y = Denominator)) + 
   geom_bar(stat="identity", aes(fill = reorder(State_Full1, Denominator, FUN = median))) + # fill color by State
   scale_fill_discrete(guide = guide_legend(title = "US. States")) + # Legend Name
   scale_x_discrete(name = "US. States") +
   scale_y_continuous(name = "No. Children (Denominator)") +
   ggtitle("No. Children surveyed by State [ADDM] [Year 2014]") +
-#  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5) + # Show data label inside bars
+  #  geom_text(aes(label=Denominator), vjust=1.6, color="darkslategrey", size=3.5) + # Show data label inside bars
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
         axis.title = element_text(face = 'plain', color = "darkslategrey"),
         legend.position="none") 
@@ -1269,18 +1268,18 @@ p
 # Add Lower.CI
 p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Lower.CI,
                                                 shape=Source # point shape
-                                                ), 
-                   size = 2 # point size
+), 
+size = 2 # point size
 ) +
-#  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
+  #  geom_text(aes(label=Lower.CI), hjust=-0.1, vjust=3, color="darkslategrey", size=2.5) + # Show data label inside bars 
   scale_shape_manual(values=3)  # manual define point shape
 # Show plot
 p
 # Add Upper.CI
 p = p + geom_point(data = ASD_State_Subset, aes(x = reorder(State_Full1, Prevalence, median), y = Upper.CI, 
                                                 shape=Source # point shape
-                                                ), 
-                   size = 2 # point size
+), 
+size = 2 # point size
 ) 
 #  geom_text(aes(label=Upper.CI), hjust=-0.1, vjust=-3, color="darkslategrey", size=2.5) # Show data label inside bars 
 # Show plot
@@ -1382,10 +1381,10 @@ p_dynamic
 # Show plot in facet_grid
 p + facet_grid(facets = . ~ State_Full1) + 
   theme(legend.position = "none", # Hide legend
-      axis.text.x=element_blank(),  # Hide axis
-      axis.ticks.x=element_blank(), # Hide axis
-      panel.background = element_blank() # Remove panel background
-      ) 
+        axis.text.x=element_blank(),  # Hide axis
+        axis.ticks.x=element_blank(), # Hide axis
+        panel.background = element_blank() # Remove panel background
+  ) 
 
 
 # ----------------------------------
@@ -1421,10 +1420,10 @@ ASD_State_Subset$state = ASD_State_Subset$State
 
 # Show data on map
 p_map_addm_2014 <- plot_usmap(data = ASD_State_Subset, values = Map_Data_Value, 
-                    color = "white", # map line colour
-                    labels = TRUE,  # State name shown
-                    label_color = 'white' # State name colour
-                    ) + 
+                              color = "white", # map line colour
+                              labels = TRUE,  # State name shown
+                              label_color = 'white' # State name colour
+) + 
   scale_fill_continuous(
     na.value = "lightgrey", # Set colour with no State data
     low="lightblue1", high = "darkblue", 
@@ -1524,22 +1523,31 @@ clt_n = 10
 set.seed(88)
 clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
 clt_sample_1
-plot(density(clt_sample_1), col="grey", lwd=2) 
+plot(density(clt_sample_1), col="darkgrey", lwd=2) 
 hist(clt_sample_1, probability = T, add = T)
 
 # Repeatedly sample for k times, create a matrix/array to store these samples
-clt_k = 100000
+clt_k = 10000
 set.seed(88)
-clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = 10)))
+clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n)))
 # first few samples
 clt_sample_k[, 1:6]
 # last sample
-clt_sample_k[,clt_k]
+clt_sample_k[, clt_k]
 
 # mean values of first few samples
-mean(clt_sample_k[, 1:6])
+mean(clt_sample_k[, 1])
+mean(clt_sample_k[, 2])
+mean(clt_sample_k[, 3])
 # or use apply() function to loop
 apply(clt_sample_k[, 1:6], 2, mean)
+
+# std-dev values of first few samples
+sd(clt_sample_k[, 1])
+sd(clt_sample_k[, 2])
+sd(clt_sample_k[, 3])
+# or use apply() function to loop
+apply(clt_sample_k[, 1:6], 2, sd)
 
 # ----------------------------------
 # k sample's distributions (k many)
@@ -1549,6 +1557,46 @@ par(mfrow=c(2, 3))
 apply(clt_sample_k[, 1:6], 2, FUN=hist)
 # Reset
 par(mfrow=c(1, 1))
+
+# Show the first few sample's density, together with Population
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', 
+     ylim = (c(0, 0.6)),
+     main = 'Visualize Population & Samples')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay:
+# First few sample's density & mean
+lines(density(clt_sample_k[, 1]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 1]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 2]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 2]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 3]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 2]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 4]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 4]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 5]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 5]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 6]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 6]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, clt_k]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, clt_k]), col="blue", lwd=1) 
 
 # We can see that sample's distributions are quite different.
 
@@ -1562,44 +1610,33 @@ clt_sample_k_mean <- apply(clt_sample_k, 2, mean)
 # Show first few sample means
 clt_sample_k_mean[1:6]
 
-# histogram of sample means
-plot(density(clt_sample_k_mean), col="red", lwd=2) 
-hist(clt_sample_k_mean, probability = T, add = T, breaks = 500)
+# Calculate sample std-dev value for k samples
+clt_sample_k_sd <- apply(clt_sample_k, 2, sd)
+
+# Show first few samples' std-dev
+clt_sample_k_sd[1:6]
+
+# histogram of sample means (Sampling distribution of the mean)
+hist(clt_sample_k_mean, probability = T, breaks = 500)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+
+# histogram of sample std-dev
+hist(clt_sample_k_sd, probability = T, breaks = 500)
+lines(density(clt_sample_k_sd), col="cyan2", lwd=2) 
 
 # k *Sample* (sample size = n) mean Prevalence
 mean(clt_sample_k_mean)
-
 # *Population* mean Prevalence
 mean(ASD_State_SPED_2016$Prevalence)
 
+# Avarage std-dev of k *Sample* (sample size = n)
+mean(clt_sample_k_sd)
+# sd of *Population* Prevalence
+sd(ASD_State_SPED_2016$Prevalence)
+# std-dev of Sampling distribution of the mean (Prevalence)
+sd(clt_sample_k_mean)
 
-# ----------------------------------
-# Visualisation: Sampling distribution vs. Population distribution
-# ----------------------------------
-
-# < Make transparent colors in R >
-# https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
-# col2rgb(c("cyan", "grey", "red")) / 255
-
-# Sample means histogram in probability (Sampling disribution)
-hist(clt_sample_k_mean, probability = T, 
-     col=rgb(0,1,1,0.5), # https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
-     xlab = 'Prevalvence', xlim = (c(0, 25)),
-     ylab = 'Probability Density', ylim = (c(0, 0.5)),
-     main = 'Sampling Distribution vs. Population distribution')
-# Overlay curve:
-# Sample (Prevalence) density (Sampling disribution)
-lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
-
-# Population (Prevalence) histogram in probablity
-hist(ASD_State_SPED_2016$Prevalence, probability = T, 
-     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
-     xlab = 'Population Prevalvence', xlim = (c(0, 25)),
-     ylab = 'Probability Density', ylim = (c(0, 0.5)),
-     main = 'Population Distribution', add = T)
-# Overlay curve:
-# Population (Prevalence) density
-lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2) 
+# Note that the above three std-dev are different.
 
 
 # ----------------------------------
@@ -1614,25 +1651,23 @@ lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2)
 hist(ASD_State_SPED_2016$Prevalence, probability = T, 
      col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
      xlab = 'Prevalvence', xlim = (c(0, 25)),
-     ylab = 'Probability Density', ylim = (c(0, 0.5)),
+     ylab = 'Probability Density', ylim = (c(0, 0.6)),
      main = 'Visualize Central Limit Theorem (CLT)')
 
 # Overlay curve:
 # Population (Prevalence) density
-lines(density(ASD_State_SPED_2016$Prevalence), col="darkgrey", lwd=2) 
+lines(density(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
 
 # Overlay line:
 # mean = mean of Population (Prevalence)
-abline(v=mean(ASD_State_SPED_2016$Prevalence), col="red", lwd=2) 
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="black", lwd=2) 
 
-# Overlay curve:
-# # Z-Norm with mean = mean of Population (Prevalence) & std-dev = std-dev of Population (Prevalence)
-curve(dnorm(x, 
-            mean(ASD_State_SPED_2016$Prevalence),
-            sd(ASD_State_SPED_2016$Prevalence)), 
-      add=TRUE, col="red", lwd=2)
+# Overlay line:
+# Sample means histogram in probability (Sampling disribution)
+hist(clt_sample_k_mean, probability = T, 
+     col=rgb(0,1,1,0.3), # https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+     add=T)
 
-# Overlay:
 # Overlay curve:
 # Sample (Prevalence) density (Sampling disribution)
 lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
@@ -1640,14 +1675,40 @@ lines(density(clt_sample_k_mean), col="cyan2", lwd=2)
 # mean of Sampling distribution (of Prevelance, sample size n) 
 abline(v=mean(clt_sample_k_mean), col="cyan2", lwd=2, lty=3) 
 
+# < How to make transparent colors in R >
+# https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+# col2rgb(c("cyan", "grey", "red")) / 255
+
 # mean estimation is good (values are close).
 mean(clt_sample_k_mean)
 mean(ASD_State_SPED_2016$Prevalence)
 
-# Actual SE (for mean prevalence) = Population standard deviation / square root of sample size
+# ----------------------------------
+# Standard Error (SE) (of mean prevalence) = 
+# std-dev of the Sampling distribution (of mean prevalence)
+# ----------------------------------
+# https://en.wikipedia.org/wiki/Sampling_distribution
+# [1] When Population std-dev is known, SE using Population standard deviation:
 sd(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)
-# Estimated SE (for mean prevalence) = std-dev of Sampling distribution
-sd(clt_sample_k_mean)
+# [2] When Population std-dev is NOT known, SE using Sample's standard deviation: (Average of std-dev of k Samples)
+mean(clt_sample_k_sd) / sqrt(clt_n)
+# In cases, only one sample is observed/obtained:
+clt_sample_k_sd[1] / sqrt(clt_n)
+
+# Overlay curve:
+# *Theoretic* Distribution of the mean with std-dev = SE, calculated based on population std-dev
+# mean = mean of Population (Prevalence) & std-dev = std-dev of Population (Prevalence) / square root of sample size n
+curve(dnorm(x, 
+            mean(ASD_State_SPED_2016$Prevalence), # Actual Population mean
+            sd(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)), # Actual SE (for mean prevalence) = Population standard deviation / square root of sample size
+      add=TRUE, col="red", lwd=2, lty=3)
+
+# Overlay curve:
+# *Estimated* Distribution of the mean with std-dev = SE, calculated base on average sample std-dev
+curve(dnorm(x, 
+            mean(mean(clt_sample_k_mean)), # Estimated Population mean
+            mean(clt_sample_k_sd) / sqrt(clt_n)), # Estimated SE 
+      add=TRUE, col="blue", lwd=2, lty=3)
 
 
 # ----------------------------------
@@ -1658,13 +1719,13 @@ sd(clt_sample_k_mean)
 
 par(mfrow=c(1, 2))
 # Sample means
-qqnorm(clt_sample_k_mean, col="grey", 
+qqnorm(clt_sample_k_mean, col="darkgrey", 
        xlab="z Value", ylab="Prevalence")
-qqline(clt_sample_k_mean, col="red", lwd=2)
+qqline(clt_sample_k_mean, col="red", lwd=2, lty=3)
 # Population
-qqnorm(ASD_State_SPED_2016$Prevalence, col="grey4", 
+qqnorm(ASD_State_SPED_2016$Prevalence, col="darkgrey", 
        xlab="z Value", ylab="Prevalence")
-qqline(ASD_State_SPED_2016$Prevalence, col="red", lwd=2)
+qqline(ASD_State_SPED_2016$Prevalence, col="red", lwd=2, lty=3)
 # Reset
 par(mfrow=c(1, 1))
 
@@ -1693,7 +1754,7 @@ clt_n = 10
 set.seed(88)
 clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
 clt_sample_1
-plot(density(clt_sample_1), col="grey", lwd=2) 
+plot(density(clt_sample_1), col="darkgrey", lwd=2) 
 hist(clt_sample_1, probability = T, add = T)
 
 # Sample mean Prevalence
@@ -1779,7 +1840,8 @@ t.test(clt_sample_1, mu = mean(ASD_State_SPED_2016$Prevalence))
 # ----------------------------------
 
 # ----------------------------------
-# CI using Z (Standard Normal) distribution
+# CI using Z score interval  (standard normal distribution)
+# https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
 # ----------------------------------
 # No. Children with ASD
 ASD  <- ASD_State_SPED$Numerator_ASD[ASD_State_SPED$Year == 2016]
@@ -1817,10 +1879,9 @@ cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  1000*(sample_
 
 
 # ----------------------------------
-# CI using Chi-squared distribution (wilson score interval)
-# ----------------------------------
-
+# CI using Wilson score interval
 # https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+# ----------------------------------
 
 ASD[1]
 Children[1]
