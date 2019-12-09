@@ -249,7 +249,7 @@ table(ASD_National$Source_Full3, ASD_National$Year) # table(ASD_National$Year, A
 # EDA - Visualisation
 # ----------------------------------
 
-# Histogram
+# Histogram (distribution of binned continuous variable)
 hist(ASD_National$Prevalence)
 hist(ASD_National$Male.Prevalence)
 hist(ASD_National$Female.Prevalence)
@@ -262,7 +262,7 @@ hist(ASD_National$Prevalence,
      col.main="blue", col.lab="black", col.sub="darkgrey")
 
 
-# Density plot
+# Density plot (distribution for continuous variable normalized to 100% area under curve)
 plot(density(ASD_National$Prevalence))
 # Density plot with annotations
 plot(density(ASD_National$Prevalence),
@@ -635,7 +635,7 @@ p
 barplot(table(ASD_National$Source))
 
 # Create bar chart using ggplot2
-ggplot(ASD_National, aes(x = Source)) + geom_bar()
+ggplot(ASD_National, aes(x = Source)) + geom_bar(fill = "blue", alpha=0.5)
 # 
 ggplot(ASD_National, aes(x = Source, fill = factor(Year))) + geom_bar() + 
   theme(legend.position="top") + labs(fill = "Legend: Year")
@@ -658,14 +658,15 @@ ggplot(ASD_National, aes(x = Source, fill = Source)) + geom_bar() +
 
 
 # ----------------------------------
-# Histogram (binned distribution)
+# Histogram (distribution of binned continuous variable)
 # ----------------------------------
 
 # Create histogram using R graphics
 hist(ASD_National$Prevalence, breaks = 10)
 
 # Create histogram using ggplot2
-ggplot(ASD_National, aes(x=Prevalence)) + geom_histogram(binwidth = 5)
+ggplot(ASD_National, aes(x=Prevalence)) + 
+  geom_histogram(binwidth = 5, fill = "blue", color = "lightgrey", alpha=0.5)
 
 # Use color to differentiate sub-group data
 ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
@@ -710,7 +711,7 @@ ggplot(ASD_National, aes(x=Prevalence, fill = Source)) +
 
 
 # ----------------------------------
-# Density plot (normalized distribution for continuous variable)
+# Density plot (distribution for continuous variable normalized to 100% area under curve)
 # ----------------------------------
 # Create plot using R graphics
 plot(density(ASD_National$Prevalence))
@@ -718,6 +719,23 @@ plot(density(ASD_National$Prevalence))
 hist(ASD_National$Prevalence, probability = TRUE, add = TRUE)
 
 # Create plot using ggplot2
+p <- ggplot(ASD_State_SPED_2016) +
+  geom_density(aes(x=Prevalence), fill = "grey", color = "white", alpha=0.75) 
+p # Show
+# Optionally, overlay histogram
+p <- p + geom_histogram(aes(x = Prevalence, y = ..density..), binwidth = 1, fill = "blue", colour = "lightgrey", alpha=0.4) 
+p # Show
+# Optionally, overlay Prevalence mean
+p <- p + geom_vline(aes(xintercept = mean(ASD_State_SPED_2016$Prevalence)), colour="darkorange")
+p # Show
+# lastly, add other captions
+p <- p + coord_cartesian(xlim=c(0, 25), ylim=c(0, 0.3)) +
+  labs(x="Prevalence per 1,000 Children", y="Density", 
+       title=paste("Density of Prevalence ( mean =", mean(ASD_State_SPED_2016$Prevalence), ")")) +
+  theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
+        axis.title = element_text(face = 'plain', color = "darkslategrey"))
+p # Show
+
 # Prevelance distribution by Data Source
 ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 0.5) + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
@@ -731,7 +749,7 @@ ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 
         axis.title = element_text(face = 'plain', color = "darkslategrey"))
 
 # Prevelance distribution by Data Source with split
-ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), alpha = 0.5) + 
+ggplot(ASD_National) + geom_density(aes(x = Prevalence, fill = Source), colour = 'lightgrey', alpha = 0.75) + 
   scale_fill_manual("Data Source:", values = c("addm" = "darkblue", 
                                                "medi" = "orange", 
                                                "nsch" = "darkred",
