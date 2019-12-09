@@ -719,19 +719,19 @@ plot(density(ASD_National$Prevalence))
 hist(ASD_National$Prevalence, probability = TRUE, add = TRUE)
 
 # Create plot using ggplot2
-p <- ggplot(ASD_State_SPED_2016) +
+p <- ggplot(ASD_National) +
   geom_density(aes(x=Prevalence), fill = "grey", color = "white", alpha=0.75) 
 p # Show
 # Optionally, overlay histogram
 p <- p + geom_histogram(aes(x = Prevalence, y = ..density..), binwidth = 1, fill = "blue", colour = "lightgrey", alpha=0.4) 
 p # Show
 # Optionally, overlay Prevalence mean
-p <- p + geom_vline(aes(xintercept = mean(ASD_State_SPED_2016$Prevalence)), colour="darkorange")
+p <- p + geom_vline(aes(xintercept = mean(ASD_National$Prevalence)), colour="darkorange")
 p # Show
-# lastly, add other captions
-p <- p + coord_cartesian(xlim=c(0, 25), ylim=c(0, 0.3)) +
+ASD_National# lastly, add other captions
+p <- p + coord_cartesian(xlim=c(0, 35), ylim=c(0, 0.2)) +
   labs(x="Prevalence per 1,000 Children", y="Density", 
-       title=paste("Density of Prevalence ( mean =", mean(ASD_State_SPED_2016$Prevalence), ")")) +
+       title=paste("Density of Prevalence ( mean =", mean(ASD_National$Prevalence), ")")) +
   theme(title = element_text(face = 'bold.italic', color = "darkslategrey"), 
         axis.title = element_text(face = 'plain', color = "darkslategrey"))
 p # Show
@@ -1146,11 +1146,15 @@ p <- ggplot(ASD_State, aes(x = Source, fill = Source)) +
 # Show plot
 p
 
-# Filter and create dataframe of different data sources
+
+# ----------------------------------
+# Filter and create dataframe of different data sources, for easy data access
+# ----------------------------------
 ASD_State_ADDM <- subset(ASD_State, Source == 'addm')
 ASD_State_MEDI <- subset(ASD_State, Source == 'medi')
 ASD_State_NSCH <- subset(ASD_State, Source == 'nsch')
 ASD_State_SPED <- subset(ASD_State, Source == 'sped')
+
 
 # < Years Data Available [State] [ADDM] >
 p <- ggplot(ASD_State_ADDM, aes(x = 1, fill = State_Full2)) + 
@@ -1210,7 +1214,6 @@ p_dynamic
 # ----------------------------------
 # Write your code here:
 #
-
 
 
 # ----------------------------------
@@ -1523,6 +1526,18 @@ ggsave("plot Map Prevalence Estimates by Geographic Area [NSCH] [2004-2016].png"
 # ----------------------------------
 
 # ----------------------------------
+# Use sd()   to calculate *sample* std-dev (S)
+# Use sd.p() to calculate *population* std-dev (Omega)
+# ----------------------------------
+# Define a function sd.p() to calculate *population* std-dev (Omega)
+# https://www.dummies.com/education/math/statistics/standard-deviation-r/
+sd.p = function(x) {sd(x) * sqrt((length(x)-1)/length(x))}
+# Treat as population:
+sd.p(ASD_State$Denominator)
+# Treat as sample:
+sd(ASD_State$Denominator)
+
+# ----------------------------------
 # Create a *Population* of US. State level ASD Prevalence from Source SPED in Year 2016 
 # ----------------------------------
 ASD_State_SPED_2016 <- subset(ASD_State, Source == 'sped' & Year == 2016, select=c('State', 'Prevalence'))
@@ -1535,11 +1550,11 @@ mean(ASD_State_SPED_2016$Prevalence)
 # ----------------------------------
 # Create a *Sample* from ASD_State_SPED_2016$Prevalence,
 # with sample size n =
-clt_n = 10
+clt_n = 20
 # clt_n = 40
 
 set.seed(88)
-clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
+clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = TRUE)
 clt_sample_1
 plot(density(clt_sample_1), col="darkgrey", lwd=2) 
 hist(clt_sample_1, probability = T, add = T)
@@ -1547,7 +1562,7 @@ hist(clt_sample_1, probability = T, add = T)
 # Repeatedly sample for k times, create a matrix/array to store these samples
 clt_k = 10000
 set.seed(88)
-clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n)))
+clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = TRUE)))
 # first few samples
 clt_sample_k[, 1:6]
 # last sample
@@ -1557,6 +1572,9 @@ clt_sample_k[, clt_k]
 mean(clt_sample_k[, 1])
 mean(clt_sample_k[, 2])
 mean(clt_sample_k[, 3])
+mean(clt_sample_k[, 4])
+mean(clt_sample_k[, 5])
+mean(clt_sample_k[, 6])
 # or use apply() function to loop
 apply(clt_sample_k[, 1:6], 2, mean)
 
@@ -1564,6 +1582,9 @@ apply(clt_sample_k[, 1:6], 2, mean)
 sd(clt_sample_k[, 1])
 sd(clt_sample_k[, 2])
 sd(clt_sample_k[, 3])
+sd(clt_sample_k[, 4])
+sd(clt_sample_k[, 5])
+sd(clt_sample_k[, 6])
 # or use apply() function to loop
 apply(clt_sample_k[, 1:6], 2, sd)
 
@@ -1602,7 +1623,7 @@ lines(density(clt_sample_k[, 2]), col="blue", lwd=1)
 abline(v=mean(clt_sample_k[, 2]), col="blue", lwd=1) 
 
 lines(density(clt_sample_k[, 3]), col="blue", lwd=1) 
-abline(v=mean(clt_sample_k[, 2]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 3]), col="blue", lwd=1) 
 
 lines(density(clt_sample_k[, 4]), col="blue", lwd=1) 
 abline(v=mean(clt_sample_k[, 4]), col="blue", lwd=1) 
@@ -1616,7 +1637,7 @@ abline(v=mean(clt_sample_k[, 6]), col="blue", lwd=1)
 lines(density(clt_sample_k[, clt_k]), col="blue", lwd=1) 
 abline(v=mean(clt_sample_k[, clt_k]), col="blue", lwd=1) 
 
-# We can see that sample's distributions are quite different.
+# We can see that sample's distributions are all different.
 
 # ----------------------------------
 # Sampling distribution (only one)
@@ -1635,12 +1656,12 @@ clt_sample_k_sd <- apply(clt_sample_k, 2, sd)
 clt_sample_k_sd[1:6]
 
 # histogram of sample means (Sampling distribution of the mean)
-hist(clt_sample_k_mean, probability = T, breaks = 500)
+hist(clt_sample_k_mean, probability = T, breaks = 100)
 lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
 
 # histogram of sample std-dev
-hist(clt_sample_k_sd, probability = T, breaks = 500)
-lines(density(clt_sample_k_sd), col="cyan2", lwd=2) 
+hist(clt_sample_k_sd, probability = T, breaks = 100)
+lines(density(clt_sample_k_sd), col="orange2", lwd=2) 
 
 # k *Sample* (sample size = n) mean Prevalence
 mean(clt_sample_k_mean)
@@ -1650,12 +1671,9 @@ mean(ASD_State_SPED_2016$Prevalence)
 # Avarage std-dev of k *Sample* (sample size = n)
 mean(clt_sample_k_sd)
 # sd of *Population* Prevalence
-sd(ASD_State_SPED_2016$Prevalence)
-# std-dev of Sampling distribution of the mean (Prevalence)
-sd(clt_sample_k_mean)
+sd.p(ASD_State_SPED_2016$Prevalence)
 
-# Note that the above three std-dev are different.
-
+# Note that the above two std-dev are close.
 
 # ----------------------------------
 # Visualisation: Central Limit Theorem (CLT)
@@ -1702,31 +1720,25 @@ mean(clt_sample_k_mean)
 mean(ASD_State_SPED_2016$Prevalence)
 
 # ----------------------------------
-# Standard Error (SE) (of mean prevalence) = 
+# Standard Error (SE) (of mean prevalence), can be estimated as:
 # std-dev of the Sampling distribution (of mean prevalence)
 # ----------------------------------
 # https://en.wikipedia.org/wiki/Sampling_distribution
-# [1] When Population std-dev is known, SE using Population standard deviation:
-sd(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)
-# [2] When Population std-dev is NOT known, SE using Sample's standard deviation: (Average of std-dev of k Samples)
-mean(clt_sample_k_sd) / sqrt(clt_n)
-# In cases, only one sample is observed/obtained:
+# [1] Actual SE: When Population std-dev is known, SE using Population standard deviation:
+sd.p(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)
+# [2] Estimated SE with k samples: When Population std-dev is NOT known, but many sample means are known, SE using standard deviation of Sampling distribution
+sd(clt_sample_k_mean)
+# [3] Estimated SE with only one sample: When Population std-dev is NOT known, and only one sample obtained, SE using Sample's standard deviation: (std-dev of 1 Sample)
 clt_sample_k_sd[1] / sqrt(clt_n)
 
+
 # Overlay curve:
-# *Theoretic* Distribution of the mean with std-dev = SE, calculated based on population std-dev
+# *Theoretic Sampling Distribution* with population mean & std-dev = Actual SE
 # mean = mean of Population (Prevalence) & std-dev = std-dev of Population (Prevalence) / square root of sample size n
 curve(dnorm(x, 
             mean(ASD_State_SPED_2016$Prevalence), # Actual Population mean
-            sd(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)), # Actual SE (for mean prevalence) = Population standard deviation / square root of sample size
+            sd.p(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)), # Actual SE (for mean prevalence) = Population standard deviation / square root of sample size
       add=TRUE, col="red", lwd=2, lty=3)
-
-# Overlay curve:
-# *Estimated* Distribution of the mean with std-dev = SE, calculated base on average sample std-dev
-curve(dnorm(x, 
-            mean(mean(clt_sample_k_mean)), # Estimated Population mean
-            mean(clt_sample_k_sd) / sqrt(clt_n)), # Estimated SE 
-      add=TRUE, col="blue", lwd=2, lty=3)
 
 
 # ----------------------------------
@@ -1767,7 +1779,8 @@ dim(ASD_State_SPED_2016)
 # Create a *Sample* from ASD_State_SPED_2016$Prevalence,
 # with sample size n =
 clt_n = 10
-# clt_n = 40
+# Try 20 or 40, larger sample size, narrower the CI (more confident at xx% level)
+# clt_n = 20 
 
 set.seed(88)
 clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
@@ -1842,10 +1855,18 @@ sample_mean + sample_ci
 cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  sample_mean - sample_ci, '\tMean : ', sample_mean, '\tUpper CI : ',  sample_mean + sample_ci)
 
 # Alternatively, calculate CI using t.test() function
-t.test(clt_sample_1)
+t.test(clt_sample_1, conf.level = 0.95)
 
 # Two group hypothesis test : sample mean vs. population mean
-t.test(clt_sample_1, mu = mean(ASD_State_SPED_2016$Prevalence))
+t.test(clt_sample_1, conf.level = 0.95, mu = mean(ASD_State_SPED_2016$Prevalence))
+
+
+# ----------------------------------
+# Quiz: Obtain CI using smaller/larger sample size (clt_n) at 99% confidence. Compare CI width.
+# Observe: larger sample size, narrower the CI (more confident at xx% level)
+# ----------------------------------
+# Write your code here:
+#
 
 
 # ----------------------------------
@@ -1905,8 +1926,26 @@ ASD[1]
 Children[1]
 # Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
 prop.test(ASD[1], Children[1]) 
+prop.test(ASD[1], Children[1], conf.level = 0.95) 
 # Pearson's chi-squared test = Wilson score interval - wilson
-prop.test(ASD[1], Children[1], correct = FALSE) 
+prop.test(ASD[1], Children[1], conf.level = 0.95, correct = FALSE) 
+
+
+# ----------------------------------
+# Quiz: Obtain CI of Male.Prevalence at 99% confidence.
+# ----------------------------------
+# Write your code here:
+#
+
+
+# ----------------------------------
+# Quiz: Obtain CI of Female.Prevalence at 99% confidence.
+# Then Compare CI range with Male children's CI range.
+# Which gender has statistically higer ASD prevalence/proportion?
+# ----------------------------------
+# Write your code here:
+#
+
 
 
 # ----------------------------------
