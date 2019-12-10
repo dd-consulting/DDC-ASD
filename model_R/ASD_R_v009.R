@@ -898,6 +898,7 @@ p_dynamic
 # ----------------------------------
 # Use themes as aesthetic template
 # ----------------------------------
+if(!require(ggthemes)){install.packages("ggthemes")}
 library(ggthemes)
 # theme of the economist magazine:
 p + theme_economist() + scale_colour_economist()
@@ -1429,10 +1430,12 @@ library(usmap) # usmap: Mapping the US
 #
 Map_Data_Source = 'addm' # Available values lowercase: 'addm', 'medi', 'nsch', 'sped'.
 Map_Data_Value = 'Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-# or Prevalence of different groups
-Map_Data_Value = 'Male.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-Map_Data_Value = 'Female.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
-Map_Data_Value = 'Asian.or.Pacific.Islander.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
+#
+# Uncomment below to use Prevalence of different groups:
+#
+# Map_Data_Value = 'Male.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
+# Map_Data_Value = 'Female.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
+# Map_Data_Value = 'Asian.or.Pacific.Islander.Prevalence' # variable must be numeric, variable name in 'quotation'. Or else Error: Discrete value supplied to continuous scale
 #
 Map_Data_Year = 2014 # must be integer
 #
@@ -1667,13 +1670,9 @@ lines(density(clt_sample_k_sd), col="orange2", lwd=2)
 mean(clt_sample_k_mean)
 # *Population* mean Prevalence
 mean(ASD_State_SPED_2016$Prevalence)
-
-# Avarage std-dev of k *Sample* (sample size = n)
-mean(clt_sample_k_sd)
-# sd of *Population* Prevalence
-sd.p(ASD_State_SPED_2016$Prevalence)
-
-# Note that the above two std-dev are close.
+#
+# Note that the above two means are close.
+#
 
 # ----------------------------------
 # Visualisation: Central Limit Theorem (CLT)
@@ -1715,9 +1714,12 @@ abline(v=mean(clt_sample_k_mean), col="cyan2", lwd=2, lty=3)
 # https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
 # col2rgb(c("cyan", "grey", "red")) / 255
 
-# mean estimation is good (values are close).
+# Recall:
+# k *Sample* (sample size = n) mean Prevalence
 mean(clt_sample_k_mean)
+# *Population* mean Prevalence
 mean(ASD_State_SPED_2016$Prevalence)
+# We see that the above two means are close. Good estimation!
 
 # ----------------------------------
 # Standard Error (SE) (of mean prevalence), can be estimated as:
