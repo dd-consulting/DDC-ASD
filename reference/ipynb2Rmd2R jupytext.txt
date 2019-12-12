@@ -1,0 +1,43 @@
+https://jupytext.readthedocs.io/en/latest/index.html
+
+< Jupyter Notebooks as Markdown Documents, Julia, Python or R Scripts >
+
+pip install jupytext --upgrade
+or
+conda install -c conda-forge jupytext
+
+
+# Convert ipynb to Rmd:
+
+jupytext --to Rmd ASD_R_notebook_v013.ipynb
+
+
+# Convert ipynb to R:
+
+jupytext --to R ASD_R_notebook_v013.ipynb
+
+
+# Convert Rmd to R:
+
+jupytext --to R ASD_R_notebook_v013.Rmd
+
+
+# More conversions:
+
+jupytext --to py:percent notebook.ipynb         # convert notebook.ipynb to a .py file in the double percent format
+
+jupytext --to py:percent --comment-magics false notebook.ipynb   # same as above + do not comment magic commands
+
+jupytext --to markdown notebook.ipynb           # convert notebook.ipynb to a .md file
+
+jupytext --output script.py notebook.ipynb      # convert notebook.ipynb to a script.py file
+
+jupytext --to notebook notebook.py              # convert notebook.py to an .ipynb file with no outputs
+
+jupytext --update --to notebook notebook.py     # update the input cells in the .ipynb file and preserve outputs and metadata
+
+jupytext --to md --test notebook.ipynb          # Test round trip conversion
+
+jupytext --to md --output - notebook.ipynb      # display the markdown version on screen
+
+jupytext --from ipynb --to py:percent           # read ipynb from stdin and write double percent script on stdout
