@@ -84,6 +84,8 @@ https://www.cdc.gov/ncbddd/autism/data/index.html
 
 * ## Linear Model: Logistic Regression (LR)
 
+* ## Linear Model: Model Evaluation: Train/Test, K-Fold Cross Validation, Confusion Matrix
+
 * ## Non-Linear Model: Decision Tree (DT)
 
 * ## Non-Linear Model: Neural Network (NN)
@@ -164,9 +166,9 @@ getwd()
 
 8. h.	Compute and interpret the coefficient of determination, $R^2$.
 
-9. i.	Find the predicted ASD Prevalence of Year 2030.
+9. i.	Find the predicted ASD Prevalence of future Year.
 
-10. j.	Determine a 95% prediction interval for the ASD Prevalence of Year 2030.
+10. j.	Determine a 95% confidence interval for the predicted ASD Prevalence.
 
 
 
@@ -179,6 +181,9 @@ getwd()
 # Read back in above saved file:
 ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
 ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, levels=c("Low", "High"))
+ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, levels=c("Low", "Medium", "High", "Very High"))
+
 ```
 
 ```{r}
@@ -327,29 +332,31 @@ summary(fit_model)
 ---
 
 
-**SLR Workshop Task: <span style="color:blue">9. i.	Find the predicted ASD Prevalence of Year 2030.</span>**
+**SLR Workshop Task: <span style="color:blue">9. i.	Find the predicted ASD Prevalence of future Year.</span>**
 
 ```{r}
-newdata = data.frame(Year = 2030) 
+future_year = 2025
+newdata = data.frame(Year = future_year) 
 predict(fit_model,newdata)
 #
-cat("Predicted ASD Prevalence of Year 2030 is", round(predict(fit_model,newdata), 1), "per 1,000 Children")
+cat("Predicted ASD Prevalence of Year [", future_year, "] is", round(predict(fit_model,newdata), 1), "per 1,000 Children")
+
 ```
 
 ---
 
 
-**SLR Workshop Task: <span style="color:blue">10. j.	Determine a 95% prediction interval for the ASD Prevalence of Year 2030.</span>**
+**SLR Workshop Task: <span style="color:blue">10. j.	Determine a 95% confidence interval for the predicted ASD Prevalence.</span>**
 
 ```{r}
 predict(fit_model, newdata, interval = "predict")
 ```
 
 ```{r}
-cat("\nPredicted ASD Prevalence of Year 2030 (95% Upper CI) is", 
+cat("\nPredicted ASD Prevalence of Year [", future_year, "] (95% Upper CI) is", 
     round(predict(fit_model,newdata, interval = "predict")[3], 1), "per 1,000 Children")
 
-cat("\nPredicted ASD Prevalence of Year 2030 (95% Lower CI) is", 
+cat("\nPredicted ASD Prevalence of Year [", future_year, "] (95% Lower CI) is", 
     round(predict(fit_model,newdata, interval = "predict")[2], 1), "per 1,000 Children")
 
 ```
@@ -421,7 +428,7 @@ ASD_State_4_SLR = subset(ASD_State, select = c(Prevalence, Year))
 
 
 
-**SLR Workshop Task: <span style="color:blue">1. a. Get the data.</span>**
+**MLR Workshop Task: <span style="color:blue">1. a. Get the data.</span>**
 
 
 **Use Case Data: <span style="color:blue">"../dataset/ADV_ASD_State_R.csv"</span>**
@@ -431,8 +438,11 @@ ASD_State_4_SLR = subset(ASD_State, select = c(Prevalence, Year))
 
 ```{r}
 # Read back in above saved file:
-ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
-ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+# ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+# ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+# ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, levels=c("Low", "High"))
+# ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, levels=c("Low", "Medium", "High", "Very High"))
+
 ```
 
 ```{r}
@@ -456,7 +466,7 @@ ASD_State_4_MLR
 ---
 
 
-**SLR Workshop Task: <span style="color:blue">2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value).</span>**
+**MLR Workshop Task: <span style="color:blue">2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value).</span>**
 
 ```{r}
 summary(ASD_State_4_MLR)
@@ -499,7 +509,8 @@ cbind(names(ASD_State_4_MLR), c(1:length(names(ASD_State_4_MLR))))
 
 ```{r}
 Leaky_Column_Names = c('Lower.CI', 'Upper.CI', 'Numerator_ASD', 'Numerator_NonASD', 'Proportion', 
-                    'Chi_Wilson_Corrected_Lower.CI', 'Chi_Wilson_Corrected_Upper.CI')
+                       'Chi_Wilson_Corrected_Lower.CI', 'Chi_Wilson_Corrected_Upper.CI', 
+                       'Prevalence_Risk2', 'Prevalence_Risk4')
 ```
 
 ```{r}
@@ -529,7 +540,7 @@ ASD_State_4_MLR
 ---
 
 
-**SLR Workshop Task: <span style="color:blue">3. c.	Visualize the data to gain insights</span>**
+**MLR Workshop Task: <span style="color:blue">3. c.	Visualize the data to gain insights</span>**
 
 ```{r}
 # Adjust in-line plot size to M x N
@@ -569,7 +580,7 @@ plot(ASD_State_4_MLR$State_Full2, ASD_State_4_MLR$Prevalence)
 ---
 
 
-**SLR Workshop Task: <span style="color:blue">4. d.	Compute correlation between variables and apply multiple regression.</span>**
+**MLR Workshop Task: <span style="color:blue">4. d.	Compute correlation between variables and apply multiple regression.</span>**
 
 
 Recode categorical variable to dummy (numeric) variable using one-hot encoding:
@@ -593,12 +604,29 @@ correlation[, 2]
 ```
 
 ```{r}
+if(!require(corrplot)){install.packages("corrplot")}
+library("corrplot")
+corrplot(correlation, tl.col="black", tl.pos = "lt")
+```
+
+```{r}
+str(ASD_State_4_MLR)
+```
+
+```{r}
 # To build (National level) ASD Prevalence predictive model for all state's:
 # In situations that we won't know the US. State name, we can also fit a model without State name/code:
 fit_model = lm(Prevalence ~ . - State_Full2, data = ASD_State_4_MLR) # Exclude a variable using: "- variable"
 #
 summary(fit_model)
 ```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <p>
+        Adjusted $R^2$ = 0.6575
+    </p>
+</div>
+
 
 ```{r}
 # To build (US. State level) ASD Prevalence predictive model for specific state's prevalence:
@@ -619,7 +647,7 @@ summary(fit_model)
 ---
 
 
-**SLR Workshop Task: <span style="color:blue">5. e.	Check multicollinearity, then how to remove multicollinearity.</span>**
+**MLR Workshop Task: <span style="color:blue">5. e.	Check multicollinearity, then how to remove multicollinearity.</span>**
 
 
 < Detection of multicollinearity >
@@ -628,7 +656,7 @@ Some authors have suggested a formal detection-tolerance or the variance inflati
 
 ```{r}
 # To use select_if() function
-if(!require(dplyr)){install.packages("car")}
+if(!require(car)){install.packages("car")}
 library("car")
 ```
 
@@ -689,7 +717,7 @@ vif(fit_model_with_Denominator)
 ---
 
 
-**SLR Workshop Task: <span style="color:blue">6. f.	How is your ﬁnal model looks like?</span>**
+**MLR Workshop Task: <span style="color:blue">6. f.	How is your ﬁnal model looks like?</span>**
 
 <!-- #region -->
 * During prediction, if US. State name will be known, then the **fit_model_with_State** can be better because it has higher $R^2$ value.
@@ -709,7 +737,8 @@ newdata$Prevalence = NA
 newdata$Denominator = 50000
 newdata$Year = 2016
 newdata$Source = "addm"
-newdata$State_Full2 = "CA-California"
+#newdata$State_Full2 = "CA-California"
+newdata$State_Full2 = "AZ-Arizona"
 
 newdata
 ```
@@ -717,7 +746,7 @@ newdata
 ```{r}
 predict(fit_model_with_State, newdata, interval = "predict")
 #
-cat("Predicted ASD Prevalence is", round(predict(fit_model_with_state, newdata), 1), "per 1,000 Children")
+cat("Predicted ASD Prevalence is", round(predict(fit_model_with_State, newdata), 1), "per 1,000 Children")
 ```
 
 **MLR Prediciton 2**
@@ -730,47 +759,304 @@ predict(fit_model_with_Denominator, newdata, interval = "predict")
 cat("Predicted ASD Prevalence is", round(predict(fit_model_with_Denominator, newdata), 1), "per 1,000 Children")
 ```
 
+**MLR Prediciton 2**
+
+Let's use **fit_model** to predict FL-Florida State level ASD Prevalence of Year 2025 if SPED will conduct a record review/survey of 2,600,000 children.
+
 ```{r}
+newdata = ASD_State_4_MLR[1,] # Copy datastructure
+newdata$Prevalence = NA
+newdata$Denominator = 2600000
+newdata$Year = 2025
+newdata$Source = "sped"
+newdata$State_Full2 = "FL-Florida"
+
+newdata
+```
+
+```{r}
+predict(fit_model, newdata, interval = "predict")
+#
+cat("Predicted ASD Prevalence is", round(predict(fit_model, newdata), 1), "per 1,000 Children")
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+         <img src="" width="750" align="center">
+    </a>
+</div>
+
+
+
+
+## <span style="color:blue">Linear Model: Polynomial (Linear) Regression (PLR)</span>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Linear Model: Polynomial (Linear) Regression (PLR) - Workshop Task
+    </h3>
+</div>
+
+
+
+**Workshop Task:**
+
+1. a.	Get the data.
+
+2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value)
+
+3. c.	Visualize Data and trends
+
+4. d.	Compute correlation between variables and apply multiple regression.
+
+5. e.	Multiple polynomial regression.
+
+
+
+**PLR Workshop Task: <span style="color:blue">1. a. Get the data.</span>**
+
+
+**Use Case Data: <span style="color:blue">"../dataset/ADV_ASD_State_R.csv"</span>**
+
+
+**Read in CSV data, storing as R <span style="color:blue">dataframe</span>**
+
+```{r}
+# Read back in above saved file:
+ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, levels=c("Low", "High"))
+ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, levels=c("Low", "Medium", "High", "Very High"))
 
 ```
 
 ```{r}
+head(ASD_State)
+```
+
+```{r}
+names(ASD_State)
+```
+
+```{r}
+# Filter [ Source: SPED ], including only two clomuns for SLR:
+# Dependent variable: Prevalence
+# independent variable: Year
+# ASD_State_4_PLR = subset(ASD_State, Source_UC == 'SPED' & State_Full2 == 'MN-Minnesota', select = c(Prevalence, Year))
+# ASD_State_4_PLR = subset(ASD_State, Source_UC == 'SPED' & State_Full2 == 'MS-Mississippi', select = c(Prevalence, Year))
+ASD_State_4_PLR = subset(ASD_State, Source_UC == 'SPED' & State_Full2 == 'FL-Florida', select = c(Prevalence, Year))
+#
+dim(ASD_State_4_PLR)
+ASD_State_4_PLR
+```
+
+---
+
+
+**PLR Workshop Task: <span style="color:blue">2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value).</span>**
+
+```{r}
+summary(ASD_State_4_PLR)
+```
+
+```{r}
+# Check whether each columns got missing value:
+lapply(ASD_State_4_PLR, function(col_x)sum(is.na(col_x)))
+       
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=3)
+barplot(apply(ASD_State_4_PLR, 2, function(col_x)sum(is.na(col_x))))
+```
+
+**No missing values**
+
+
+---
+
+
+**PLR Workshop Task: <span style="color:blue">3. c.	Visualize the data to gain insights</span>**
+
+```{r}
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=4)
+```
+
+```{r}
+plot(ASD_State_4_PLR$Year, ASD_State_4_PLR$Prevalence)
+```
+
+---
+
+
+**PLR Workshop Task: <span style="color:blue">4. d.	Compute correlation between variables and apply multiple regression.</span>**
+
+
+Recode categorical variable to dummy (numeric) variable using one-hot encoding:
+
+```{r}
+# To use select_if() function
+if(!require(dplyr)){install.packages("dplyr")}
+library("dplyr")
+
+summary(select_if(ASD_State_4_PLR, is.numeric))
+```
+
+```{r}
+correlation = cor(select_if(ASD_State_4_PLR, is.numeric))
+correlation
+```
+
+```{r}
+# Variable's correlation against target dependent variable:
+correlation[, 1]
+```
+
+```{r}
+str(ASD_State_4_PLR)
+```
+
+```{r}
+# SLR
+fit_model_SLR = lm(Prevalence ~ Year , data = ASD_State_4_PLR)
+#
+summary(fit_model_SLR)
+```
+
+```{r}
+plot(fit_model_SLR)
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <p>
+        Adjusted $R^2$ = 0.958
+    </p>
+</div>
+
+
+```{r}
+# PLR (quadratic)
+fit_model_PLR = lm(Prevalence ~ Year + I(Year^2), data = ASD_State_4_PLR)
+#
+summary(fit_model_PLR)
+```
+
+**Abount I() function:** https://stackoverflow.com/questions/8055508/in-r-formulas-why-do-i-have-to-use-the-i-function-on-power-terms-like-y-i
+
+
+```{r}
+plot(fit_model_PLR)
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <p>
+        Adjusted $R^2$ = 0.9981
+    </p>
+</div>
+
+
+
+**Visualise the difference between SLR & PLR:**
+
+```{r}
+plot(ASD_State_4_PLR$Year, ASD_State_4_PLR$Prevalence)
+# add SLR line
+lines(ASD_State_4_PLR$Year, predict(fit_model_SLR, ASD_State_4_PLR), col="red", lwd=2) # or # abline(fit_model_SLR, col="red", lwd=2)
+# add PLR line
+lines(ASD_State_4_PLR$Year, predict(fit_model_PLR, ASD_State_4_PLR), col="orange", lwd=2) 
+```
+
+---
+
+
+**PLR Prediciton**
+
+
+```{r}
+newdata = ASD_State_4_PLR[1,] # Copy datastructure
+newdata$Prevalence = NA
+newdata$Year = 2025
+
+newdata
+```
+
+```{r}
+predict(fit_model_PLR, newdata, interval = "predict")
+#
+cat("Predicted ASD Prevalence of Year [", newdata$Year, "] is", round(predict(fit_model_PLR, newdata), 1), "per 1,000 Children")
+
+```
+
+---
+
+
+**Multiple PLR Workshop Task: <span style="color:blue">5. e.	Multiple polynomial regression (MPR).</span>** (Enhance MLR by adding higher order transformed variables.)
+
+
+**Resuse MLR data: <span style="color:blue">ASD_State_4_MLR</span>** Cop to new dataframe: ASD_State_4_MPR
+
+```{r}
+ASD_State_4_MPR = ASD_State_4_MLR
+
+dim(ASD_State_4_MPR)
 
 ```
 
 ```{r}
-
+summary(ASD_State_4_MPR)
 ```
 
 ```{r}
+# Check whether each columns got missing value:
+lapply(ASD_State_4_MLR, function(col_x)sum(is.na(col_x)))
+       
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=3)
+barplot(apply(ASD_State_4_MLR, 2, function(col_x)sum(is.na(col_x))))
+```
 
+**Build Multiple PLR model: + I(Year^2) + I(log(Denominator)**
+
+```{r}
+fit_model_MPR = lm(Prevalence ~ . + I(Year^2) + I(log(Denominator)), data = ASD_State_4_MPR) # "~." means all other variables, including factors
+#
+summary(fit_model_MPR)
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <p>
+        Adjusted $R^2$ = 0.7884
+    </p>
+</div>
+
+
+
+**Mutiple PLR Prediciton**
+
+```{r}
+# Copy datastructure
+newdata = subset(ASD_State_4_MPR, ASD_State_4_MPR$Year == 2016 &
+                            ASD_State_4_MPR$State_Full2 == 'FL-Florida' & 
+                            ASD_State_4_MPR$Source == 'sped')
+newdata
 ```
 
 ```{r}
+newdata = ASD_State_4_MPR[1,] # Copy datastructure
+newdata$Prevalence = NA
+newdata$Denominator = 2600000
+newdata$Year = 2025
+newdata$Source = "sped"
+newdata$State_Full2 = "FL-Florida"
 
+newdata
 ```
 
 ```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
+predict(fit_model_MPR, newdata, interval = "predict")
+#
+cat("Predicted ASD Prevalence of Year [", newdata$Year, "] is", round(predict(fit_model_MPR,newdata), 1), "per 1,000 Children")
 
 ```
 
@@ -779,7 +1065,10 @@ cat("Predicted ASD Prevalence is", round(predict(fit_model_with_Denominator, new
         Quiz:
     </h3>
     <p>
-        Which Data Source has breakdown Prevalvence data by race and ethnicity?
+        Compare predicted ASD prevalence and model $R^2$ between: Multiple Linear Rregression and Multiple Polynomial Rregression.
+    </p>
+    <p>
+        Which prediction result would you use? Provide yor justifications.
     </p>
 </div>
 
@@ -793,53 +1082,636 @@ Double-click <b>here</b> for the solution.
 <!-- The answer is below:
 
 # Write your code below and press Shift+Enter to execute 
-table(ASD_National$Source, ASD_National$Asian.or.Pacific.Islander.Prevalence)
-plot(table(ASD_National$Source, ASD_National$Asian.or.Pacific.Islander.Prevalence))
+# TBD
 
 -->
 
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+         <img src="" width="750" align="center">
+    </a>
 </div>
 
 
 
 
-## <span style="color:blue">Data Visualisation (Enhanced)</span>
+## <span style="color:blue">Linear Model: Logistic Regression (LR)</span>
 
 
-```{r}
-if(!require(ggplot2)){install.packages("ggplot2")}
-library(ggplot2)
-```
-
-```{r}
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=4)
-```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    Data Visualisation (Enhanced) - <span style="color:blue">[ CDC ] Explore the Data</span>
+    Linear Model: Logistic Regression (LR) - Workshop Task
     </h3>
 </div>
 
 
+
+**Workshop Task:**
+
+1. a.	Get the data.
+
+2. b.	Logistic regression - Binary Class.
+
+3. c.	Logistic regression - Multi-Class.
+
+
+
+**LR Workshop Task: <span style="color:blue">1. a. Get the data.</span>**
+
+
+**Use Case Data: <span style="color:blue">"../dataset/ADV_ASD_State_R.csv"</span>**
+
+
+**Read in CSV data, storing as R <span style="color:blue">dataframe</span>**
+
+```{r}
+# Read back in above saved file:
+# ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+# ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
+# ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, levels=c("Low", "High"))
+# ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, levels=c("Low", "Medium", "High", "Very High"))
+
+```
+
+```{r}
+head(ASD_State)
+```
+
+```{r}
+Column_Names = c("Prevalence_Risk2", "Denominator", "Year", "Source", "State_Full2")
+ASD_State_4_LR_Risk2 <- ASD_State[ , (names(ASD_State) %in% Column_Names)]
+dim(ASD_State_4_LR_Risk2)
+ASD_State_4_LR_Risk2
+```
+
+```{r}
+Column_Names = c("Prevalence_Risk4", "Denominator", "Year", "Source", "State_Full2")
+ASD_State_4_LR_Risk4 <- ASD_State[ , (names(ASD_State) %in% Column_Names)]
+dim(ASD_State_4_LR_Risk4)
+ASD_State_4_LR_Risk4
+```
+
+---
+
+
+**LR Workshop Task: <span style="color:blue">2. b.	Logistic regression (LR) Binary Class.</span>** (Reuse Multiple Polynomial Model on categorical dependent variable.)
+
+```{r}
+table(ASD_State_4_LR_Risk2$Prevalence_Risk2)
+barplot(table(ASD_State_4_LR_Risk2$Prevalence_Risk2))
+```
+
+```{r}
+counts = table(ASD_State_4_LR_Risk2$Prevalence_Risk2, ASD_State_4_LR_Risk2$Source)
+counts
+barplot(counts,
+        main="Prevalence by Data Sources and Risk Levels",
+        xlab="Data Sources",
+        ylab="Occurrences",
+        col=c("white", "lightgrey"),
+        legend = rownames(counts), 
+        args.legend = list(x = "topleft", bty = "n", cex = 0.85, y.intersp = 4))
+
+```
+
+```{r}
+str(ASD_State_4_LR_Risk2)
+```
+
+**Build model**
+
+```{r}
+# Binary Classification:
+fit_model_LR_Risk2 = glm(Prevalence_Risk2 ~ Denominator + Year + Source + State_Full2 + I(Year^2) + I(log(Denominator)), 
+                         family=binomial(link='logit'), data = ASD_State_4_LR_Risk2)
+#
+summary(fit_model_LR_Risk2)
+
+```
+
+**Evaluate model**
+
+```{r}
+# Likelihood ratio test: significance of the difference between the full model and the null model.
+pchisq(fit_model_LR_Risk2$null.deviance - fit_model_LR_Risk2$deviance, 
+       fit_model_LR_Risk2$df.null - fit_model_LR_Risk2$df.residual, lower.tail = FALSE)
+
+```
+
+**Check whether above value is very small (the smaller the more significant), e.g. < 0.05.**
+
+
+< How to perform a Logistic Regression in R > Michy Alice
+
+https://www.r-bloggers.com/how-to-perform-a-logistic-regression-in-r/
+
+
+```{r}
+# null deviance and the residual deviance
+anova(fit_model_LR_Risk2, test="Chisq")
+```
+
+```{r}
+# R^2 equivalent
+if(!require(pscl)){install.packages("pscl")}
+library("pscl")
+```
+
+While no exact equivalent to the $R^2$ of linear regression exists, the **McFadden $R^2$** index can be used to assess the model fit.
+
+```{r}
+# R^2 equivalent
+pR2(fit_model_LR_Risk2)[4]
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <p>
+        McFadden $R^2$ = 0.6374
+    </p>
+</div>
+
+
+
+---
+
+
+**LR Workshop Task: <span style="color:blue">3. c.	Logistic regression (LR) Muti-Class.</span>** (Reuse Multiple Polynomial Model on categorical dependent variable.)
+
+```{r}
+table(ASD_State_4_LR_Risk4$Prevalence_Risk4)
+barplot(table(ASD_State_4_LR_Risk4$Prevalence_Risk4))
+```
+
+```{r}
+counts = table(ASD_State_4_LR_Risk4$Prevalence_Risk4, ASD_State_4_LR_Risk4$Source)
+counts
+barplot(counts,
+        main="Prevalence Occurrence by Source and Risk",
+        xlab="Data Sources",
+        ylab="Occurrences",
+        col=c("lightyellow", "orange", "red","darkred"),
+        legend = rownames(counts), 
+        args.legend = list(x = "topleft", bty = "n", cex = 0.85, y.intersp = 4))
+
+```
+
+**Build model**
+
+```{r}
+# multinom function from the nnet package 
+if(!require(nnet)){install.packages("nnet")}
+library("nnet")
+```
+
+```{r}
+# Multi-Class Classification:
+fit_model_LR_Risk4 = multinom(Prevalence_Risk4 ~ Denominator + Year + Source + State_Full2 + I(Year^2) + I(log(Denominator)), 
+                     data = ASD_State_4_LR_Risk4, maxit=1000) # maxit https://cran.r-project.org/web/packages/nnet/nnet.pdf
+
+summary(fit_model_LR_Risk4)
+
+```
+
+< MULTINOMIAL LOGISTIC REGRESSION | R DATA ANALYSIS EXAMPLES >
+
+https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/
+
+```{r}
+## extract the coefficients from the model and exponentiate
+exp(coef(fit_model_LR_Risk4))
+# Uncomment below to display all p values:
+# paste(exp(coef(fit_model)))
+```
+
+```{r}
+# Test the significance/importance of each coefficient (check if p values < 0.05)
+
+# z score for coefficients
+z <- summary(fit_model_LR_Risk4)$coefficients/summary(fit_model_LR_Risk4)$standard.errors
+cat('\n< Talbe of coefficient z scores>')
+z
+
+# p value of 2-tailed z test
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
+cat('\n< Talbe of coefficient p values>')
+p
+# Uncomment below to display all p values:
+# paste(p)
+```
+
+While no exact equivalent to the $R^2$ of linear regression exists, the **McFadden $R^2$** index can be used to assess the model fit.
+
+```{r}
+# R^2 equivalent
+pR2(fit_model_LR_Risk4)[4]
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <p>
+        McFadden $R^2$ = 0.6122
+    </p>
+</div>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+         <img src="" width="750" align="center">
+    </a>
+</div>
+
+
+
+
+## <span style="color:blue">Linear Model: Model Evaluation</span>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Linear Model: Linear Model: Model Evaluation - Workshop Task
+    </h3>
+</div>
+
+
+
+**Workshop Task:**
+
+1. a.	Train/Test Dataset Split
+2. b.	Confusion Matrix & Accuracy for Classification
+3. c.	K-Fold Cross Validation
+4. d.	$R^2$ for Regression
+
+
+**Model Evaluation Workshop Task: <span style="color:blue">1. a.	Train/Test Dataset Split</span>**
+
+```{r}
+if(!require(caTools)){install.packages("caTools")}
+library("caTools") 
+```
+
+```{r}
+# Generate a random number sequence that can be reproduced to check results thru the seed number.
+set.seed(88)
+
+# Stratified Random Sampling: split dataset into two sets in predefined proportion (SplitRatio)
+# while preserving differnt class ratios of dependent variable. (e.g. Proportion of Low/High)
+split <- sample.split(ASD_State_4_LR_Risk2$Prevalence_Risk2, SplitRatio = 0.7)
+```
+
+```{r}
+# Get training and test data
+trainset <- subset(ASD_State_4_LR_Risk2, split == TRUE) 
+testset <- subset(ASD_State_4_LR_Risk2, split == FALSE)
+```
+
+**Build a binary classification model to predict (categorical) Prevalence Risk Level using Logistic Regression (LR)**
+
+```{r}
+# Binary Classification:
+fit_model_LR_Risk2 = glm(Prevalence_Risk2 ~ Denominator + Year + Source + State_Full2 + I(Year^2) + I(log(Denominator)), 
+                         family=binomial(link='logit'), data = trainset) # data = trainset
+
+summary(fit_model_LR_Risk2)
+
+```
+
+**Model Evaluation Workshop Task: <span style="color:blue">2. b.	Confusion Matrix & Accuracy for Classification</span>**
+
+
+https://en.wikipedia.org/wiki/Confusion_matrix
+
+```{r}
+# Confusion matrix on Trainset
+probTrainset <- predict(fit_model_LR_Risk2, type = 'response')
+# One way is to use the proportion of High risk in the *Training* data.
+threshold2 <- sum(trainset$Prevalence_Risk2 == "High")/length(trainset$Prevalence_Risk2)
+cat('Trainset High Risk Threshold = ', threshold2)
+# If logistic regression probability > threshold, predict High, else predict Low.
+predictTrainset <- ifelse(probTrainset > threshold2, "High", "Low")
+# Create a contingency table (Confusion Matrix) with actuals on rows and predictions on columns.
+table(trainset$Prevalence_Risk2, predictTrainset)
+
+# Accuracy on Trainset
+AccuracyTrain <- mean(predictTrainset == trainset$Prevalence_Risk2) 
+cat('Trainset Accuracy = ', AccuracyTrain)
+ 
+
+```
+
+```{r}
+# Confusion matrix on Testset
+probTestset <- predict(fit_model_LR_Risk2, newdata = testset, type = 'response') # newdata = testset
+# One way is to use the proportion of High risk in the *Training* data.
+cat('Reused Trainset High Risk Threshold = ', threshold2)
+# If logistic regression probability > threshold, predict High, else predict Low.
+predictTestset <- ifelse(probTestset > threshold2, "High", "Low")
+# Create a contingency table (Confusion Matrix) with actuals on rows and predictions on columns.
+table(testset$Prevalence_Risk2, predictTestset)
+
+# Accuracy on Trainset
+AccuracyTest <- mean(predictTestset == testset$Prevalence_Risk2) 
+cat('Testset Accuracy = ', AccuracyTest)
+```
+
+**Model Evaluation Workshop Task: <span style="color:blue">3. c.	K-Fold Cross Validation</span>**
+
+
+### R caret package
+
+The caret package (short for Classification And REgression Training) is a set of functions that attempt to streamline the process for creating predictive models. The package contains tools for:
+
+* data splitting
+* pre-processing
+* feature selection
+* model tuning using resampling
+* variable importance estimation
+
+http://topepo.github.io/caret/index.html
+
+
+```{r}
+if(!require(caret)){install.packages("caret")}
+library("caret")
+```
+
+```{r}
+if(!require(e1071)){install.packages("e1071")}
+library("e1071")
+```
+
+```{r}
+set.seed(88)
+cv_control = trainControl(method = "cv", number = 5)
+
+fit_model_LR_Risk2 = train(
+  form = Prevalence_Risk2 ~ .,
+  data = trainset,
+  trControl = cv_control,
+  method = "glm",
+  family = "binomial"
+)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+**Model Evaluation Workshop Task: <span style="color:blue">4. d.	$R^2$ for Regression</span>**
+
+```{r}
+
+```
+
+**Build a regression model to predict (numeric) Prevalanece using Multiple Linear Regression (MLR)**
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+# dummy
 
 
 <img src="../reference/CDC_ASD/ADV Years Data Available.png" align="left">
 
-
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <h3>
-    Data Visualisation (Enhanced) - <span style="color:blue">[ R ] Explore the Data</span>
-    </h3>
-</div>
-
-
-
-# dummy
 
 
 <div class="alert alert-danger alertdanger" style="margin-top: 20px">
