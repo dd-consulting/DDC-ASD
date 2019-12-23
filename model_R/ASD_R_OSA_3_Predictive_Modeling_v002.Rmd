@@ -18,7 +18,7 @@ jupyter:
          <img src="../reference/GZ_logo.png" width="60" align="right">
     </a>
     <h1>
-        One-Stop Analytics: Predictive Modeling (Non-Linear Models)
+        One-Stop Analytics: Predictive Modeling (Rattle)
     </h1>
 </div>
 
@@ -84,25 +84,35 @@ https://www.cdc.gov/ncbddd/autism/data/index.html
 
 * ## R Rattle Tool: Process & Transform Data
 
-* ## R Rattle Tool: Train Model
+---
 
-    * ### Non-Linear Model: Decision Tree (DT)
+* ## R Rattle Tool: Train Model (Classification)
 
-    * ### Non-Linear Model: Random Forest (RF)
+    * ### Classification Model: Decision Tree (DT)
 
-    * ### Non-Linear Model: Adaptive Boosting (AdaBoost)
+    * ### Classification Model: Random Forest (RF)
 
-    * ### Non-Linear Model: Neural Network (NN)
+    * ### Classification Model: Support Vector Machines (SVM)
 
-    * ### Non-Linear Model: Support Vector Machines (SVM)
+    * ### Classification Model: Multinomial Logistic regression (MLR)
+    
+* ## R Rattle Tool: Evaluate Model (Classification)
 
-* ## R Rattle Tool: Evaluate Model
+---
 
-* ## R Rattle Tool: Improve Model
+* ## R Rattle Tool: Train Model (Regression)
+
+    * ### Regression Model: Adaptive Boosting (AdaBoost)
+
+    * ### Regression Model: Neural Network (NN)
+
+* ## R Rattle Tool: Evaluate Model (Regression)
+
+---
 
 * ## R Rattle Tool: Save Model & Log
 
-* ## R Rattle Tool: Miscellaneous
+* ## R Rattle Tool: Improve Model
 
 * ## Workshop Submission
 
@@ -133,6 +143,11 @@ getwd()
 # setwd("/media/sf_vm_shared_folder/git/DDC/DDC-ASD/model_R")
 # setwd('~/Desktop/admin-desktop/vm_shared_folder/git/DDC-ASD/model_R')
 getwd()
+```
+
+```{r}
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=5)
 ```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
@@ -903,6 +918,33 @@ by Prevalence_Risk4", sub="Rattle 2019-Dec-23 11:15:09 iss-user", color=colorspa
 
 ---
 
+
+<img src="../reference/R rattle/020 EDA Explore n Test/a014b.png" align="left"> 
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-23 14:50:59 x86_64-pc-linux-gnu 
+
+# Mosaic Plot 
+
+# Generate the table data for plotting.
+
+ds <- table(crs$dataset[crs$train,]$State_Region, crs$dataset[crs$train,]$Prevalence_Risk4)
+
+# Sort the entries.
+
+ord <- order(apply(ds, 1, sum), decreasing=TRUE)
+
+# Plot the data.
+
+mosaicplot(ds[ord,], main="Mosaic of State_Region (sample)
+by Prevalence_Risk4", sub="Rattle 2019-Dec-23 14:50:59 iss-user", color=colorspace::rainbow_hcl(5)[-1], cex=0.7, xlab="State_Region", ylab="Prevalence_Risk4")
+```
+
+---
+
 ```{r}
 if(!require(gplots)){install.packages("gplots")}
 library('gplots')
@@ -1261,6 +1303,7 @@ locationTest(na.omit(crs$dataset[crs$dataset[["Prevalence_Risk4"]] == "High", "P
 names(crs$dataset)
 ```
 
+<!-- #region -->
 **Select variables to build classification model**
 
 Target: 
@@ -1275,10 +1318,14 @@ Inputs:
 
 * Source
 
-* State_Full2
+* State_Region
 
 
+Note: It's not recommended ot use **State**, which has more than 32 levels.
 
+https://stats.stackexchange.com/questions/49243/rs-randomforest-can-not-handle-more-than-32-levels-what-is-workaround
+
+<!-- #endregion -->
 
 <img src="../reference/R rattle/030 Process n Transform Data/a001.png" align="left">
 
@@ -1286,7 +1333,7 @@ Inputs:
 
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:03:30 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 15:06:51 x86_64-pc-linux-gnu 
 
 # Action the user selections from the Data tab. 
 
@@ -1314,33 +1361,39 @@ crs$test
 
 # The following variable selections have been noted.
 
-crs$input     <- c("Denominator", "Year", "Source", "State_Full2")
+crs$input     <- c("Denominator", "Year", "Source",
+                   "State_Region")
 
 crs$numeric   <- c("Denominator", "Year")
 
-crs$categoric <- c("Source", "State_Full2")
+crs$categoric <- c("Source", "State_Region")
 
 crs$target    <- "Prevalence_Risk4"
 crs$risk      <- NULL
 crs$ident     <- NULL
-crs$ignore    <- c("State", "Prevalence", "Lower.CI", "Upper.CI", "Source_Full1", "State_Full1", "Numerator_ASD", "Numerator_NonASD", "Proportion", "Chi_Wilson_Corrected_Lower.CI", "Chi_Wilson_Corrected_Upper.CI", "Male.Prevalence", "Male.Lower.CI", "Male.Upper.CI", "Female.Prevalence", "Female.Lower.CI", "Female.Upper.CI", "Non.hispanic.white.Prevalence", "Non.hispanic.white.Lower.CI", "Non.hispanic.white.Upper.CI", "Non.hispanic.black.Prevalence", "Non.hispanic.black.Lower.CI", "Non.hispanic.black.Upper.CI", "Hispanic.Prevalence", "Hispanic.Lower.CI", "Hispanic.Upper.CI", "Asian.or.Pacific.Islander.Prevalence", "Asian.or.Pacific.Islander.Lower.CI", "Asian.or.Pacific.Islander.Upper.CI", "Source_UC", "Source_Full3", "Prevalence_Risk2", "Year_Factor")
+crs$ignore    <- c("State", "Prevalence", "Lower.CI", "Upper.CI", "Source_Full1", "State_Full1", "State_Full2", "Numerator_ASD", "Numerator_NonASD", "Proportion", "Chi_Wilson_Corrected_Lower.CI", "Chi_Wilson_Corrected_Upper.CI", "Male.Prevalence", "Male.Lower.CI", "Male.Upper.CI", "Female.Prevalence", "Female.Lower.CI", "Female.Upper.CI", "Non.hispanic.white.Prevalence", "Non.hispanic.white.Lower.CI", "Non.hispanic.white.Upper.CI", "Non.hispanic.black.Prevalence", "Non.hispanic.black.Lower.CI", "Non.hispanic.black.Upper.CI", "Hispanic.Prevalence", "Hispanic.Lower.CI", "Hispanic.Upper.CI", "Asian.or.Pacific.Islander.Prevalence", "Asian.or.Pacific.Islander.Lower.CI", "Asian.or.Pacific.Islander.Upper.CI", "Source_UC", "Source_Full3", "Prevalence_Risk2", "Year_Factor")
 crs$weights   <- NULL
 ```
 
 ---
 
 ```{r}
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=5)
+```
+
+```{r}
 
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:17:02 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 14:59:20 x86_64-pc-linux-gnu 
 
 # The 'gplots' package provides the 'barplot2' function.
 
 library(gplots, quietly=TRUE)
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:17:02 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 14:59:20 x86_64-pc-linux-gnu 
 
 # Bar Plot 
 
@@ -1374,17 +1427,17 @@ title(main="Distribution of Source (sample)\nby Prevalence_Risk4",
     sub=paste("Rattle", format(Sys.time(), "%Y-%b-%d %H:%M:%S"), Sys.info()["user"]))
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:17:02 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 14:59:21 x86_64-pc-linux-gnu 
 
 # Bar Plot 
 
 # Generate the summary data for plotting.
 
-ds <- rbind(summary(na.omit(crs$dataset[crs$train,]$State_Full2)),
-    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="High",]$State_Full2)),
-    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="Low",]$State_Full2)),
-    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="Medium",]$State_Full2)),
-    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="Very High",]$State_Full2)))
+ds <- rbind(summary(na.omit(crs$dataset[crs$train,]$State_Region)),
+    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="High",]$State_Region)),
+    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="Low",]$State_Region)),
+    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="Medium",]$State_Region)),
+    summary(na.omit(crs$dataset[crs$train,][crs$dataset[crs$train,]$Prevalence_Risk4=="Very High",]$State_Region)))
 
 # Sort the entries.
 
@@ -1392,7 +1445,7 @@ ord <- order(ds[1,], decreasing=TRUE)
 
 # Plot the data.
 
-bp <-  barplot2(ds[,ord], beside=TRUE, ylab="Frequency", xlab="State_Full2", ylim=c(0, 37), col=colorspace::rainbow_hcl(5))
+bp <-  barplot2(ds[,ord], beside=TRUE, ylab="Frequency", xlab="State_Region", ylim=c(0, 265), col=colorspace::rainbow_hcl(5))
 
 # Add a legend to the plot.
 
@@ -1400,7 +1453,7 @@ legend("topright", bty="n", c("All","High","Low","Medium","Very High"),  fill=co
 
 # Add a title to the plot.
 
-title(main="Distribution of State_Full2 (sample)\nby Prevalence_Risk4",
+title(main="Distribution of State_Region (sample)\nby Prevalence_Risk4",
     sub=paste("Rattle", format(Sys.time(), "%Y-%b-%d %H:%M:%S"), Sys.info()["user"]))
 ```
 
@@ -1460,11 +1513,14 @@ gridExtra::grid.arrange(p01, p02)
 
 <img src="../reference/R rattle/030 Process n Transform Data/a004.png" align="left">
 
+
+<img src="../reference/R rattle/030 Process n Transform Data/a005.png" align="left">
+
 ```{r}
 
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:19:08 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 15:10:29 x86_64-pc-linux-gnu 
 
 # Transform variables by rescaling. 
 
@@ -1489,23 +1545,23 @@ if (scoring)
 }
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:19:08 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 15:10:29 x86_64-pc-linux-gnu 
 
 # Action the user selections from the Data tab. 
 
 # The following variable selections have been noted.
 
-crs$input     <- c("Year", "Source", "State_Full2",
+crs$input     <- c("Year", "Source", "State_Region",
                    "R10_Denominator")
 
 crs$numeric   <- c("Year", "R10_Denominator")
 
-crs$categoric <- c("Source", "State_Full2")
+crs$categoric <- c("Source", "State_Region")
 
 crs$target    <- "Prevalence_Risk4"
 crs$risk      <- NULL
 crs$ident     <- NULL
-crs$ignore    <- c("State", "Denominator", "Prevalence", "Lower.CI", "Upper.CI", "Source_Full1", "State_Full1", "Numerator_ASD", "Numerator_NonASD", "Proportion", "Chi_Wilson_Corrected_Lower.CI", "Chi_Wilson_Corrected_Upper.CI", "Male.Prevalence", "Male.Lower.CI", "Male.Upper.CI", "Female.Prevalence", "Female.Lower.CI", "Female.Upper.CI", "Non.hispanic.white.Prevalence", "Non.hispanic.white.Lower.CI", "Non.hispanic.white.Upper.CI", "Non.hispanic.black.Prevalence", "Non.hispanic.black.Lower.CI", "Non.hispanic.black.Upper.CI", "Hispanic.Prevalence", "Hispanic.Lower.CI", "Hispanic.Upper.CI", "Asian.or.Pacific.Islander.Prevalence", "Asian.or.Pacific.Islander.Lower.CI", "Asian.or.Pacific.Islander.Upper.CI", "Source_UC", "Source_Full3", "Prevalence_Risk2", "Year_Factor")
+crs$ignore    <- c("State", "Denominator", "Prevalence", "Lower.CI", "Upper.CI", "Source_Full1", "State_Full1", "State_Full2", "Numerator_ASD", "Numerator_NonASD", "Proportion", "Chi_Wilson_Corrected_Lower.CI", "Chi_Wilson_Corrected_Upper.CI", "Male.Prevalence", "Male.Lower.CI", "Male.Upper.CI", "Female.Prevalence", "Female.Lower.CI", "Female.Upper.CI", "Non.hispanic.white.Prevalence", "Non.hispanic.white.Lower.CI", "Non.hispanic.white.Upper.CI", "Non.hispanic.black.Prevalence", "Non.hispanic.black.Lower.CI", "Non.hispanic.black.Upper.CI", "Hispanic.Prevalence", "Hispanic.Lower.CI", "Hispanic.Upper.CI", "Asian.or.Pacific.Islander.Prevalence", "Asian.or.Pacific.Islander.Lower.CI", "Asian.or.Pacific.Islander.Upper.CI", "Source_UC", "Source_Full3", "Prevalence_Risk2", "Year_Factor")
 crs$weights   <- NULL
 ```
 
@@ -1517,16 +1573,16 @@ crs$weights   <- NULL
 
 
 
-<img src="../reference/R rattle/030 Process n Transform Data/a005.png" align="left">
-
-
 <img src="../reference/R rattle/030 Process n Transform Data/a006.png" align="left">
+
+
+<img src="../reference/R rattle/030 Process n Transform Data/a007.png" align="left">
 
 ```{r}
 
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:23:45 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 15:12:22 x86_64-pc-linux-gnu 
 
 # Transform variables by rescaling. 
 
@@ -1571,30 +1627,30 @@ if (scoring)
 }
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:23:45 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 15:12:23 x86_64-pc-linux-gnu 
 
 # Action the user selections from the Data tab. 
 
 # The following variable selections have been noted.
 
-crs$input     <- c("Source", "State_Full2", "RMD_Year",
+crs$input     <- c("Source", "State_Region", "RMD_Year",
                    "RMD_R10_Denominator")
 
 crs$numeric   <- c("RMD_Year", "RMD_R10_Denominator")
 
-crs$categoric <- c("Source", "State_Full2")
+crs$categoric <- c("Source", "State_Region")
 
 crs$target    <- "Prevalence_Risk4"
 crs$risk      <- NULL
 crs$ident     <- NULL
-crs$ignore    <- c("State", "Denominator", "Prevalence", "Lower.CI", "Upper.CI", "Year", "Source_Full1", "State_Full1", "Numerator_ASD", "Numerator_NonASD", "Proportion", "Chi_Wilson_Corrected_Lower.CI", "Chi_Wilson_Corrected_Upper.CI", "Male.Prevalence", "Male.Lower.CI", "Male.Upper.CI", "Female.Prevalence", "Female.Lower.CI", "Female.Upper.CI", "Non.hispanic.white.Prevalence", "Non.hispanic.white.Lower.CI", "Non.hispanic.white.Upper.CI", "Non.hispanic.black.Prevalence", "Non.hispanic.black.Lower.CI", "Non.hispanic.black.Upper.CI", "Hispanic.Prevalence", "Hispanic.Lower.CI", "Hispanic.Upper.CI", "Asian.or.Pacific.Islander.Prevalence", "Asian.or.Pacific.Islander.Lower.CI", "Asian.or.Pacific.Islander.Upper.CI", "Source_UC", "Source_Full3", "Prevalence_Risk2", "Year_Factor", "R10_Denominator")
+crs$ignore    <- c("State", "Denominator", "Prevalence", "Lower.CI", "Upper.CI", "Year", "Source_Full1", "State_Full1", "State_Full2", "Numerator_ASD", "Numerator_NonASD", "Proportion", "Chi_Wilson_Corrected_Lower.CI", "Chi_Wilson_Corrected_Upper.CI", "Male.Prevalence", "Male.Lower.CI", "Male.Upper.CI", "Female.Prevalence", "Female.Lower.CI", "Female.Upper.CI", "Non.hispanic.white.Prevalence", "Non.hispanic.white.Lower.CI", "Non.hispanic.white.Upper.CI", "Non.hispanic.black.Prevalence", "Non.hispanic.black.Lower.CI", "Non.hispanic.black.Upper.CI", "Hispanic.Prevalence", "Hispanic.Lower.CI", "Hispanic.Upper.CI", "Asian.or.Pacific.Islander.Prevalence", "Asian.or.Pacific.Islander.Lower.CI", "Asian.or.Pacific.Islander.Upper.CI", "Source_UC", "Source_Full3", "Prevalence_Risk2", "Year_Factor", "R10_Denominator")
 crs$weights   <- NULL
 ```
 
 **Optionally, Cleanup variables by Delete Ignored**
 
 
-<img src="../reference/R rattle/030 Process n Transform Data/a007.png" align="left">
+<img src="../reference/R rattle/030 Process n Transform Data/a008.png" align="left">
 
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
@@ -1606,7 +1662,7 @@ crs$weights   <- NULL
 
 
 
-## <span style="color:blue">R Rattle Tool: Train Model</span>
+## <span style="color:blue">R Rattle Tool: Train Model</span> (Classification)
 
 
 ```{r}
@@ -1619,7 +1675,7 @@ crs$input
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    Non-Linear Model: Decision Tree (DT)
+    Classification Model: Decision Tree (DT)
     </h3>
 </div>
 
@@ -1631,10 +1687,15 @@ crs$input
 <img src="../reference/R rattle/040 Train Model/DT002.png" align="left"> 
 
 ```{r}
+if(!require(rpart)){install.packages("rpart")}
+library('rpart')
+```
+
+```{r}
 
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:38:55 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 15:16:48 x86_64-pc-linux-gnu 
 
 # Decision Tree 
 
@@ -1662,16 +1723,7 @@ print(crs$rpart)
 printcp(crs$rpart)
 cat("\n")
 
-# Time taken: 0.04 secs
-
-#=======================================================================
-# Rattle timestamp: 2019-12-23 12:38:59 x86_64-pc-linux-gnu 
-
-# Plot the resulting Decision Tree. 
-
-# We use the rpart.plot package.
-
-fancyRpartPlot(crs$rpart, main="Decision Tree ADV_ASD_State_R.csv $ Prevalence_Risk4")
+# Time taken: 0.05 secs
 
 # List the rules from the tree using a Rattle support function.
 
@@ -1679,38 +1731,40 @@ asRules(crs$rpart)
 ```
 
 ```{r}
-
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=6)
 ```
 
 ```{r}
-
+rpart.plot::prp(crs$rpart,
+    type = 2, extra = "auto", nn = TRUE,
+    under = FALSE, fallen.leaves = TRUE,
+    digits = 2, varlen = 0, faclen = 0, 
+#    roundint = TRUE,
+    cex = NULL, tweak = 1,
+#    clip.facs = FALSE, 
+    clip.right.labs = TRUE,
+    snip = FALSE,
+    box.palette = "auto", shadow.col = 0)
 ```
 
-```{r}
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Classification Model: Random Forest (RF)
+    </h3>
+</div>
 
-```
 
-```{r}
 
-```
+<img src="../reference/R rattle/040 Train Model/RF001.png" align="left"> 
 
-```{r}
 
-```
-
-```{r}
-
-```
+<img src="../reference/R rattle/040 Train Model/RF002.png" align="left"> 
 
 ```{r}
-
-```
-
-```{r}
-
 
 #=======================================================================
-# Rattle timestamp: 2019-12-23 12:34:57 x86_64-pc-linux-gnu 
+# Rattle timestamp: 2019-12-23 15:40:42 x86_64-pc-linux-gnu 
 
 # Build a Random Forest model using the traditional approach.
 
@@ -1718,7 +1772,7 @@ set.seed(crv$seed)
 
 crs$rf <- randomForest::randomForest(Prevalence_Risk4 ~ .,
   data=crs$dataset[crs$train, c(crs$input, crs$target)], 
-  ntree=300,
+  ntree=500,
   mtry=2,
   importance=TRUE,
   na.action=randomForest::na.roughfix,
@@ -1733,1226 +1787,159 @@ crs$rf
 rn <- round(randomForest::importance(crs$rf), 2)
 rn[order(rn[,3], decreasing=TRUE),]
 
-# Time taken: 0.44 secs
-```
+# Time taken: 2.00 secs
 
-```{r}
+#=======================================================================
+# Rattle timestamp: 2019-12-23 15:40:45 x86_64-pc-linux-gnu 
 
-```
+# Plot the relative importance of the variables.
 
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-```{r}
-head(ASD_State)
-```
-
-```{r}
-# Filter [ Source: ADDM ], including only two clomuns for SLR:
-# Dependent variable: Prevalence
-# independent variable: Year
-ASD_State_4_SLR = subset(ASD_State, Source_UC == 'ADDM', select = c(Prevalence, Year))
-#
-dim(ASD_State_4_SLR)
-head(ASD_State_4_SLR)
-```
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">1. a. Graph the data in a scatterplot to determine if there is a possible linear relationship.</span>**
-
-```{r}
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=4)
-```
-
-```{r}
-plot(ASD_State_4_SLR$Year, ASD_State_4_SLR$Prevalence)
-```
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">2. b. Compute and interpret the linear correlation coefficient, r.</span>**
-
-
-Compute correlaion coefficient
-
-```{r}
-cor(ASD_State_4_SLR$Year, ASD_State_4_SLR$Prevalence)
-```
-
-Apply correlation test (two tail: != 0)
-
-```{r}
-cor.test(ASD_State_4_SLR$Year, ASD_State_4_SLR$Prevalence)
-```
-
-Apply correlation test (one tail: > 0)
-
-```{r}
-cor.test(ASD_State_4_SLR$Year, ASD_State_4_SLR$Prevalence, alternative = "greater")
-```
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">3. c. Determine the regression equation for the data.</span>**
-
-```{r}
-fit_model = lm(formula = Prevalence ~ Year, data = ASD_State_4_SLR)
-print(fit_model)
-```
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">4. d. Graph the regression equation and the data points.</span>**
-
-```{r}
-plot(ASD_State_4_SLR$Year, ASD_State_4_SLR$Prevalence)
-abline(fit_model, col="blue", lwd=2)
-```
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">5. e. Identify potential influential observations (outliers).</span>**
-
-```{r}
-# library(repr)
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=6)
-par(mfrow=c(2, 2)) 
-plot(fit_model)
-par(mfrow=c(1, 1))
-```
-
-**<span style="color:blue">[ Tips ]</span> We notice:**
-
-* Based on **Residual vs Leverage** chart, there seems no potential influential observations (outliers)
-
-
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">6. f. At the 5% significance level, do the data provide sufficient evidence to conclude that the slope of the population regression line is not 0 and, hence, that [ Year ] is useful as a predictor of ASD [ Prevalence ]?</span>**
-
-```{r}
-summary(fit_model)
-```
-
-**<span style="color:blue">[ Tips ]</span> We notice:**
-
-2. F-test's p-value is 4.13e-15, which is smaller than 0.05, thus above 95% confidence.
-
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">7. g.	Obtain the residuals and create a residual plot. Decide whether it is reasonable to consider that the assumptions for regression analysis are met by the variables in questions.</span>**
-
-```{r}
-# library(repr)
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=6)
-par(mfrow=c(2, 2)) 
-plot(fit_model)
-par(mfrow=c(1, 1))
-```
-
-**<span style="color:blue">[ Tips ]</span> We notice:**
-
-* Based on **Residual vs Fitted, Sacle-Location, and Normal Q-Q** charts, the residuals (vs fitted) are following linear assumption, with slightly "fan-shape" at larger Year values (Heteroscedasticity). https://statisticsbyjim.com/regression/heteroscedasticity-regression/
-
-* We are to explore polynomial regression method for this issue later.
-
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">8. h.	Compute and interpret the coefficient of determination, $R^2$.</span>**
-
-```{r}
-summary(fit_model)
-```
-
-**<span style="color:blue">[ Tips ]</span> We notice:**
-
-* $R^2$ is  0.5219
-
-* Adjusted $R^2$ is  0.5162
-
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">9. i.	Find the predicted ASD Prevalence of future Year.</span>**
-
-```{r}
-future_year = 2025
-newdata = data.frame(Year = future_year) 
-predict(fit_model,newdata)
-#
-cat("Predicted ASD Prevalence of Year [", future_year, "] is", round(predict(fit_model,newdata), 1), "per 1,000 Children")
-
-```
-
----
-
-
-**SLR Workshop Task: <span style="color:blue">10. j.	Determine a 95% confidence interval for the predicted ASD Prevalence.</span>**
-
-```{r}
-predict(fit_model, newdata, interval = "predict")
-```
-
-```{r}
-cat("\nPredicted ASD Prevalence of Year [", future_year, "] (95% Upper CI) is", 
-    round(predict(fit_model,newdata, interval = "predict")[3], 1), "per 1,000 Children")
-
-cat("\nPredicted ASD Prevalence of Year [", future_year, "] (95% Lower CI) is", 
-    round(predict(fit_model,newdata, interval = "predict")[2], 1), "per 1,000 Children")
-
-```
-
----
-
-
-<div class="alert alert-danger alertdanger" style="margin-top: 20px">
-    <h3>
-        Quiz:
-    </h3>
-    <p>
-        Create Prevalence ~ Year SLR model for Data Source: SPED
-    </p>
-</div>
-
-```{r}
-# Write your code below and press Shift+Enter to execute 
-
-```
-
-Double-click <b>here</b> for the solution.
-
-<!-- The answer is below:
-
-# Write your code below and press Shift+Enter to execute 
-ASD_State_4_SLR = subset(ASD_State, Source_UC == 'SPED', select = c(Prevalence, Year))
-ASD_State_4_SLR = subset(ASD_State, Source_UC == 'NSCH', select = c(Prevalence, Year))
-ASD_State_4_SLR = subset(ASD_State, Source_UC == 'MEDI', select = c(Prevalence, Year))
-ASD_State_4_SLR = subset(ASD_State, select = c(Prevalence, Year))
-
--->
-
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <a href="">
-         <img src="" width="750" align="center">
-    </a>
-</div>
-
-
-
-
-## <span style="color:blue">Linear Model: Multiple Linear Regression (MLR)</span>
-
-
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <h3>
-    Linear Model: Multiple Linear Regression (MLR) - Workshop Task
-    </h3>
-</div>
-
-
-
-**Workshop Task:**
-
-1. a.	Get the data.
-
-2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value)
-
-3. c.	Visualize Data and trends
-
-4. d.	Compute correlation between variables and apply multiple regression.
-
-5. e.	Check multicollinearity, then how to remove multicollinearity.
-
-6. f.	How is your ﬁnal model looks like?
-
-
-
-**MLR Workshop Task: <span style="color:blue">1. a. Get the data.</span>**
-
-
-**Use Case Data: <span style="color:blue">"../dataset/ADV_ASD_State_R.csv"</span>**
-
-
-**Read in CSV data, storing as R <span style="color:blue">dataframe</span>**
-
-```{r}
-# Read back in above saved file:
-# ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
-# ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
-# ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, levels=c("Low", "High"))
-# ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, levels=c("Low", "Medium", "High", "Very High"))
-
-```
-
-```{r}
-head(ASD_State)
-```
-
-```{r}
-names(ASD_State)
-```
-
-```{r}
-# Filter to include relevant clomuns for MLR:
-# Dependent variable: Prevalence
-# independent variable: Let's include all at the moment
-ASD_State_4_MLR = ASD_State
-#
-dim(ASD_State_4_MLR)
-head(ASD_State_4_MLR)
-```
-
----
-
-
-**MLR Workshop Task: <span style="color:blue">2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value).</span>**
-
-```{r}
-summary(ASD_State_4_MLR)
-```
-
-```{r}
-# Check whether each columns got missing value:
-lapply(ASD_State_4_MLR, function(col_x)sum(is.na(col_x)))
-       
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=3)
-barplot(apply(ASD_State_4_MLR, 2, function(col_x)sum(is.na(col_x))))
-```
-
-```{r}
-dim(ASD_State_4_MLR)
-```
-
-```{r}
-#Get all the column variables which contains missing value 
-NA_Column_Names <- names(ASD_State_4_MLR[0, colSums(is.na(ASD_State_4_MLR)) > 0])
-#
-NA_Column_Names
-```
-
-```{r}
-# Remove these columns from dataframe
-ASD_State_4_MLR <- ASD_State_4_MLR[ , !(names(ASD_State_4_MLR) %in% NA_Column_Names)]
-#
-head(ASD_State_4_MLR)
-```
-
-**No missing values, as they have been handled earlier. <span style="color:blue">Hurrah!</span>**
-
-**But some varialbe contains <span style="color:blue">"leaky"</span> information, which can be used to directly calculate the dependent variable: Prevalence. This won't happen in real world scenario, thus they need to be removed.**
-
-```{r}
-cbind(names(ASD_State_4_MLR), c(1:length(names(ASD_State_4_MLR))))
-```
-
-```{r}
-Leaky_Column_Names = c('Lower.CI', 'Upper.CI', 'Numerator_ASD', 'Numerator_NonASD', 'Proportion', 
-                       'Chi_Wilson_Corrected_Lower.CI', 'Chi_Wilson_Corrected_Upper.CI', 
-                       'Prevalence_Risk2', 'Prevalence_Risk4')
-```
-
-```{r}
-# Remove these columns from dataframe
-ASD_State_4_MLR <- ASD_State_4_MLR[ , !(names(ASD_State_4_MLR) %in% Leaky_Column_Names)]
-#
-head(ASD_State_4_MLR)
-```
-
-**Remove redundant/duplicate variables (aliased coefficients), retaining one for each type of information is enough:**
-
-https://en.wikipedia.org/wiki/Multicollinearity
-
-https://stats.stackexchange.com/questions/112442/what-are-aliased-coefficients
-
-```{r}
-Redundant_Column_Names = c('State', 'Source_Full1', 'State_Full1', 'Source_UC', 'Source_Full3', 'Year_Factor')
-```
-
-```{r}
-# Remove these columns from dataframe
-ASD_State_4_MLR <- ASD_State_4_MLR[ , !(names(ASD_State_4_MLR) %in% Redundant_Column_Names)]
-#
-head(ASD_State_4_MLR)
-```
-
----
-
-
-**MLR Workshop Task: <span style="color:blue">3. c.	Visualize the data to gain insights</span>**
-
-```{r}
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=4)
-```
-
-```{r}
-plot(ASD_State_4_MLR$Year, ASD_State_4_MLR$Prevalence)
-```
-
-```{r}
-plot(as.factor(ASD_State_4_MLR$Year), ASD_State_4_MLR$Prevalence)
-```
-
-```{r}
-plot(ASD_State_4_MLR$Denominator, ASD_State_4_MLR$Prevalence)
-```
-
-```{r}
-# To use bin() function
-# https://www.rdocumentation.org/packages/OneR/versions/2.2/topics/bin
-if(!require(OneR)){install.packages("OneR")}
-library('OneR')
-
-# Bin 'Denominator'
-plot(bin(ASD_State_4_MLR$Denominator, nbins = 10), ASD_State_4_MLR$Prevalence)
-```
-
-```{r}
-plot(ASD_State_4_MLR$Source, ASD_State_4_MLR$Prevalence)
-```
-
-```{r}
-plot(ASD_State_4_MLR$State_Full2, ASD_State_4_MLR$Prevalence)
-```
-
----
-
-
-**MLR Workshop Task: <span style="color:blue">4. d.	Compute correlation between variables and apply multiple regression.</span>**
-
-
-Recode categorical variable to dummy (numeric) variable using one-hot encoding:
-
-```{r}
-# To use select_if() function
-if(!require(dplyr)){install.packages("dplyr")}
-library("dplyr")
-
-summary(select_if(ASD_State_4_MLR, is.numeric))
-```
-
-```{r}
-correlation = cor(select_if(ASD_State_4_MLR, is.numeric))
-correlation
-```
-
-```{r}
-# Variable's correlation against target dependent variable:
-correlation[, 2]
-```
-
-```{r}
-if(!require(corrplot)){install.packages("corrplot")}
-library("corrplot")
-corrplot(correlation, tl.col="black", tl.pos = "lt")
-```
-
-```{r}
-str(ASD_State_4_MLR)
-```
-
-```{r}
-# To build (National level) ASD Prevalence predictive model for all state's:
-# In situations that we won't know the US. State name, we can also fit a model without State name/code:
-fit_model = lm(Prevalence ~ . - State_Full2, data = ASD_State_4_MLR) # Exclude a variable using: "- variable"
-#
-summary(fit_model)
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        Adjusted $R^2$ = 0.6575
-    </p>
-</div>
-
-
-```{r}
-# To build (US. State level) ASD Prevalence predictive model for specific state's prevalence:
-# In situations that we shall know the US. State name. (A state name is required during prediciton.)
-fit_model = lm(Prevalence ~ . , data = ASD_State_4_MLR) # "~." means all other variables, including factors
-#
-summary(fit_model)
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        Adjusted $R^2$ = 0.7697
-    </p>
-</div>
-
-
-
----
-
-
-**MLR Workshop Task: <span style="color:blue">5. e.	Check multicollinearity, then how to remove multicollinearity.</span>**
-
-
-< Detection of multicollinearity >
-
-Some authors have suggested a formal detection-tolerance or the variance inflation factor (VIF) for multicollinearity. <span style="color:blue">A VIF of 5 or 10 and above</span> indicates a multicollinearity problem.
-
-```{r}
-# To use select_if() function
-if(!require(car)){install.packages("car")}
-library("car")
-```
-
-```{r}
-vif(fit_model)
-```
-
-**<span style="color:blue">[ Tips ]</span> We notice VIF of Denominator and State_Full2 are high.** Let's exclude them one at a time.
-
-
-**Retain: State; Remove: Denominator then re-build model:**
-
-```{r}
-# To build (National level) ASD Prevalence predictive model for all state's:
-# In situations that we won't know the US. State name, we can also fit a model without State name/code:
-fit_model_with_State = lm(Prevalence ~ . - Denominator, data = ASD_State_4_MLR) # Exclude a variable using: "- variable"
-#
-summary(fit_model_with_State)
-```
-
-```{r}
-vif(fit_model_with_State)
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        Adjusted $R^2$ = 0.7662
-    </p>
-</div>
-
-
-
----
-
-
-**Retain: Denominator; Remove: State; then re-build model:**
-
-```{r}
-# To build (National level) ASD Prevalence predictive model for all state's:
-# In situations that we won't know the US. State name, we can also fit a model without State name/code:
-fit_model_with_Denominator = lm(Prevalence ~ . - State_Full2, data = ASD_State_4_MLR) # Exclude a variable using: "- variable"
-#
-summary(fit_model_with_Denominator)
-```
-
-```{r}
-vif(fit_model_with_Denominator)
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        Adjusted $R^2$ = 0.6575
-    </p>
-</div>
-
-
-
----
-
-
-**MLR Workshop Task: <span style="color:blue">6. f.	How is your ﬁnal model looks like?</span>**
-
-<!-- #region -->
-* During prediction, if US. State name will be known, then the **fit_model_with_State** can be better because it has higher $R^2$ value.
-
-
-* During prediction, if US. State name will NOT be known,  then the **fit_model_with_Denominator** can be adopted because it doesn't require state name as input for prediciton.
-
-<!-- #endregion -->
-
-**MLR Prediciton 1**
-
-Let's use **fit_model_with_State** to predict CA-California ASD Prevalence of Year 2016 if ADDM would have conducted a survey
-
-```{r}
-newdata = ASD_State_4_MLR[1,] # Copy datastructure
-newdata$Prevalence = NA
-newdata$Denominator = 50000
-newdata$Year = 2016
-newdata$Source = "addm"
-#newdata$State_Full2 = "CA-California"
-newdata$State_Full2 = "AZ-Arizona"
-
-newdata
-```
-
-```{r}
-predict(fit_model_with_State, newdata, interval = "predict")
-#
-cat("Predicted ASD Prevalence is", round(predict(fit_model_with_State, newdata), 1), "per 1,000 Children")
-```
-
-**MLR Prediciton 2**
-
-Let's use **fit_model_with_Denominator** to predict National level ASD Prevalence of Year 2016 if ADDM would have conducted a survey
-
-```{r}
-predict(fit_model_with_Denominator, newdata, interval = "predict")
-#
-cat("Predicted ASD Prevalence is", round(predict(fit_model_with_Denominator, newdata), 1), "per 1,000 Children")
-```
-
-**MLR Prediciton 2**
-
-Let's use **fit_model** to predict FL-Florida State level ASD Prevalence of Year 2025 if SPED will conduct a record review/survey of 2,600,000 children.
-
-```{r}
-newdata = ASD_State_4_MLR[1,] # Copy datastructure
-newdata$Prevalence = NA
-newdata$Denominator = 2600000
-newdata$Year = 2025
-newdata$Source = "sped"
-newdata$State_Full2 = "FL-Florida"
-
-newdata
-```
-
-```{r}
-predict(fit_model, newdata, interval = "predict")
-#
-cat("Predicted ASD Prevalence is", round(predict(fit_model, newdata), 1), "per 1,000 Children")
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <a href="">
-         <img src="" width="750" align="center">
-    </a>
-</div>
-
-
-
-
-## <span style="color:blue">Linear Model: Polynomial (Linear) Regression (PLR)</span>
-
-
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <h3>
-    Linear Model: Polynomial (Linear) Regression (PLR) - Workshop Task
-    </h3>
-</div>
-
-
-
-**Workshop Task:**
-
-1. a.	Get the data.
-
-2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value)
-
-3. c.	Visualize Data and trends
-
-4. d.	Compute correlation between variables and apply multiple regression.
-
-5. e.	Multiple polynomial regression.
-
-
-
-**PLR Workshop Task: <span style="color:blue">1. a. Get the data.</span>**
-
-
-**Use Case Data: <span style="color:blue">"../dataset/ADV_ASD_State_R.csv"</span>**
-
-
-**Read in CSV data, storing as R <span style="color:blue">dataframe</span>**
-
-```{r}
-# Read back in above saved file:
-ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
-ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
-ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, levels=c("Low", "High"))
-ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, levels=c("Low", "Medium", "High", "Very High"))
-
-```
-
-```{r}
-head(ASD_State)
-```
-
-```{r}
-names(ASD_State)
-```
-
-```{r}
-# Filter [ Source: SPED ], including only two clomuns for SLR:
-# Dependent variable: Prevalence
-# independent variable: Year
-# ASD_State_4_PLR = subset(ASD_State, Source_UC == 'SPED' & State_Full2 == 'MN-Minnesota', select = c(Prevalence, Year))
-# ASD_State_4_PLR = subset(ASD_State, Source_UC == 'SPED' & State_Full2 == 'MS-Mississippi', select = c(Prevalence, Year))
-ASD_State_4_PLR = subset(ASD_State, Source_UC == 'SPED' & State_Full2 == 'FL-Florida', select = c(Prevalence, Year))
-#
-dim(ASD_State_4_PLR)
-head(ASD_State_4_PLR)
-```
-
----
-
-
-**PLR Workshop Task: <span style="color:blue">2. b.	Discover and visualize the data to gain insights (Is there missing Value in the dataframe, then how to deal with the missing value).</span>**
-
-```{r}
-summary(ASD_State_4_PLR)
-```
-
-```{r}
-# Check whether each columns got missing value:
-lapply(ASD_State_4_PLR, function(col_x)sum(is.na(col_x)))
-       
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=3)
-barplot(apply(ASD_State_4_PLR, 2, function(col_x)sum(is.na(col_x))))
-```
-
-**No missing values**
-
-
----
-
-
-**PLR Workshop Task: <span style="color:blue">3. c.	Visualize the data to gain insights</span>**
-
-```{r}
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=4)
-```
-
-```{r}
-plot(ASD_State_4_PLR$Year, ASD_State_4_PLR$Prevalence)
-```
-
----
-
-
-**PLR Workshop Task: <span style="color:blue">4. d.	Compute correlation between variables and apply multiple regression.</span>**
-
-
-Recode categorical variable to dummy (numeric) variable using one-hot encoding:
-
-```{r}
-# To use select_if() function
-if(!require(dplyr)){install.packages("dplyr")}
-library("dplyr")
-
-summary(select_if(ASD_State_4_PLR, is.numeric))
-```
-
-```{r}
-correlation = cor(select_if(ASD_State_4_PLR, is.numeric))
-correlation
-```
-
-```{r}
-# Variable's correlation against target dependent variable:
-correlation[, 1]
-```
-
-```{r}
-str(ASD_State_4_PLR)
-```
-
-```{r}
-# SLR
-fit_model_SLR = lm(Prevalence ~ Year , data = ASD_State_4_PLR)
-#
-summary(fit_model_SLR)
-```
-
-```{r}
-plot(fit_model_SLR)
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        Adjusted $R^2$ = 0.958
-    </p>
-</div>
-
-
-```{r}
-# PLR (quadratic)
-fit_model_PLR = lm(Prevalence ~ Year + I(Year^2), data = ASD_State_4_PLR)
-#
-summary(fit_model_PLR)
-```
-
-**Abount I() function:** https://stackoverflow.com/questions/8055508/in-r-formulas-why-do-i-have-to-use-the-i-function-on-power-terms-like-y-i
-
-
-```{r}
-plot(fit_model_PLR)
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        Adjusted $R^2$ = 0.9981
-    </p>
-</div>
-
-
-
-**Visualise the difference between SLR & PLR:**
-
-```{r}
-plot(ASD_State_4_PLR$Year, ASD_State_4_PLR$Prevalence)
-# add SLR line
-lines(ASD_State_4_PLR$Year, predict(fit_model_SLR, ASD_State_4_PLR), col="red", lwd=2) # or # abline(fit_model_SLR, col="red", lwd=2)
-# add PLR line
-lines(ASD_State_4_PLR$Year, predict(fit_model_PLR, ASD_State_4_PLR), col="orange", lwd=2) 
-```
-
----
-
-
-**PLR Prediciton**
-
-
-```{r}
-newdata = ASD_State_4_PLR[1,] # Copy datastructure
-newdata$Prevalence = NA
-newdata$Year = 2025
-
-newdata
-```
-
-```{r}
-predict(fit_model_PLR, newdata, interval = "predict")
-#
-cat("Predicted ASD Prevalence of Year [", newdata$Year, "] is", round(predict(fit_model_PLR, newdata), 1), "per 1,000 Children")
-
-```
-
----
-
-
-**Multiple PLR Workshop Task: <span style="color:blue">5. e.	Multiple polynomial regression (MPR).</span>** (Enhance MLR by adding higher order transformed variables.)
-
-
-**Resuse MLR data: <span style="color:blue">ASD_State_4_MLR</span>** Cop to new dataframe: ASD_State_4_MPR
-
-```{r}
-ASD_State_4_MPR = ASD_State_4_MLR
-
-dim(ASD_State_4_MPR)
-
-```
-
-```{r}
-summary(ASD_State_4_MPR)
-```
-
-```{r}
-# Check whether each columns got missing value:
-lapply(ASD_State_4_MLR, function(col_x)sum(is.na(col_x)))
-       
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=3)
-barplot(apply(ASD_State_4_MLR, 2, function(col_x)sum(is.na(col_x))))
-```
-
-**Build Multiple PLR model: + I(Year^2) + I(log(Denominator)**
-
-```{r}
-fit_model_MPR = lm(Prevalence ~ . + I(Year^2) + I(log(Denominator)), data = ASD_State_4_MPR) # "~." means all other variables, including factors
-#
-summary(fit_model_MPR)
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        Adjusted $R^2$ = 0.7884
-    </p>
-</div>
-
-
-
-**Mutiple PLR Prediciton**
-
-```{r}
-# Copy datastructure
-newdata = subset(ASD_State_4_MPR, ASD_State_4_MPR$Year == 2016 &
-                            ASD_State_4_MPR$State_Full2 == 'FL-Florida' & 
-                            ASD_State_4_MPR$Source == 'sped')
-newdata
-```
-
-```{r}
-newdata = ASD_State_4_MPR[1,] # Copy datastructure
-newdata$Prevalence = NA
-newdata$Denominator = 2600000
-newdata$Year = 2025
-newdata$Source = "sped"
-newdata$State_Full2 = "FL-Florida"
-
-newdata
-```
-
-```{r}
-predict(fit_model_MPR, newdata, interval = "predict")
-#
-cat("Predicted ASD Prevalence of Year [", newdata$Year, "] is", round(predict(fit_model_MPR,newdata), 1), "per 1,000 Children")
-
-```
-
-<div class="alert alert-danger alertdanger" style="margin-top: 20px">
-    <h3>
-        Quiz:
-    </h3>
-    <p>
-        Compare predicted ASD prevalence and model $R^2$ between: Multiple Linear Rregression and Multiple Polynomial Rregression.
-    </p>
-    <p>
-        Which prediction result would you use? Provide yor justifications.
-    </p>
-</div>
-
-```{r}
-# Write your code below and press Shift+Enter to execute 
-
-```
-
-Double-click <b>here</b> for the solution.
-
-<!-- The answer is below:
-
-# Write your code below and press Shift+Enter to execute 
-# TBD
-
--->
-
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <a href="">
-         <img src="" width="750" align="center">
-    </a>
-</div>
-
-
-
-
-## <span style="color:blue">Linear Model: Logistic Regression (LR)</span>
-
-
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <h3>
-    Linear Model: Logistic Regression (LR) - Workshop Task
-    </h3>
-</div>
-
-
-
-**Workshop Task:**
-
-1. a.	Get the data.
-
-2. b.	Logistic regression - Binary Class.
-
-3. c.	Logistic regression - Multi-Class.
-
-
-
-**LR Workshop Task: <span style="color:blue">1. a. Get the data.</span>**
-
-
-**Use Case Data: <span style="color:blue">"../dataset/ADV_ASD_State_R.csv"</span>**
-
-
-**Read in CSV data, storing as R <span style="color:blue">dataframe</span>**
-
-```{r}
-# Read back in above saved file:
-# ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
-# ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) # Convert Year_Factor to ordered.factor
-# ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, levels=c("Low", "High"))
-# ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, levels=c("Low", "Medium", "High", "Very High"))
-
-```
-
-```{r}
-head(ASD_State)
-```
-
-```{r}
-Column_Names = c("Prevalence_Risk2", "Denominator", "Year", "Source", "State_Full2")
-ASD_State_4_LR_Risk2 <- ASD_State[ , (names(ASD_State) %in% Column_Names)]
-dim(ASD_State_4_LR_Risk2)
-head(ASD_State_4_LR_Risk2)
-```
-
-```{r}
-Column_Names = c("Prevalence_Risk4", "Denominator", "Year", "Source", "State_Full2")
-ASD_State_4_LR_Risk4 <- ASD_State[ , (names(ASD_State) %in% Column_Names)]
-dim(ASD_State_4_LR_Risk4)
-head(ASD_State_4_LR_Risk4)
-```
-
----
-
-
-**LR Workshop Task: <span style="color:blue">2. b.	Logistic regression (LR) Binary Class.</span>** (Reuse Multiple Polynomial Model on categorical dependent variable.)
-
-```{r}
-table(ASD_State_4_LR_Risk2$Prevalence_Risk2)
-barplot(table(ASD_State_4_LR_Risk2$Prevalence_Risk2))
-```
-
-```{r}
-counts = table(ASD_State_4_LR_Risk2$Prevalence_Risk2, ASD_State_4_LR_Risk2$Source)
-counts
-barplot(counts,
-        main="Prevalence by Data Sources and Risk Levels",
-        xlab="Data Sources",
-        ylab="Occurrences",
-        col=c("white", "lightgrey"),
-        legend = rownames(counts), 
-        args.legend = list(x = "topleft", bty = "n", cex = 0.85, y.intersp = 4))
-
-```
-
-```{r}
-str(ASD_State_4_LR_Risk2)
-```
-
-**Build model**
-
-```{r}
-# Binary Classification:
-fit_model_LR_Risk2 = glm(Prevalence_Risk2 ~ Denominator + Year + Source + State_Full2 + I(Year^2) + I(log(Denominator)), 
-                         family=binomial(link='logit'), data = ASD_State_4_LR_Risk2)
-#
-summary(fit_model_LR_Risk2)
-
-```
-
-**Evaluate model**
-
-```{r}
-# Likelihood ratio test: significance of the difference between the full model and the null model.
-pchisq(fit_model_LR_Risk2$null.deviance - fit_model_LR_Risk2$deviance, 
-       fit_model_LR_Risk2$df.null - fit_model_LR_Risk2$df.residual, lower.tail = FALSE)
-
-```
-
-**Check whether above value is very small (the smaller the more significant), e.g. < 0.05.**
-
-
-< How to perform a Logistic Regression in R > Michy Alice
-
-https://www.r-bloggers.com/how-to-perform-a-logistic-regression-in-r/
-
-
-```{r}
-# null deviance and the residual deviance
-anova(fit_model_LR_Risk2, test="Chisq")
-```
-
-```{r}
-# R^2 equivalent
-if(!require(pscl)){install.packages("pscl")}
-library("pscl")
-```
-
-While no exact equivalent to the $R^2$ of linear regression exists, the **McFadden $R^2$** index can be used to assess the model fit.
-
-```{r}
-# R^2 equivalent
-pR2(fit_model_LR_Risk2)[4]
-```
-
-<div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        McFadden $R^2$ = 0.6374
-    </p>
-</div>
-
-
-
----
-
-
-**LR Workshop Task: <span style="color:blue">3. c.	Logistic regression (LR) Muti-Class.</span>** (Reuse Multiple Polynomial Model on categorical dependent variable.)
-
-```{r}
-table(ASD_State_4_LR_Risk4$Prevalence_Risk4)
-barplot(table(ASD_State_4_LR_Risk4$Prevalence_Risk4))
-```
-
-```{r}
-counts = table(ASD_State_4_LR_Risk4$Prevalence_Risk4, ASD_State_4_LR_Risk4$Source)
-counts
-barplot(counts,
-        main="Prevalence Occurrence by Source and Risk",
-        xlab="Data Sources",
-        ylab="Occurrences",
-        col=c("lightyellow", "orange", "red","darkred"),
-        legend = rownames(counts), 
-        args.legend = list(x = "topleft", bty = "n", cex = 0.85, y.intersp = 4))
-
-```
-
-**Build model**
-
-```{r}
-# multinom function from the nnet package 
-if(!require(nnet)){install.packages("nnet")}
-library("nnet")
-```
-
-```{r}
-# Multi-Class Classification:
-fit_model_LR_Risk4 = multinom(Prevalence_Risk4 ~ Denominator + Year + Source + State_Full2 + I(Year^2) + I(log(Denominator)), 
-                     data = ASD_State_4_LR_Risk4, maxit=1000) # maxit https://cran.r-project.org/web/packages/nnet/nnet.pdf
-
-summary(fit_model_LR_Risk4)
-
-```
-
-< MULTINOMIAL LOGISTIC REGRESSION | R DATA ANALYSIS EXAMPLES >
-
-https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/
-
-```{r}
-## extract the coefficients from the model and exponentiate
-exp(coef(fit_model_LR_Risk4))
-# Uncomment below to display all p values:
-# paste(exp(coef(fit_model)))
-```
-
-```{r}
-# Test the significance/importance of each coefficient (check if p values < 0.05)
-
-# z score for coefficients
-z <- summary(fit_model_LR_Risk4)$coefficients/summary(fit_model_LR_Risk4)$standard.errors
-cat('\n< Talbe of coefficient z scores>')
-z
-
-# p value of 2-tailed z test
-p <- (1 - pnorm(abs(z), 0, 1)) * 2
-cat('\n< Talbe of coefficient p values>')
+p <- ggVarImp(crs$rf,
+              title="Variable Importance Random Forest ADV_ASD_State_R.csv")
 p
-# Uncomment below to display all p values:
-# paste(p)
 ```
 
-While no exact equivalent to the $R^2$ of linear regression exists, the **McFadden $R^2$** index can be used to assess the model fit.
+```{r}
+
+# Plot the error rate against the number of trees.
+
+plot(crs$rf, main="")
+legend("topright", c("OOB", "High", "Low", "Medium", "Very High"), text.col=1:6, lty=1:3, col=1:3)
+title(main="Error Rates Random Forest ADV_ASD_State_R.csv",
+    sub=paste("Rattle", format(Sys.time(), "%Y-%b-%d %H:%M:%S"), Sys.info()["user"]))
+```
 
 ```{r}
-# R^2 equivalent
-pR2(fit_model_LR_Risk4)[4]
+if(!require(verification)){install.packages("verification")}
+library('verification')
+```
+
+ROC Curve: **TPR (True Positive Rate) / Hit Rate / Recall / Sensitivity** vs. **FPR / 1- Specificity**
+
+```{r}
+head(crs$rf$votes)
+```
+
+```{r}
+
+# Plot the OOB ROC curve.
+
+library(verification)
+# aucc <- verification::roc.area(as.integer(as.factor(crs$dataset[crs$train, crs$target]))-1,
+#                 crs$rf$votes[,2])$A
+verification::roc.plot(as.integer(as.factor(crs$dataset[crs$train, crs$target]))-1,
+         crs$rf$votes[,2], main="")
+# legend("bottomright", bty="n",
+#       sprintf("Area Under the Curve (AUC) = %1.3f", aucc))
+title(main="OOB ROC Curve Random Forest ADV_ASD_State_R.csv",
+    sub=paste("Rattle", format(Sys.time(), "%Y-%b-%d %H:%M:%S"), Sys.info()["user"]))
+```
+
+```{r}
+
+# Display tree number 1 to 3.
+
+printRandomForests(crs$rf, 1:3)
 ```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
-    <p>
-        McFadden $R^2$ = 0.6122
-    </p>
+    <h3>
+    Classification Model: Support Vector Machines (SVM)
+    </h3>
 </div>
 
 
+
+<img src="../reference/R rattle/040 Train Model/SVM001.png" align="left"> 
+
+
+<img src="../reference/R rattle/040 Train Model/SVM002.png" align="left"> 
+
+```{r}
+if(!require(kernlab)){install.packages("kernlab")}
+library('kernlab')
+```
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-23 16:17:34 x86_64-pc-linux-gnu 
+
+# Support vector machine. 
+
+# The 'kernlab' package provides the 'ksvm' function.
+
+library(kernlab, quietly=TRUE)
+
+# Build a Support Vector Machine model.
+
+set.seed(crv$seed)
+crs$ksvm <- ksvm(as.factor(Prevalence_Risk4) ~ .,
+      data=crs$dataset[crs$train,c(crs$input, crs$target)],
+      kernel="rbfdot",
+      prob.model=TRUE)
+
+# Generate a textual view of the SVM model.
+
+crs$ksvm
+
+# Time taken: 0.40 secs
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Linear Model: Multinomial Logistic regression
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/040 Train Model/MLR001.png" align="left"> 
+
+
+<img src="../reference/R rattle/040 Train Model/MLR002.png" align="left"> 
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-23 16:13:19 x86_64-pc-linux-gnu 
+
+# Regression model 
+
+# Build a multinomial model using the nnet package.
+
+library(nnet, quietly=TRUE)
+
+# Summarise multinomial model using Anova from the car package.
+
+library(car, quietly=TRUE)
+
+# Build a Regression model.
+
+crs$glm <- multinom(Prevalence_Risk4 ~ ., data=crs$dataset[crs$train,c(crs$input, crs$target)], trace=FALSE, maxit=1000)
+
+# Generate a textual view of the Linear model.
+
+rattle.print.summary.multinom(summary(crs$glm,
+                              Wald.ratios=TRUE))
+cat(sprintf("Log likelihood: %.3f (%d df)
+", logLik(crs$glm)[1], attr(logLik(crs$glm), "df")))
+if (is.null(crs$glm$na.action)) omitted <- TRUE else omitted <- -crs$glm$na.action
+cat(sprintf("Pseudo R-Square: %.8f
+
+",cor(apply(crs$glm$fitted.values, 1, function(x) which(x == max(x))),
+as.integer(crs$dataset[crs$train,][omitted,]$Prevalence_Risk4))))
+
+cat('==== ANOVA ====
+')
+print(Anova(crs$glm))
+print("
+")
+
+# Time taken: 0.37 secs
+```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <a href="">
@@ -2963,309 +1950,293 @@ pR2(fit_model_LR_Risk4)[4]
 
 
 
-## <span style="color:blue">Linear Model: Model Evaluation</span>
+## <span style="color:blue">R Rattle Tool: Evaluate Model</span> (Classification)
 
 
+```{r}
+crs$rpart
+```
+
+```{r}
+crs$rf
+```
+
+```{r}
+crs$ksvm
+```
+
+```{r}
+crs$glm
+```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    Linear Model: Linear Model: Model Evaluation - Workshop Task
+    R Rattle Tool: Evaluate Model (Classification): Error/Confusion matrix
     </h3>
 </div>
 
 
 
-**Workshop Task:**
-
-1. a.	Train/Test Dataset Split
-2. b.	Confusion Matrix & Accuracy for Classification
-3. c.	K-Fold Cross Validation
-4. d.	$R^2$, MSE, RMSE for Regression for Regression
+<img src="../reference/R rattle/050 Evaluate Model/EM001.png" align="left"> 
 
 
-**Model Evaluation Workshop Task: <span style="color:blue">1. a.	Train/Test Dataset Split</span>**
+<img src="../reference/R rattle/050 Evaluate Model/EM002.png" align="left"> 
 
 ```{r}
-if(!require(caTools)){install.packages("caTools")}
-library("caTools") 
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-23 16:32:12 x86_64-pc-linux-gnu 
+
+# Evaluate model performance on the testing dataset. 
+
+# Generate an Error Matrix for the Decision Tree model.
+
+# Obtain the response from the Decision Tree model.
+
+crs$pr <- predict(crs$rpart, newdata=crs$dataset[crs$test, c(crs$input, crs$target)],
+    type="class")
+
+# Generate the confusion matrix showing counts.
+
+rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk4, crs$pr, count=TRUE)
+
+# Generate the confusion matrix showing proportions.
+
+(per <- rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk4, crs$pr))
+
+# Calculate the overall error percentage.
+
+cat(100-sum(diag(per), na.rm=TRUE))
+
+# Calculate the averaged class error percentage.
+
+cat(mean(per[,"Error"], na.rm=TRUE))
+
+# Generate an Error Matrix for the Random Forest model.
+
+# Obtain the response from the Random Forest model.
+
+crs$pr <- predict(crs$rf, newdata=na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]))
+
+# Generate the confusion matrix showing counts.
+
+rattle::errorMatrix(na.omit(crs$dataset[crs$test, c(crs$input, crs$target)])$Prevalence_Risk4, crs$pr, count=TRUE)
+
+# Generate the confusion matrix showing proportions.
+
+(per <- rattle::errorMatrix(na.omit(crs$dataset[crs$test, c(crs$input, crs$target)])$Prevalence_Risk4, crs$pr))
+
+# Calculate the overall error percentage.
+
+cat(100-sum(diag(per), na.rm=TRUE))
+
+# Calculate the averaged class error percentage.
+
+cat(mean(per[,"Error"], na.rm=TRUE))
+
+# Generate an Error Matrix for the SVM model.
+
+# Obtain the response from the SVM model.
+
+crs$pr <- kernlab::predict(crs$ksvm, newdata=na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]))
+
+# Generate the confusion matrix showing counts.
+
+rattle::errorMatrix(na.omit(crs$dataset[crs$test, c(crs$input, crs$target)])$Prevalence_Risk4, crs$pr, count=TRUE)
+
+# Generate the confusion matrix showing proportions.
+
+(per <- rattle::errorMatrix(na.omit(crs$dataset[crs$test, c(crs$input, crs$target)])$Prevalence_Risk4, crs$pr))
+
+# Calculate the overall error percentage.
+
+cat(100-sum(diag(per), na.rm=TRUE))
+
+# Calculate the averaged class error percentage.
+
+cat(mean(per[,"Error"], na.rm=TRUE))
+
+# Generate an Error Matrix for the Linear model.
+
+# Obtain the response from the Linear model.
+
+crs$pr <- predict(crs$glm, newdata=crs$dataset[crs$test, c(crs$input, crs$target)])
+
+# Generate the confusion matrix showing counts.
+
+rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk4, crs$pr, count=TRUE)
+
+# Generate the confusion matrix showing proportions.
+
+(per <- rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk4, crs$pr))
+
+# Calculate the overall error percentage.
+
+cat(100-sum(diag(per), na.rm=TRUE))
+
+# Calculate the averaged class error percentage.
+
+cat(mean(per[,"Error"], na.rm=TRUE))
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    R Rattle Tool: Evaluate Model (Classification): Sore/Write predicted results to CSV file.
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/050 Evaluate Model/EM003.png" align="left"> 
+
+```{r}
+
+#=======================================================================
+# Rattle timestamp: 2019-12-23 16:50:20 x86_64-pc-linux-gnu 
+
+# Score the testing dataset. 
+
+# Obtain probability scores for the Decision Tree model on ADV_ASD_State_R.csv [test].
+
+crs$pr_rpart <- predict(crs$rpart, newdata=crs$dataset[crs$test, c(crs$input)],
+    type="class")
+
+# Obtain probability scores for the Random Forest model on ADV_ASD_State_R.csv [test].
+
+crs$pr_rf <- predict(crs$rf, newdata=na.omit(crs$dataset[crs$test, c(crs$input)]))
+
+# Obtain probability scores for the SVM model on ADV_ASD_State_R.csv [test].
+
+crs$pr_ksvm <- kernlab::predict(crs$ksvm, newdata=na.omit(crs$dataset[crs$test, c(crs$input)]))
+
+# Obtain probability scores for the Linear model on ADV_ASD_State_R.csv [test].
+
+crs$pr_glm <- predict(crs$glm, newdata=crs$dataset[crs$test, c(crs$input)])
+
+# Extract the relevant variables from the dataset.
+
+sdata <- crs$dataset[crs$test,]
+
+# Output the combined data.
+
+write.csv(cbind(sdata, crs$pr_rpart, crs$pr_rf, crs$pr_ksvm, crs$pr_glm), row.names=FALSE,
+          file="../reference/R rattle/ADV_ASD_State_R_test_score_all.csv")
 ```
 
 ```{r}
-# Generate a random number sequence that can be reproduced to check results thru the seed number.
-set.seed(88)
-
-# Stratified Random Sampling: split dataset into two sets in predefined proportion (SplitRatio)
-# while preserving differnt class ratios of dependent variable. (e.g. Proportion of Low/High)
-split <- sample.split(ASD_State_4_LR_Risk2$Prevalence_Risk2, SplitRatio = 0.7)
-```
-
-```{r}
-# Get training and test data
-trainset <- subset(ASD_State_4_LR_Risk2, split == TRUE) 
-testset <- subset(ASD_State_4_LR_Risk2, split == FALSE)
-```
-
-**Build a binary classification model to predict (categorical) Prevalence Risk Level using Logistic Regression (LR)**
-
-```{r}
-# Binary Classification:
-fit_model_LR_Risk2 = glm(Prevalence_Risk2 ~ Denominator + Year + Source + State_Full2 + I(Year^2) + I(log(Denominator)), 
-                         family=binomial(link='logit'), data = trainset) # data = trainset
-
-summary(fit_model_LR_Risk2)
 
 ```
 
-**Model Evaluation Workshop Task: <span style="color:blue">2. b.	Confusion Matrix & Accuracy for Classification</span>**
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+         <img src="" width="750" align="center">
+    </a>
+</div>
 
 
-https://en.wikipedia.org/wiki/Confusion_matrix
+
+
+## <span style="color:blue">R Rattle Tool: Train Model</span> (Regression)
+
+
+
+# WIP
 
 ```{r}
-# Confusion matrix on Trainset
-probTrainset <- predict(fit_model_LR_Risk2, type = 'response')
-# One way is to use the proportion of High risk in the *Training* data.
-threshold2 <- sum(trainset$Prevalence_Risk2 == "High")/length(trainset$Prevalence_Risk2)
-cat('Trainset High Risk Threshold = ', threshold2)
-# If logistic regression probability > threshold, predict High, else predict Low.
-predictTrainset <- ifelse(probTrainset > threshold2, "High", "Low")
-# Create a contingency table (Confusion Matrix) with actuals on rows and predictions on columns.
-table(trainset$Prevalence_Risk2, predictTrainset)
-
-# Accuracy on Trainset
-AccuracyTrain <- mean(predictTrainset == trainset$Prevalence_Risk2) 
-cat('Trainset Accuracy = ', AccuracyTrain)
+crs$target
 ```
 
 ```{r}
-# Confusion matrix on Testset
-probTestset <- predict(fit_model_LR_Risk2, newdata = testset, type = 'response') # newdata = testset
-# One way is to use the proportion of High risk in the *Training* data.
-cat('Reused Trainset High Risk Threshold = ', threshold2)
-# If logistic regression probability > threshold, predict High, else predict Low.
-predictTestset <- ifelse(probTestset > threshold2, "High", "Low")
-# Create a contingency table (Confusion Matrix) with actuals on rows and predictions on columns.
-table(testset$Prevalence_Risk2, predictTestset)
-
-# Accuracy on Trainset
-AccuracyTest <- mean(predictTestset == testset$Prevalence_Risk2) 
-cat('Testset Accuracy = ', AccuracyTest)
+crs$input
 ```
 
-**Model Evaluation Workshop Task: <span style="color:blue">3. c.	K-Fold Cross Validation</span>**
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Regression Model: Adaptive Boosting (AdaBoost)
+    </h3>
+</div>
 
 
-### R caret package
 
-The caret package (short for Classification And REgression Training) is a set of functions that attempt to streamline the process for creating predictive models. The package contains tools for:
-
-* data splitting
-* pre-processing
-* feature selection
-* model tuning using resampling
-* variable importance estimation
-
-http://topepo.github.io/caret/index.html
-
+<img src="../reference/R rattle/040 Train Model/??.png" align="left"> 
 
 ```{r}
-if(!require(caret)){install.packages("caret")}
-library("caret")
-```
-
-```{r}
-if(!require(e1071)){install.packages("e1071")}
-library("e1071")
-```
-
-```{r}
-# Caret train/test split method:
-set.seed(88)
-caret_idx = createDataPartition(ASD_State_4_LR_Risk2$Prevalence_Risk2, p = 0.85, list = FALSE)
-caret_trainset = ASD_State_4_LR_Risk2[caret_idx, ]
-caret_testset  = ASD_State_4_LR_Risk2[-caret_idx, ]
-
-#caret_threshold <- sum(caret_trainset$Prevalence_Risk2 == "Low")/length(caret_trainset$Prevalence_Risk2)
-#caret_threshold
-```
-
-```{r}
-# Caret logistic regresion
-set.seed(88)
-cv_control = trainControl(method = "cv", number = 5)
-
-caret_model_LR_Risk2 = train(form = Prevalence_Risk2 ~ ., data = caret_trainset, 
-                             trControl = cv_control, method = "glm", family = "binomial")
-#
-caret_model_LR_Risk2
-```
-
-```{r}
-# Get predicted class label
-caret_model_LR_Risk2_Pred <- predict(caret_model_LR_Risk2, caret_testset)
-
-# Uncomment below to get class probability
-# caret_model_LR_Risk2_Pred <- predict(caret_model_LR_Risk2, caret_testset, type = "prob")
 
 ```
 
-https://topepo.github.io/caret/using-your-own-model-in-train.html#Illustration5
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Regression Model: Neural Network (NN)
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/040 Train Model/??.png" align="left"> 
 
 ```{r}
-# CM & Acc
-cm_table <- table(as.factor(caret_model_LR_Risk2_Pred), caret_testset$Prevalence_Risk2)
-confusionMatrix(cm_table)
-```
 
-**Model Evaluation Workshop Task: <span style="color:blue">4. d.	$R^2$, MSE, RMSE for Regression</span>**
-
-```{r}
-# Caret train/test split method:
-set.seed(88)
-caret_idx = createDataPartition(ASD_State_4_MLR$Prevalence, p = 0.85, list = FALSE)
-caret_trainset = ASD_State_4_MLR[caret_idx, ]
-caret_testset  = ASD_State_4_MLR[-caret_idx, ]
 ```
 
 ```{r}
-# Look at below plots of train and test, shape of distribution are similar, which means good sampling.
-par(mfrow=c(1, 2)) 
-plot(density(caret_trainset$Prevalence))
-plot(density(caret_testset$Prevalence))
-par(mfrow=c(1, 1))
-```
 
-**Build a regression model to predict (numeric) Prevalanece using Multiple Linear Regression (MLR)**
-
-```{r}
-if(!require(elasticnet)){install.packages("elasticnet")}
-library("elasticnet")
 ```
 
 ```{r}
-# Caret MLR regresion
-set.seed(88)
-cv_control = trainControl(method = "cv", number = 5)
-#
-caret_model_MLR <- train(Prevalence ~ ., data = caret_trainset, trControl = cv_control, method = "lm") 
-#
-caret_model_MLR
+
 ```
 
 ```{r}
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=8)
-ggplot(varImp(caret_model_MLR))
-# plot(varImp(caret_model_MLR))
+
 ```
 
 ```{r}
-caret_model_MLR_Pred <- predict(caret_model_MLR, caret_testset)
-head(caret_model_MLR_Pred)
+
 ```
 
 ```{r}
-# MSE
-mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
+
 ```
 
 ```{r}
-# RMSE
-sqrt(mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2))
-```
 
----
-
-
-**Enhanced MLR using Regularization: L1 Lasso**
-
-
-https://towardsdatascience.com/create-predictive-models-in-r-with-caret-12baf9941236
-
-```{r}
-if(!require(elasticnet)){install.packages("elasticnet")}
-library("elasticnet")
 ```
 
 ```{r}
-# Caret MLR with Regularization
-# possible method: boot", "boot632", "cv", "repeatedcv", "LOOCV", "LGOCV"
-cv_control <- trainControl(method = "repeatedcv",   
-                           number = 10,     # number of folds
-                           repeats = 5)    # repeated N times
 
-caret_model_MLR_L1 <- train(Prevalence ~ .,
-               data = caret_trainset,
-               method = "lasso",  # Try using "ridge"
-               trControl = cv_control,
-               preProcess = c('scale', 'center'))  # Auto pre-process data
-#
-caret_model_MLR_L1
 ```
 
 ```{r}
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=2)
-ggplot(varImp(caret_model_MLR_L1))
-# plot(varImp(caret_model_MLR_L1))
+
 ```
 
 ```{r}
-caret_model_MLR_Pred <- predict(caret_model_MLR_L1, caret_testset)
-head(caret_model_MLR_Pred)
+
 ```
 
 ```{r}
-# MSE
-mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
+
 ```
 
 ```{r}
-# RMSE
-sqrt(mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2))
-```
 
----
-
-
-**Enhanced MLR using Regularization: L2 Ridge**
-
-```{r}
-# Caret MLR with Regularization
-# possible method: boot", "boot632", "cv", "repeatedcv", "LOOCV", "LGOCV"
-cv_control <- trainControl(method = "repeatedcv",   
-                           number = 10,     # number of folds
-                           repeats = 5)    # repeated N times
-
-caret_model_MLR_L2 <- train(Prevalence ~ .,
-               data = caret_trainset,
-               method = "ridge",  # Try using "lasso"
-               trControl = cv_control,
-               preProcess = c('scale', 'center'))  # Auto pre-process data
-#
-caret_model_MLR_L2
 ```
 
 ```{r}
-# Adjust in-line plot size to M x N
-options(repr.plot.width=8, repr.plot.height=2)
-ggplot(varImp(caret_model_MLR_L2))
-# plot(varImp(caret_model_MLR_L2))
+
 ```
 
 ```{r}
-caret_model_MLR_Pred <- predict(caret_model_MLR_L2, caret_testset)
-head(caret_model_MLR_Pred)
+
 ```
 
 ```{r}
-# MSE
-mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
+
 ```
 
 ```{r}
-# RMSE
-sqrt(mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2))
+
 ```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
@@ -3299,15 +2270,6 @@ http://topepo.github.io/caret/index.html
 
 https://cran.r-project.org/web/packages/caret/caret.pdf
 
-
-```{r}
-# Code example of multinomial logistic regresion using Iris flower dataset
-iris[c(1:3, 51:53, 101:103), ]
-summary(iris)
-iris_model = train(Species ~ ., data = iris, method = "multinom", 
-                     trControl = trainControl(method = "cv", number = 5), trace = FALSE)
-iris_model
-```
 
 ```{r}
 # Write your code below and press Shift+Enter to execute 
