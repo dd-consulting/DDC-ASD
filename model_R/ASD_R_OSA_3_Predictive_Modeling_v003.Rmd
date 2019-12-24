@@ -76,43 +76,49 @@ https://www.pathlight.org.sg/
 
 https://www.cdc.gov/ncbddd/autism/data/index.html
 
-* ## R Rattle Tool
+* ## Rattle
 
-* ## R Rattle Tool: Import Data
+* ## Rattle: Import Data
 
-* ## R Rattle Tool: EDA Explore & Test
+* ## Rattle: EDA Explore & Test
 
-* ## R Rattle Tool: Process & Transform Data
+* ## Rattle: Process & Transform Data
 
----
+    <span style="color:blue">Predict Prevelance Risk Levels (Classification)</span>
 
-* ## R Rattle Tool: Train Model (Classification)
+* ## Rattle: Train Model (Classification)
 
-    * ### Classification Model: Decision Tree (DT)
+    * ### Multi-Class Model: Decision Tree (DT)
 
-    * ### Classification Model: Random Forest (RF)
+    * ### Multi-Class Model: Random Forest (RF)
 
-    * ### Classification Model: Support Vector Machines (SVM)
+    * ### Multi-Class Model: Support Vector Machines (SVM)
 
-    * ### Classification Model: Multinomial Logistic regression (MLR)
+    * ### Multi-Class Model: Multinomial Logistic Regression (MLR)
+
+    * ### Binary-Class Model: Boost (AdaBoost & XgBoost)
+
+    * ### Binary-Class Model: Neural Net (NN)
     
-* ## R Rattle Tool: Evaluate Model (Classification)
+* ## Rattle: Evaluate Model (Classification)
 
----
+    <span style="color:blue">Predict Prevelance (Regression)</span>
 
-* ## R Rattle Tool: Train Model (Regression)
+* ## Rattle: Train Model (Regression)
 
-    * ### Regression Model: Adaptive Boosting (AdaBoost)
+    * ### Regression Model: Decision Tree (DT)
 
-    * ### Regression Model: Neural Network (NN)
+    * ### Regression Model: Random Forest (RF)
 
-* ## R Rattle Tool: Evaluate Model (Regression)
+    * ### Regression Model: Linear Regression (LR)
 
----
+    * ### Regressions Model: Neural Net (NN)
 
-* ## R Rattle Tool: Save Model & Log
+* ## Rattle: Evaluate Model (Regression)
 
-* ## R Rattle Tool: Improve Model
+* ## Rattle: Save Model & Log
+
+* ## Rattle: Improve Model
 
 * ## Workshop Submission
 
@@ -159,13 +165,20 @@ options(repr.plot.width=8, repr.plot.height=5)
 
 
 
-## <span style="color:blue">R Rattle Tool</span>
+## <span style="color:blue">Rattle</span>
 
+
+
+**Rattle** — the **R** **A**nalytical **T**ool **T**o **L**earn **E**asily — is a popular open-source GUI for data mining using R. 
+
+https://rattle.togaware.com/
+
+https://journal.r-project.org/archive/2009-2/RJournal_2009-2_Williams.pdf
 
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool
+    Rattle
     </h3>
 </div>
 
@@ -243,13 +256,13 @@ crv$seed <- 42
 
 
 
-## <span style="color:blue">R Rattle Tool: Import Data</span>
+## <span style="color:blue">Rattle: Import Data</span>
 
 
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: Import Data
+    Rattle: Import Data
     </h3>
 </div>
 
@@ -456,7 +469,7 @@ crs$weights   <- NULL
 
 
 
-## <span style="color:blue">R Rattle Tool: EDA Explore & Test</span>
+## <span style="color:blue">Rattle: EDA Explore & Test</span>
 
 
 ```{r}
@@ -481,7 +494,7 @@ library('descr')
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: EDA Explore & Test: Summary
+    Rattle: EDA Explore & Test: Summary
     </h3>
 </div>
 
@@ -563,7 +576,7 @@ for (i in c(1, 7:10, 34:36))
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: EDA Explore & Test: Distribution
+    Rattle: EDA Explore & Test: Distribution
     </h3>
 </div>
 
@@ -1059,7 +1072,7 @@ crs$dataset[crs$train,] %>%
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: EDA Explore & Test: Correlation
+    Rattle: EDA Explore & Test: Correlation
     </h3>
 </div>
 
@@ -1210,7 +1223,7 @@ title(main="Principal Components ADV_ASD_State_R.csv",
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: EDA Explore & Test: Test
+    Rattle: EDA Explore & Test: Test
     </h3>
 </div>
 
@@ -1288,13 +1301,13 @@ locationTest(na.omit(crs$dataset[crs$dataset[["Prevalence_Risk4"]] == "High", "P
 
 
 
-## <span style="color:blue">R Rattle Tool: Process & Transform Data</span>
+## <span style="color:blue">Rattle: Process & Transform Data</span>
 
 
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: Process & Transform Data: Select Variables
+    Rattle: Process & Transform Data: Select Variables
     </h3>
 </div>
 
@@ -1505,7 +1518,7 @@ gridExtra::grid.arrange(p01, p02)
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: Process & Transform Data: Rescale (log transformation)
+    Rattle: Process & Transform Data: Rescale (log transformation)
     </h3>
 </div>
 
@@ -1567,7 +1580,7 @@ crs$weights   <- NULL
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: Process & Transform Data: Rescale (normalization)
+    Rattle: Process & Transform Data: Rescale (normalization)
     </h3>
 </div>
 
@@ -1662,8 +1675,15 @@ crs$weights   <- NULL
 
 
 
-## <span style="color:blue">R Rattle Tool: Train Model</span> (Classification)
+## <span style="color:blue">Rattle: Train Model</span> (Classification)
 
+
+
+## <span style="color:blue">Multi-Class Classification: Prevalence_Risk4</span>
+
+
+
+<img src="../reference/R rattle/040 Train Model Classification/Prevalence_Risk4.png" align="left">
 
 ```{r}
 crs$target
@@ -1675,16 +1695,16 @@ crs$input
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    Classification Model: Decision Tree (DT)
+    Multi-Class Model: Decision Tree (DT)
     </h3>
 </div>
 
 
 
-<img src="../reference/R rattle/040 Train Model/DT001.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/DT001.png" align="left"> 
 
 
-<img src="../reference/R rattle/040 Train Model/DT002.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/DT002.png" align="left"> 
 
 ```{r}
 if(!require(rpart)){install.packages("rpart")}
@@ -1750,16 +1770,16 @@ rpart.plot::prp(crs$rpart,
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    Classification Model: Random Forest (RF)
+    Multi-Class Model: Random Forest (RF)
     </h3>
 </div>
 
 
 
-<img src="../reference/R rattle/040 Train Model/RF001.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/RF001.png" align="left"> 
 
 
-<img src="../reference/R rattle/040 Train Model/RF002.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/RF002.png" align="left"> 
 
 ```{r}
 
@@ -1844,16 +1864,16 @@ printRandomForests(crs$rf, 1:3)
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    Classification Model: Support Vector Machines (SVM)
+    Multi-Class Model: Support Vector Machines (SVM)
     </h3>
 </div>
 
 
 
-<img src="../reference/R rattle/040 Train Model/SVM001.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/SVM001.png" align="left"> 
 
 
-<img src="../reference/R rattle/040 Train Model/SVM002.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/SVM002.png" align="left"> 
 
 ```{r}
 if(!require(kernlab)){install.packages("kernlab")}
@@ -1889,16 +1909,16 @@ crs$ksvm
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    Linear Model: Multinomial Logistic regression
+    Multi-Class Model: Multinomial Logistic Regression
     </h3>
 </div>
 
 
 
-<img src="../reference/R rattle/040 Train Model/MLR001.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/MLR001.png" align="left"> 
 
 
-<img src="../reference/R rattle/040 Train Model/MLR002.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/MLR002.png" align="left"> 
 
 ```{r}
 
@@ -1942,6 +1962,264 @@ print("
 ```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
+</div>
+
+
+
+## <span style="color:blue">Binary-Class Classification: Prevalence_Risk2</span>
+
+
+
+<img src="../reference/R rattle/040 Train Model Classification/Prevalence_Risk2.png" align="left">
+
+```{r}
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 10:52:36 x86_64-pc-linux-gnu 
+
+# Action the user selections from the Data tab. 
+
+# Build the train/validate/test datasets.
+
+# nobs=1692 train=1184 validate=254 test=254
+
+set.seed(88)
+
+crs$nobs <- nrow(crs$dataset)
+
+crs$train <- sample(crs$nobs, 0.7*crs$nobs)
+
+crs$nobs %>%
+  seq_len() %>%
+  setdiff(crs$train) %>%
+  sample(0.15*crs$nobs) ->
+crs$validate
+
+crs$nobs %>%
+  seq_len() %>%
+  setdiff(crs$train) %>%
+  setdiff(crs$validate) ->
+crs$test
+
+# The following variable selections have been noted.
+
+crs$input     <- c("Source", "State_Region", "RMD_Year",
+                   "RMD_R10_Denominator")
+
+crs$numeric   <- c("RMD_Year", "RMD_R10_Denominator")
+
+crs$categoric <- c("Source", "State_Region")
+
+crs$target    <- "Prevalence_Risk2"
+crs$risk      <- NULL
+crs$ident     <- NULL
+crs$ignore    <- c("State", "Denominator", "Prevalence", "Lower.CI", "Upper.CI", "Year", "Source_Full1", "State_Full1", "State_Full2", "Numerator_ASD", "Numerator_NonASD", "Proportion", "Chi_Wilson_Corrected_Lower.CI", "Chi_Wilson_Corrected_Upper.CI", "Male.Prevalence", "Male.Lower.CI", "Male.Upper.CI", "Female.Prevalence", "Female.Lower.CI", "Female.Upper.CI", "Non.hispanic.white.Prevalence", "Non.hispanic.white.Lower.CI", "Non.hispanic.white.Upper.CI", "Non.hispanic.black.Prevalence", "Non.hispanic.black.Lower.CI", "Non.hispanic.black.Upper.CI", "Hispanic.Prevalence", "Hispanic.Lower.CI", "Hispanic.Upper.CI", "Asian.or.Pacific.Islander.Prevalence", "Asian.or.Pacific.Islander.Lower.CI", "Asian.or.Pacific.Islander.Upper.CI", "Source_UC", "Source_Full3", "Prevalence_Risk4", "Year_Factor", "R10_Denominator")
+crs$weights   <- NULL
+```
+
+```{r}
+crs$target
+```
+
+```{r}
+crs$input
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Binary-Class Model: Boost
+    </h3>
+</div>
+
+
+
+**Ada Boost: Adaptive Boosting**
+
+
+<img src="../reference/R rattle/040 Train Model Classification/AB001.png" align="left"> 
+
+
+<img src="../reference/R rattle/040 Train Model Classification/AB002.png" align="left"> 
+
+```{r}
+if(!require(ada)){install.packages("ada")}
+library('ada')
+```
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 11:00:37 x86_64-pc-linux-gnu 
+
+# Ada Boost 
+
+# The `ada' package implements the boost algorithm.
+
+# Build the Ada Boost model.
+
+set.seed(crv$seed)
+crs$ada <- ada::ada(Prevalence_Risk2 ~ .,
+                    data=crs$dataset[crs$train,c(crs$input, crs$target)],
+                    control=rpart::rpart.control(maxdepth=6,
+                                                 cp=0.010000,
+                                                 minsplit=20,
+                                                 xval=10),
+                    iter=50)
+
+# Print the results of the modelling.
+
+print(crs$ada)
+round(crs$ada$model$errs[crs$ada$iter,], 2)
+cat('Variables actually used in tree construction:\n')
+print(sort(names(listAdaVarsUsed(crs$ada))))
+cat('\nFrequency of variables actually used:\n')
+print(listAdaVarsUsed(crs$ada))
+
+# Time taken: 1.14 secs
+
+# Plot the error rate as we increase the number of trees.
+
+plot(crs$ada)
+
+# Plot the relative importance of the variables.
+
+ada::varplot(crs$ada)
+```
+
+```{r}
+
+# Display tree number 1.
+
+listTreesAda(crs$ada, 1)
+
+```
+
+```{r}
+
+# Display tree number 1.
+
+drawTreesAda(crs$ada, 1, ": ADV_ASD_State_R.csv $ Prevalence_Risk2")
+```
+
+---
+
+
+**Xg Boost: Extreme Gradient Boost**
+
+
+<img src="../reference/R rattle/040 Train Model Classification/XB001.png" align="left"> 
+
+
+<img src="../reference/R rattle/040 Train Model Classification/XB002.png" align="left"> 
+
+```{r}
+if(!require(xgboost)){install.packages("xgboost")}
+library('xgboost')
+```
+
+```{r active="", eval=FALSE}
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 11:21:50 x86_64-pc-linux-gnu 
+
+# Extreme Boost 
+
+# The `xgboost' package implements the extreme gradient boost algorithm.
+
+# Build the Extreme Boost model.
+
+set.seed(crv$seed)
+
+crs$xgb <- xgboost(Prevalence_Risk2 ~ .,
+  data              = crs$dataset[crs$train,c(crs$input, crs$target)],
+  max_depth         = 6,
+  eta               = 0.3, 
+  num_parallel_tree = 1, 
+  nthread           = 2, 
+  nround            = 50,
+  metrics           = 'error',
+  objective         = 'binary:logistic')
+
+# Print the results of the modelling.
+
+print(crs$xgb)
+
+cat('\nFinal iteration error rate:\n')
+print(round(crs$xgb$evaluation_log[crs$xgb$niter, ], 2))
+
+cat('\nImportance/Frequency of variables actually used:\n')
+print(crs$imp <- importance(crs$xgb, crs$dataset[crs$train,c(crs$input, crs$target)]))
+
+# Time taken: 0.10 secs
+```
+
+**Note**: Above R code generated from Rattle log cannot be executed directly due to:
+"Error in xgb.get.DMatrix(data, label, missing, weight): xgboost doesn't support data.frame as input. Convert it to matrix first."
+
+<span style="color:blue">In the workshop submission section, you are required to build **xgboost** model by fixing/handling this issue. References:</span>
+
+https://github.com/dd-consulting/DDC-Data-Science-R/blob/master/HousePriceAnalysisPrediction/codeR/House%20prices_%20Lasso%2C%20XGBoost%2C%20and%20a%20detailed%20EDA.pdf
+
+https://github.com/dd-consulting/DDC-Data-Science-R/blob/master/Google%20Analytics%20Customer%20Revenue%20Prediction/code/Google%20Analytics%20Customer%20Revenue%20Prediction%20EDA.pdf
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Binary-Class Model: Neural Net (NN)
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/040 Train Model Classification/NN001.png" align="left"> 
+
+
+<img src="../reference/R rattle/040 Train Model Classification/NN002.png" align="left"> 
+
+```{r}
+if(!require(nnet)){install.packages("nnet")}
+library('nnet')
+```
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 11:46:00 x86_64-pc-linux-gnu 
+
+# Neural Network 
+
+# Build a neural network model using the nnet package.
+
+library(nnet, quietly=TRUE)
+
+# Build the NNet model.
+
+set.seed(199)
+crs$nnet <- nnet(as.factor(Prevalence_Risk2) ~ .,
+    data=crs$dataset[crs$train,c(crs$input, crs$target)],
+    size=10, skip=TRUE, MaxNWts=10000, trace=FALSE, maxit=100)
+
+# Print the results of the modelling.
+
+cat(sprintf("A %s network with %d weights.\n",
+    paste(crs$nnet$n, collapse="-"),
+    length(crs$nnet$wts)))
+cat(sprintf("Inputs: %s.\n",
+    paste(crs$nnet$coefnames, collapse=", ")))
+cat(sprintf("Output: %s.\n",
+    names(attr(crs$nnet$terms, "dataClasses"))[1]))
+cat(sprintf("Sum of Squares Residuals: %.4f.\n",
+    sum(residuals(crs$nnet) ^ 2)))
+cat("\n")
+print(summary(crs$nnet))
+cat('\n')
+
+# Time taken: 0.29 secs
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
     <a href="">
          <img src="" width="750" align="center">
     </a>
@@ -1950,37 +2228,32 @@ print("
 
 
 
-## <span style="color:blue">R Rattle Tool: Evaluate Model</span> (Classification)
+## <span style="color:blue">Rattle: Evaluate Model</span> (Classification)
 
 
-```{r}
+
+## <span style="color:blue">Multi-Class Classification: Prevalence_Risk4</span>
+
+
+```{r active="", eval=FALSE}
 crs$rpart
-```
-
-```{r}
 crs$rf
-```
-
-```{r}
 crs$ksvm
-```
-
-```{r}
 crs$glm
 ```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: Evaluate Model (Classification): Error/Confusion matrix
+    Rattle: Evaluate Model (Classification): Error/Confusion matrix
     </h3>
 </div>
 
 
 
-<img src="../reference/R rattle/050 Evaluate Model/EM001.png" align="left"> 
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM001.png" align="left"> 
 
 
-<img src="../reference/R rattle/050 Evaluate Model/EM002.png" align="left"> 
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM002.png" align="left"> 
 
 ```{r}
 
@@ -2082,13 +2355,13 @@ cat(mean(per[,"Error"], na.rm=TRUE))
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <h3>
-    R Rattle Tool: Evaluate Model (Classification): Sore/Write predicted results to CSV file.
+    Rattle: Evaluate Model (Classification): Sore/Write predicted results to CSV file.
     </h3>
 </div>
 
 
 
-<img src="../reference/R rattle/050 Evaluate Model/EM003.png" align="left"> 
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM003.png" align="left"> 
 
 ```{r}
 
@@ -2121,11 +2394,493 @@ sdata <- crs$dataset[crs$test,]
 # Output the combined data.
 
 write.csv(cbind(sdata, crs$pr_rpart, crs$pr_rf, crs$pr_ksvm, crs$pr_glm), row.names=FALSE,
-          file="../reference/R rattle/ADV_ASD_State_R_test_score_all.csv")
+          file="../reference/R rattle/ADV_ASD_State_R_test_score_all_Prevalence_Risk4.csv")
+```
+
+## <span style="color:blue">Binary-Class Classification: Prevalence_Risk4</span>
+
+
+```{r active="", eval=FALSE}
+crs$ada
+crs$nnet
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Rattle: Evaluate Model (Classification): Error/Confusion matrix
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM011.png" align="left"> 
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 12:07:18 x86_64-pc-linux-gnu 
+
+# Evaluate model performance on the testing dataset. 
+
+# Generate an Error Matrix for the Extreme Boost model.
+
+# Obtain the response from the Extreme Boost model.
+
+crs$pr <- predict(crs$ada, newdata=crs$dataset[crs$test, c(crs$input, crs$target)])
+
+# Generate the confusion matrix showing counts.
+
+rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2, crs$pr, count=TRUE)
+
+# Generate the confusion matrix showing proportions.
+
+(per <- rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2, crs$pr))
+
+# Calculate the overall error percentage.
+
+cat(100-sum(diag(per), na.rm=TRUE))
+
+# Calculate the averaged class error percentage.
+
+cat(mean(per[,"Error"], na.rm=TRUE))
+
+# Generate an Error Matrix for the Neural Net model.
+
+# Obtain the response from the Neural Net model.
+
+crs$pr <- predict(crs$nnet, newdata=crs$dataset[crs$test, c(crs$input, crs$target)], type="class")
+
+# Generate the confusion matrix showing counts.
+
+rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2, crs$pr, count=TRUE)
+
+# Generate the confusion matrix showing proportions.
+
+(per <- rattle::errorMatrix(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2, crs$pr))
+
+# Calculate the overall error percentage.
+
+cat(100-sum(diag(per), na.rm=TRUE))
+
+# Calculate the averaged class error percentage.
+
+cat(mean(per[,"Error"], na.rm=TRUE))
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Rattle: Evaluate Model (Classification): ROC
+    </h3>
+</div>
+
+
+
+ROC Curve: **TPR (True Positive Rate) / Hit Rate / Recall / Sensitivity** vs. **FPR / 1- Specificity**
+
+
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM012.png" align="left"> 
+
+```{r}
+if(!require(ROCR)){install.packages("ROCR")}
+library('ROCR')
 ```
 
 ```{r}
 
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 12:09:03 x86_64-pc-linux-gnu 
+
+# Evaluate model performance on the testing dataset. 
+
+# ROC Curve: requires the ROCR package.
+
+library(ROCR)
+
+# ROC Curve: requires the ggplot2 package.
+
+library(ggplot2, quietly=TRUE)
+
+# Generate an ROC Curve for the ada model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$ada, newdata=crs$dataset[crs$test, c(crs$input, crs$target)], type="prob")[,2]
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+
+pe <- performance(pred, "tpr", "fpr")
+au <- performance(pred, "auc")@y.values[[1]]
+pd <- data.frame(fpr=unlist(pe@x.values), tpr=unlist(pe@y.values))
+p <- ggplot(pd, aes(x=fpr, y=tpr))
+p <- p + geom_line(colour="red")
+p <- p + xlab("False Positive Rate") + ylab("True Positive Rate")
+p <- p + ggtitle("ROC Curve Extreme Boost ADV_ASD_State_R.csv [test] Prevalence_Risk2")
+p <- p + theme(plot.title=element_text(size=10))
+p <- p + geom_line(data=data.frame(), aes(x=c(0,1), y=c(0,1)), colour="grey")
+p <- p + annotate("text", x=0.50, y=0.00, hjust=0, vjust=0, size=5,
+                   label=paste("AUC =", round(au, 2)))
+print(p)
+
+# Calculate the area under the curve for the plot.
+
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+performance(pred, "auc")
+
+# ROC Curve: requires the ROCR package.
+
+library(ROCR)
+
+# ROC Curve: requires the ggplot2 package.
+
+library(ggplot2, quietly=TRUE)
+
+# Generate an ROC Curve for the nnet model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$nnet, newdata=crs$dataset[crs$test, c(crs$input, crs$target)])
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+
+pe <- performance(pred, "tpr", "fpr")
+au <- performance(pred, "auc")@y.values[[1]]
+pd <- data.frame(fpr=unlist(pe@x.values), tpr=unlist(pe@y.values))
+p <- ggplot(pd, aes(x=fpr, y=tpr))
+p <- p + geom_line(colour="red")
+p <- p + xlab("False Positive Rate") + ylab("True Positive Rate")
+p <- p + ggtitle("ROC Curve Neural Net ADV_ASD_State_R.csv [test] Prevalence_Risk2")
+p <- p + theme(plot.title=element_text(size=10))
+p <- p + geom_line(data=data.frame(), aes(x=c(0,1), y=c(0,1)), colour="grey")
+p <- p + annotate("text", x=0.50, y=0.00, hjust=0, vjust=0, size=5,
+                   label=paste("AUC =", round(au, 2)))
+print(p)
+
+# Calculate the area under the curve for the plot.
+
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+performance(pred, "auc")
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Rattle: Evaluate Model (Classification): Sensitivity
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM013.png" align="left"> 
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 12:17:21 x86_64-pc-linux-gnu 
+
+# Evaluate model performance on the testing dataset. 
+
+# Sensitivity/Specificity Plot: requires the ROCR package
+
+library(ROCR)
+
+# Generate Sensitivity/Specificity Plot for ada model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$ada, newdata=crs$dataset[crs$test, c(crs$input, crs$target)], type="prob")[,2]
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+ROCR::plot(performance(pred, "sens", "spec"), col="#CC0000FF", lty=1, add=FALSE)
+
+
+# Sensitivity/Specificity Plot: requires the ROCR package
+
+library(ROCR)
+
+# Generate Sensitivity/Specificity Plot for nnet model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$nnet, newdata=crs$dataset[crs$test, c(crs$input, crs$target)])
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+ROCR::plot(performance(pred, "sens", "spec"), col="#00CCCCFF", lty=2, add=TRUE)
+
+
+# Add a legend to the plot.
+
+legend("bottomleft", c("ada","nnet"), col=rainbow(2, 1, .8), lty=1:2, title="Models", inset=c(0.05, 0.05))
+
+# Add decorations to the plot.
+
+title(main="Sensitivity/Specificity (tpr/tnr)  ADV_ASD_State_R.csv [test]",
+    sub=paste("Rattle", format(Sys.time(), "%Y-%b-%d %H:%M:%S"), Sys.info()["user"]))
+grid()
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Rattle: Evaluate Model (Classification): Precision
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM014.png" align="left"> 
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 12:20:14 x86_64-pc-linux-gnu 
+
+# Evaluate model performance on the testing dataset. 
+
+# Precision/Recall Plot: requires the ROCR package
+
+library(ROCR)
+
+# Generate a Precision/Recall Plot for the ada model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$ada, newdata=crs$dataset[crs$test, c(crs$input, crs$target)], type="prob")[,2]
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+ROCR::plot(performance(pred, "prec", "rec"), col="#CC0000FF", lty=1, add=FALSE)
+
+
+# Precision/Recall Plot: requires the ROCR package
+
+library(ROCR)
+
+# Generate a Precision/Recall Plot for the nnet model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$nnet, newdata=crs$dataset[crs$test, c(crs$input, crs$target)])
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+ROCR::plot(performance(pred, "prec", "rec"), col="#00CCCCFF", lty=2, add=TRUE)
+
+
+# Add a legend to the plot.
+
+legend("bottomleft", c("ada","nnet"), col=rainbow(2, 1, .8), lty=1:2, title="Models", inset=c(0.05, 0.05))
+
+# Add decorations to the plot.
+
+title(main="Precision/Recall Plot  ADV_ASD_State_R.csv [test]",
+    sub=paste("Rattle", format(Sys.time(), "%Y-%b-%d %H:%M:%S"), Sys.info()["user"]))
+grid()
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Rattle: Evaluate Model (Classification): Lift
+    </h3>
+</div>
+
+
+
+<img src="../reference/R rattle/050 Evaluate Model Classification/EM015.png" align="left"> 
+
+```{r}
+
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 12:11:55 x86_64-pc-linux-gnu 
+
+# Evaluate model performance on the testing dataset. 
+
+# Lift Chart: requires the ROCR package.
+
+library(ROCR)
+
+# Obtain predictions for the ada model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$ada, newdata=crs$dataset[crs$test, c(crs$input, crs$target)], type="prob")[,2]
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+
+# Convert rate of positive predictions to percentage.
+
+per <- performance(pred, "lift", "rpp")
+per@x.values[[1]] <- per@x.values[[1]]*100
+
+# Plot the lift chart.
+ROCR::plot(per, col="#CC0000FF", lty=1, xlab="Caseload (%)", add=FALSE)
+
+# Lift Chart: requires the ROCR package.
+
+library(ROCR)
+
+# Obtain predictions for the nnet model on ADV_ASD_State_R.csv [test].
+
+crs$pr <- predict(crs$nnet, newdata=crs$dataset[crs$test, c(crs$input, crs$target)])
+
+# Remove observations with missing target.
+
+no.miss   <- na.omit(crs$dataset[crs$test, c(crs$input, crs$target)]$Prevalence_Risk2)
+miss.list <- attr(no.miss, "na.action")
+attributes(no.miss) <- NULL
+
+if (length(miss.list))
+{
+  pred <- prediction(crs$pr[-miss.list], no.miss)
+} else
+{
+  pred <- prediction(crs$pr, no.miss)
+}
+
+# Convert rate of positive predictions to percentage.
+
+per <- performance(pred, "lift", "rpp")
+per@x.values[[1]] <- per@x.values[[1]]*100
+
+# Plot the lift chart.
+ROCR::plot(per, col="#00CCCCFF", lty=2, xlab="Caseload (%)", add=TRUE)
+
+# Add a legend to the plot.
+
+legend("topright", c("ada","nnet"), col=rainbow(2, 1, .8), lty=1:2, title="Models", inset=c(0.05, 0.05))
+
+# Add decorations to the plot.
+
+title(main="Lift Chart  ADV_ASD_State_R.csv [test]",
+    sub=paste("Rattle", format(Sys.time(), "%Y-%b-%d %H:%M:%S"), Sys.info()["user"]))
+grid()
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Rattle: Evaluate Model (Classification): Sore/Write predicted results to CSV file.
+    </h3>
+</div>
+
+
+```{r}
+
+#=======================================================================
+# Rattle timestamp: 2019-12-24 12:22:22 x86_64-pc-linux-gnu 
+
+# Score the testing dataset. 
+
+# Obtain probability scores for the Extreme Boost model on ADV_ASD_State_R.csv [test].
+
+crs$pr_ada <- predict(crs$ada, newdata=crs$dataset[crs$test, c(crs$input)])
+
+# Obtain probability scores for the Neural Net model on ADV_ASD_State_R.csv [test].
+
+crs$pr_nn <- predict(crs$nnet, newdata=crs$dataset[crs$test, c(crs$input)], type="class")
+
+# Extract the relevant variables from the dataset.
+
+sdata <- crs$dataset[crs$test,]
+
+# Output the combined data.
+
+write.csv(cbind(sdata, crs$pr_ada, crs$pr_nn), file="../reference/R rattle/ADV_ASD_State_R_test_score_all_Prevalence_Risk2.csv", row.names=FALSE)
 ```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
@@ -2137,7 +2892,7 @@ write.csv(cbind(sdata, crs$pr_rpart, crs$pr_rf, crs$pr_ksvm, crs$pr_glm), row.na
 
 
 
-## <span style="color:blue">R Rattle Tool: Train Model</span> (Regression)
+## <span style="color:blue">Rattle: Train Model</span> (Regression)
 
 
 
@@ -2159,7 +2914,7 @@ crs$input
 
 
 
-<img src="../reference/R rattle/040 Train Model/??.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/??.png" align="left"> 
 
 ```{r}
 
@@ -2173,7 +2928,7 @@ crs$input
 
 
 
-<img src="../reference/R rattle/040 Train Model/??.png" align="left"> 
+<img src="../reference/R rattle/040 Train Model Classification/??.png" align="left"> 
 
 ```{r}
 
@@ -2397,6 +3152,18 @@ SOFTWARE.
 
 
 https://github.com/telescopeuser/S-SB-Workshop
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    < XGBoost support added to Rattle: A demo using Kaggle Competition Credit Card Fraud Detection >
+    </h3>
+</div>
+
+
+
+https://blog.revolutionanalytics.com/2017/07/xgboost-support-added-to-rattle.html
+
 
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
