@@ -4490,22 +4490,23 @@ https://www.cdc.gov/ncbddd/autism/data/index.html
 
 
 
-<img src="../reference/CDC_ASD/ADV ASD Data Collection Locations (US States).png" width=600 align="center">
+
+<img src="../reference/CDC_ASD/ADV ASD Data Collection Locations (US States).png" width="600" align="center">
 
 
 
 
-<img src="../reference/CDC_ASD/ADV [addm] [2014] 2014 ADDM NETWORK DATA.png" width=600 align="center">
+<img src="../reference/CDC_ASD/ADV [addm] [2014] 2014 ADDM NETWORK DATA.png" width="600" align="center">
 
 
 
 
-<img src="../reference/CDC_ASD/ADV [addm] Prevalence Estimates by Race Ethnicity.png" width=600 align="center">
+<img src="../reference/CDC_ASD/ADV [addm] Prevalence Estimates by Race Ethnicity.png" width="600" align="center">
 
 
 
 
-<img src="../reference/CDC_ASD/ADV [addm] [2012] Confidence Intervals by Data Set Location.png" width=600 align="center">
+<img src="../reference/CDC_ASD/ADV [addm] [2012] Confidence Intervals by Data Set Location.png" width="600" align="center">
 
 
 ```{r}
