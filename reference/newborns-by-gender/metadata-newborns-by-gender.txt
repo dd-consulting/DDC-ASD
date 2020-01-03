@@ -1,0 +1,55 @@
+# Metadata for Newborns by Gender
+---
+Identifier: 'e55726f8-6d91-4cad-8e40-d4aa10ec7877'
+Name: 'newborns-by-gender'
+Title: 'Newborns by Gender'
+Description: 'Published in Report on Registration of Births and Deaths which aims
+  to provide an overview on the annual changes in population, births and deaths.'
+Topics:
+  - 'Society'
+Keywords:
+  - 'Gender'
+  - 'Live Birth'
+  - 'Newborns'
+Publisher:
+  Name: 'Ministry of Home Affairs - Immigration & Checkpoints Authority'
+  Admin 1:
+    Name: 'Neo Soo Beng'
+    Department: 'Immigration & Checkpoints Authority'
+    Email: 'NEO_Soo_Beng@ica.gov.sg'
+  Admin 2:
+    Name: 'Gng Cheang Wee'
+    Department: 'Immigration & Checkpoints Authority'
+    Email: 'GNG_Cheang_Wee@ica.gov.sg'
+Sources:
+  - 'Ministry of Home Affairs - Immigration & Checkpoints Authority'
+License: 'https://data.gov.sg/open-data-licence'
+Frequency: 'Annual'
+Coverage: '1984-01-01 to 2018-12-31'
+Last Updated: '2019-07-05T06:26:39.446038'
+Resources:
+  -
+    Identifier: '6ed0a70b-5559-480e-a76f-cbe55e59a7a7'
+    Title: 'Newborns by Gender from 1984 - 2018'
+    Url: 'https://storage.data.gov.sg/newborns-by-gender/resources/newborns-by-gender-from-1984-2018-2019-07-05T06-26-39Z.csv'
+    Format: 'CSV'
+    Coverage: '1984-01-01 to 2018-12-31'
+    Last Updated: '2019-07-05T06:26:39.065163'
+    Schema:
+      -
+        Name: 'year'
+        Title: 'Year'
+        Type: 'datetime'
+        Sub Type: 'year'
+        Format: 'YYYY'
+      -
+        Name: 'gender'
+        Title: 'Gender'
+        Type: 'text'
+        Sub Type: 'general'
+      -
+        Name: 'newborns'
+        Title: 'Newborns'
+        Type: 'numeric'
+        Sub Type: 'general'
+        Unit Of Measure: 'No. of Newborns'
