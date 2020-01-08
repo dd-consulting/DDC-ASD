@@ -4770,7 +4770,8 @@ dif_lower_ci = mean(sample_1)-mean(sample_2) - qt(p = 0.975, df = cal_df)*cal_se
 cat("\nDifference's Lower CI:", dif_lower_ci)
 
 # Visualise CIs: sample_1 & sample_2
-plot(density(sample_2), col="orange", xlab="Prevalence", lwd=2, ylim=c(0,0.3), main="East vs. West ASD Prevalence PDF")
+plot(density(sample_2), col="orange", xlab="Prevalence", lwd=2, ylim=c(0,0.3), 
+     main="East vs. West ASD Prevalence PDF")
 lines(density(sample_1), col="blue", lwd=2)
 # Overlay sample_1 CI
 abline(v= mean(sample_1), col="blue", lwd=2, lty=1)
@@ -4885,7 +4886,7 @@ fn = subset(df_newborns, year == 2018 & gender == "Females")$newborns # Female n
 total = mn + fn
 
 prop.test(x = mn, n = total)
-prop.test(x = mn, n = total, alternative = "greater")
+# prop.test(x = mn, n = total, alternative = "greater")
 ```
 
 ---
@@ -4910,7 +4911,7 @@ fn = subset(df_newborns[order(-df_newborns$year),], year %in% c(2018, 1984) & ge
 total = mn + fn
 
 prop.test(x = mn, n = total)
-prop.test(x = mn, n = total, alternative = "less")
+# prop.test(x = mn, n = total, alternative = "less")
 ```
 
 ---
@@ -4957,7 +4958,7 @@ lines(density(mn_all$newborns), col="blue", lwd=2)
 ```{r}
 # t test with equal variance:
 t.test(mn_all$newborns, fn_all$newborns, paired = FALSE, var.equal = TRUE)
-t.test(mn_all$newborns, fn_all$newborns, paired = FALSE, var.equal = TRUE, alternative = "greater")
+# t.test(mn_all$newborns, fn_all$newborns, paired = FALSE, var.equal = TRUE, alternative = "greater")
 
 ```
 
@@ -5047,7 +5048,7 @@ lines(cal_xseq, cal_pdf, col="darkgrey", type="l",lwd=2)
 ```{r}
 # t test with unequal variances
 t.test(mn_all$newborns, fn_all$newborns, paired = FALSE)
-t.test(mn_all$newborns, fn_all$newborns, paired = FALSE, alternative = "greater")
+# t.test(mn_all$newborns, fn_all$newborns, paired = FALSE, alternative = "greater")
 
 ```
 
@@ -5109,7 +5110,7 @@ lines(cal_xseq, cal_pdf, col="darkgrey", type="l",lwd=2)
 
 ```{r}
 t.test(mn_all$newborns, fn_all$newborns, paired = TRUE)
-t.test(mn_all$newborns, fn_all$newborns, paired = TRUE, alternative = "greater")
+# t.test(mn_all$newborns, fn_all$newborns, paired = TRUE, alternative = "greater")
 
 ```
 
@@ -5153,8 +5154,8 @@ cat("\ncal_s :", cal_s)
 cal_se = cal_s / sqrt(cal_n)
 cat("\ncal_se:", cal_se)
 
-# t statistic
-cal_t = mean(mn_all$newborns-fn_all$newborns)/(cal_s/sqrt(cal_n))
+# t statistic calculated using standard error:
+cal_t = mean(mn_all$newborns-fn_all$newborns)/cal_se
 cat("\ncal_t :", cal_t)
 
 # p-value
