@@ -18,7 +18,7 @@ jupyter:
          <img src="../reference/GZ_logo.png" width="60" align="right">
     </a>
     <h1>
-        One-Stop Analytics: Exploratory Data Analysis (EDA) & Statistics
+        One-Stop Analytics: Central Limit Theorem (CLT) & Confidence Interval (CI)
     </h1>
 </div>
 
