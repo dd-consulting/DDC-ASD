@@ -1,0 +1,1210 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.3.0
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
+---
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="https://github.com/dd-consulting">
+         <img src="../reference/GZ_logo.png" width="60" align="right">
+    </a>
+    <h1>
+        One-Stop Analytics: Exploratory Data Analysis (EDA) & Statistics
+    </h1>
+</div>
+
+
+
+# Case Study of Autism Spectrum Disorder (ASD) with R
+
+---
+
+![](../reference/CDC_ASD/CDC_ASD_01.jpg)
+
+![](../reference/CDC_ASD/CDC_ASD_02.png)
+
+
+
+## <span style="color:blue">[ United States ]</span> 
+
+## Centers for Disease Control and Prevention (CDC) - Autism Spectrum Disorder (ASD)
+
+Autism spectrum disorder (ASD) is a developmental disability that can cause significant social, communication and behavioral challenges. CDC is committed to continuing to provide essential data on ASD, search for factors that put children at risk for ASD and possible causes, and develop resources that help identify children with ASD as early as possible.
+
+https://www.cdc.gov/ncbddd/autism/data/index.html
+
+
+
+## <span style="color:blue">[ Singapore ]</span> 
+
+## TODAY Online - More preschoolers diagnosed with developmental issues
+
+Doctors cited better awareness among parents and preschool teachers, leading to early referrals for diagnosis.
+
+https://www.gov.sg/news/content/today-online-more-preschoolers-diagnosed-with-developmental-issues
+
+![](../reference/SG_ASD/SG_ASD_01.png)
+
+
+
+
+![](../reference/SG_ASD/SG_ASD_04.png) 
+
+https://www.pathlight.org.sg/
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+    </a>
+</div>
+
+
+
+# Workshop Objective: 
+
+## Use R to analyze Autism Spectrum Disorder (ASD) data from CDC USA. 
+
+https://www.cdc.gov/ncbddd/autism/data/index.html
+
+* ## Data
+
+* ## Sampling & Normality (CLT)
+
+* ## Confidence Interval (CI)
+
+* ## Appendices
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+    </a>
+</div>
+
+
+## <span style="color:blue">Data</span>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Data - Get & Set working directory
+    </h3>
+</div>
+
+
+
+**Obtain current R <span style="color:blue">working directory</span>**
+
+```{r}
+getwd()
+```
+
+**Set new R working directory**
+
+```{r}
+# setwd("/media/sf_vm_shared_folder/git/DDC/DDC-ASD/model_R")
+# setwd('~/Desktop/admin-desktop/vm_shared_folder/git/DDC-ASD/model_R')
+getwd()
+```
+
+**Read in CSV data, storing as R <span style="color:blue">dataframe</span>**
+
+```{r}
+# Read back in above saved file:
+ASD_State <- read.csv("../dataset/ADV_ASD_State_R.csv")
+# Convert Year_Factor to ordered.factor
+ASD_State$Year_Factor <- factor(ASD_State$Year_Factor, ordered = TRUE) 
+ASD_State$Prevalence_Risk2 = factor(ASD_State$Prevalence_Risk2, ordered=TRUE, 
+                                    levels=c("Low", "High"))
+ASD_State$Prevalence_Risk4 = factor(ASD_State$Prevalence_Risk4, ordered=TRUE, 
+                                    levels=c("Low", "Medium", "High", "Very High"))
+
+```
+
+```{r}
+# Filter and create dataframe of different data sources, for easy data access
+ASD_State_ADDM <- subset(ASD_State, Source == 'addm')
+ASD_State_MEDI <- subset(ASD_State, Source == 'medi')
+ASD_State_NSCH <- subset(ASD_State, Source == 'nsch')
+ASD_State_SPED <- subset(ASD_State, Source == 'sped')
+
+```
+
+```{r}
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=4)
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+    </a>
+</div>
+
+
+
+
+## <span style="color:blue">Sampling & Normality</span>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Sampling & Normality - Population & Sample
+    </h3>
+</div>
+
+
+
+**Create a  <span style="color:blue">Population</span> of US. State level ASD Prevalence from Source SPED in Year 2016**
+
+```{r}
+# ----------------------------------
+# Create a *Population* of US. State level ASD Prevalence from Source SPED in Year 2016 
+# ----------------------------------
+ASD_State_SPED_2016 <- subset(ASD_State, 
+                              Source == 'sped' & Year == 2016, # conditions
+                              select=c('State', 'Prevalence')) # selection
+#
+head(ASD_State_SPED_2016)
+```
+
+```{r}
+dim(ASD_State_SPED_2016)
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+```
+
+**Define a function to calculate population std-dev (Omega):**
+
+```{r}
+# Use sd()   to calculate *sample*     std-dev (S)
+# Use sd.p() to calculate *population* std-dev (Omega)
+
+# Define a function sd.p() to calculate *population* std-dev (Omega)
+# https://www.dummies.com/education/math/statistics/standard-deviation-r/
+
+sd.p = function(x) {sd(x) * sqrt((length(x)-1)/length(x))}
+
+# Treat as sample:
+cat('sd()   of ASD_State_SPED_2016$Prevalence : ', sd(ASD_State_SPED_2016$Prevalence) )
+
+# Treat as population:
+cat('\nsd.p() of ASD_State_SPED_2016$Prevalence : ', sd.p(ASD_State_SPED_2016$Prevalence) )
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Sampling & Normality - Central Limit Theorem (CLT)
+    </h3>
+</div>
+
+
+
+**Create a  <span style="color:blue">Sample</span> of US. State level ASD Prevalence from Source SPED in Year 2016**
+
+```{r}
+# Create a *Sample* from ASD_State_SPED_2016$Prevalence,
+# with sample size n =
+clt_n = 20
+# clt_n = 40
+
+set.seed(88)
+clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = TRUE)
+clt_sample_1
+```
+
+```{r}
+# Adjust in-line plot size to M x N
+options(repr.plot.width=8, repr.plot.height=4)
+```
+
+```{r}
+plot(density(clt_sample_1), col="darkgrey", lwd=2) 
+hist(clt_sample_1, probability = T, add = T)
+```
+
+**Draw a large k number of samples, with sample size = n**:
+
+```{r}
+# Repeatedly sample for k times, create a matrix/array to store these samples
+clt_k = 10000 # or called 'N', but this can be confusing due to N can also be population size. Thus we use 'k' here.
+
+set.seed(88) # Repeatable sampling using pseudo random methold
+clt_sample_k <- (replicate(clt_k, sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = TRUE)))
+
+# first few samples
+clt_sample_k[, 1:6]
+```
+
+```{r}
+# last sample
+clt_sample_k[, clt_k]
+```
+
+```{r}
+# mean values of first few samples
+mean(clt_sample_k[, 1])
+mean(clt_sample_k[, 2])
+mean(clt_sample_k[, 3])
+mean(clt_sample_k[, 4])
+mean(clt_sample_k[, 5])
+mean(clt_sample_k[, 6])
+
+# or use apply() function to loop
+apply(clt_sample_k[, 1:6], 2, mean)
+```
+
+```{r}
+# std-dev values of first few samples
+sd(clt_sample_k[, 1])
+sd(clt_sample_k[, 2])
+sd(clt_sample_k[, 3])
+sd(clt_sample_k[, 4])
+sd(clt_sample_k[, 5])
+sd(clt_sample_k[, 6])
+
+# or use apply() function to loop
+apply(clt_sample_k[, 1:6], 2, sd)
+```
+
+**k sample's distributions (k many)**
+
+```{r}
+# ----------------------------------
+# k sample's distributions (k many)
+# ----------------------------------
+# Show the first few sample's histogram
+par(mfrow=c(2, 3))
+apply(clt_sample_k[, 1:6], 2, FUN=hist)
+# Reset
+par(mfrow=c(1, 1))
+```
+
+**Show the first few sample's density, together with Population**
+
+```{r}
+# Show the first few sample's density, together with Population
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', 
+     ylim = (c(0, 0.6)),
+     main = 'Visualize Population & Samples')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+```
+
+```{r}
+# Show the first few sample's density, together with Population
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', 
+     ylim = (c(0, 0.6)),
+     main = 'Visualize Population & Samples')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay:
+# First few sample's density & mean
+lines(density(clt_sample_k[, 1]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 1]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 2]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 2]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 3]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 3]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 4]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 4]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 5]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 5]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, 6]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, 6]), col="blue", lwd=1) 
+
+lines(density(clt_sample_k[, clt_k]), col="blue", lwd=1) 
+abline(v=mean(clt_sample_k[, clt_k]), col="blue", lwd=1) 
+
+# We can see that sample's distributions are all different.
+```
+
+**<span style="color:blue">[ Tips ]</span> We notice that sample's distributions are all different.**
+
+
+**Create <span style="color:blue">Sampling Distribution</span> (only one):**
+
+```{r}
+# ----------------------------------
+# Sampling distribution (only one)
+# ----------------------------------
+# Calculate sample mean value for k samples
+clt_sample_k_mean <- apply(clt_sample_k, 2, mean)
+# Show first few sample means
+clt_sample_k_mean[1:6]
+```
+
+```{r}
+# Calculate sample std-dev value for each individual sample (totally k std-dev)
+clt_sample_k_sd <- apply(clt_sample_k, 2, sd)
+# Show first few samples' std-dev
+clt_sample_k_sd[1:6]
+```
+
+```{r}
+# Calculate std-dev value for Sampling DIsdtribution (only one std-dev)
+sd(clt_sample_k_mean)
+```
+
+```{r}
+# histogram of sample means (Sampling distribution of the mean)
+hist(clt_sample_k_mean, probability = T, breaks = 100)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+```
+
+```{r}
+# histogram of sample std-dev
+hist(clt_sample_k_sd, probability = T, breaks = 100)
+lines(density(clt_sample_k_sd), col="orange2", lwd=2) 
+```
+
+```{r}
+# k *Sample* (sample size = n) mean Prevalence
+mean(clt_sample_k_mean)
+```
+
+```{r}
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+```
+
+**<span style="color:blue">[ Tips ]</span> We notice that the above two means are close.**
+
+
+**Visualise: Central Limit Theorem (CLT)**
+
+```{r}
+# ----------------------------------
+# Sampling distribution vs. Population distribution vs. Z-Norm
+# ----------------------------------
+# Create:
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.6)),
+     main = 'Visualize Central Limit Theorem (CLT)')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="black", lwd=2) 
+```
+
+**Overlay: Sample means histogram in probability (Sampling disribution)**
+
+```{r}
+# ----------------------------------
+# Sampling distribution vs. Population distribution vs. Z-Norm
+# ----------------------------------
+# Create:
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.6)),
+     main = 'Visualize Central Limit Theorem (CLT)')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="black", lwd=2) 
+
+# Overlay line:
+# Sample means histogram in probability (Sampling disribution)
+hist(clt_sample_k_mean, probability = T, 
+     col=rgb(0,1,1,0.3), # https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+     add=T)
+
+# Overlay curve:
+# Sample (Prevalence) density (Sampling disribution)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+# Overlay line:
+# mean of Sampling distribution (of Prevelance, sample size n) 
+abline(v=mean(clt_sample_k_mean), col="cyan2", lwd=2, lty=3) 
+```
+
+< How to make transparent colors in R > https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+
+
+```{r}
+col2rgb(c("cyan", "grey", "purple", "orange")) / 255
+```
+
+```{r}
+# Recall:
+# k *Sample* (sample size = n) mean Prevalence
+mean(clt_sample_k_mean)
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+# We see that the above two means are close. Good estimation!
+```
+
+**<span style="color:blue">[ Tips ]</span> We notice that the above two means are close. <span style="color:blue">Good estimation!</span>**
+
+
+**Standard Error (SE) (of mean prevalence), can be estimated as: std-dev of the Sampling distribution (of mean prevalence):**
+
+```{r}
+# ----------------------------------
+# Standard Error (SE) (of mean prevalence), can be estimated as:
+# std-dev of the Sampling distribution (of mean prevalence)
+# ----------------------------------
+# https://en.wikipedia.org/wiki/Sampling_distribution
+
+# [1] Actual SE: When Population std-dev is known, SE using Population standard deviation:
+sd.p(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)
+
+# [2] Estimated SE with k samples: When Population std-dev is NOT known, but many sample means are known, SE using standard deviation of Sampling distribution
+sd(clt_sample_k_mean)
+
+# [3] Estimated SE with only one sample: When Population std-dev is NOT known, and only one sample obtained, SE using Sample's standard deviation: (std-dev of 1 Sample)
+clt_sample_k_sd[1] / sqrt(clt_n)
+```
+
+**Overlay: <span style="color:blue">Theoretic Sampling Distribution</span> with population mean & std-dev = Actual SE:**
+
+```{r}
+# ----------------------------------
+# Sampling distribution vs. Population distribution vs. Z-Norm
+# ----------------------------------
+# Create:
+# Population (Prevalence) histogram in probablity
+hist(ASD_State_SPED_2016$Prevalence, probability = T, 
+     col=rgb(0.75,0.75,0.75,0.5), breaks = 50,
+     xlab = 'Prevalvence', xlim = (c(0, 25)),
+     ylab = 'Probability Density', ylim = (c(0, 0.6)),
+     main = 'Visualize Central Limit Theorem (CLT)')
+
+# Overlay curve:
+# Population (Prevalence) density
+lines(density(ASD_State_SPED_2016$Prevalence), col="grey4", lwd=2) 
+
+# Overlay line:
+# mean = mean of Population (Prevalence)
+abline(v=mean(ASD_State_SPED_2016$Prevalence), col="black", lwd=2) 
+
+# Overlay line:
+# Sample means histogram in probability (Sampling disribution)
+hist(clt_sample_k_mean, probability = T, 
+     col=rgb(0,1,1,0.3), # https://www.dataanalytics.org.uk/make-transparent-colors-in-r/
+     add=T)
+
+# Overlay curve:
+# Sample (Prevalence) density (Sampling disribution)
+lines(density(clt_sample_k_mean), col="cyan2", lwd=2) 
+# Overlay line:
+# mean of Sampling distribution (of Prevelance, sample size n) 
+abline(v=mean(clt_sample_k_mean), col="cyan2", lwd=2, lty=3) 
+
+# Overlay curve:
+# *Theoretic Sampling Distribution* with population mean & std-dev = Actual SE
+# mean = mean of Population (Prevalence) & std-dev = std-dev of Population (Prevalence) / square root of sample size n
+curve(dnorm(x, 
+            mean(ASD_State_SPED_2016$Prevalence), # Actual Population mean
+            sd.p(ASD_State_SPED_2016$Prevalence) / sqrt(clt_n)), # Actual SE (for mean prevalence) = Population standard deviation / square root of sample size
+      add=TRUE, col="red", lwd=2, lty=3)
+```
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Sampling & Normality - Evaluate Normality
+    </h3>
+</div>
+
+
+
+**Use QQ Plot**
+
+< Construct a Quantile-Quantile Plot (QQ plot) > https://youtu.be/okjYjClSjOg
+
+
+```{r}
+# ----------------------------------
+# Evaluate normality
+# ----------------------------------
+# Construct a Quantile-Quantile Plot (QQ plot)
+# https://youtu.be/okjYjClSjOg
+
+par(mfrow=c(1, 2))
+# Sample means
+qqnorm(clt_sample_k_mean, col="darkgrey", 
+#       xlim=(c(-4, 4)), ylim=(c(0, 20)),
+       xlab="z Value", ylab="Prevalence")
+qqline(clt_sample_k_mean, col="red", lwd=2, lty=3)
+# Population
+qqnorm(ASD_State_SPED_2016$Prevalence, col="darkgrey", 
+       xlim=(c(-4, 4)),
+       xlab="z Value", ylab="Prevalence")
+qqline(ASD_State_SPED_2016$Prevalence, col="red", lwd=2, lty=3)
+# Reset
+par(mfrow=c(1, 1))
+
+```
+
+**<span style="color:blue">[ Tips ]</span> If most/all data points are aligned with the red straight line, then the underlying data points are normally distributed.**
+
+```{r}
+# ----------------------------------
+# Evaluate normality
+# ----------------------------------
+par(mfrow=c(1, 2))
+
+# ASD_State_ADDM$Prevalence
+qqnorm(ASD_State_ADDM$Prevalence, col="darkgrey", 
+#       xlim=(c(-4, 4)), ylim=(c(0, 20)),
+       xlab="z Value", ylab="ASD_State_ADDM Prevalence")
+qqline(ASD_State_ADDM$Prevalence, col="red", lwd=2, lty=3)
+# plot(density(ASD_State_ADDM$Prevalence))
+
+# ASD_State_MEDI$Prevalence
+qqnorm(ASD_State_MEDI$Prevalence, col="darkgrey", 
+#       xlim=(c(-4, 4)), ylim=(c(0, 20)),
+       xlab="z Value", ylab="ASD_State_MEDI Prevalence")
+qqline(ASD_State_MEDI$Prevalence, col="red", lwd=2, lty=3)
+
+# ASD_State_NSCH$Prevalence
+qqnorm(ASD_State_NSCH$Prevalence, col="darkgrey", 
+#       xlim=(c(-4, 4)), ylim=(c(0, 20)),
+       xlab="z Value", ylab="ASD_State_NSCH Prevalence")
+qqline(ASD_State_NSCH$Prevalence, col="red", lwd=2, lty=3)
+
+# ASD_State_SPED$Prevalence
+qqnorm(ASD_State_SPED$Prevalence, col="darkgrey", 
+#       xlim=(c(-4, 4)), ylim=(c(0, 20)),
+       xlab="z Value", ylab="ASD_State_SPED Prevalence")
+qqline(ASD_State_SPED$Prevalence, col="red", lwd=2, lty=3)
+
+# Reset
+par(mfrow=c(1, 1))
+
+```
+
+```{r}
+# ----------------------------------
+# Evaluate normality
+# ----------------------------------
+par(mfrow=c(1, 2))
+plot(density(ASD_State_ADDM$Prevalence))
+plot(density(ASD_State_MEDI$Prevalence))
+plot(density(ASD_State_NSCH$Prevalence))
+plot(density(ASD_State_SPED$Prevalence))
+# Reset
+par(mfrow=c(1, 1))
+```
+
+```{r}
+# Alternatively, use shapiro.test() to test Normality
+set.seed(88)
+
+# Test data of k smaple's means (Sampling Distribution data):
+shapiro.test(sample(x = clt_sample_k_mean, size = 1000))
+
+# Test data of population's Prevalence values (Population Distribution data):
+shapiro.test(ASD_State_SPED_2016$Prevalence)
+```
+
+**<span style="color:blue">[ Tips ]</span> General speaking, if <span style="color:blue">p-value</span> is greater than <span style="color:blue">0.05 (meaning more than 5% chance of being normally distributed)</span>, then the underlying data points are normally distributed.**
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+</div>
+
+
+
+
+## <span style="color:blue">Confidence Interval (CI)</span>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Confidence Interval (CI) - Mean Estimation & Its CI
+    </h3>
+</div>
+
+
+
+**Use a <span style="color:blue">Sample statistic (e.g. mean)</span> to estimate a <span style="color:blue">population statistic (e.g. mean)</span>. And quantitatively calculate the confidence of the estimation.**
+
+```{r}
+# ----------------------------------
+# Use a sample of a few US. State's ASD prevalence (mean) to estimate:
+# Average prevalence of ALL US. States (the *Population*) [Source SPED, Year 2016]
+# ----------------------------------
+dim(ASD_State_SPED_2016)
+#
+ASD_State_SPED_2016 # This is considered as a population now.
+```
+
+**Draw a  <span style="color:blue">Sample</span> from ASD_State_SPED_2016$Prevalence**
+
+```{r}
+# Create a *Sample* from ASD_State_SPED_2016$Prevalence,
+# with sample size n =
+clt_n = 10
+# Try 20 or 40, larger sample size, narrower the CI (more confident at xx% level)
+# clt_n = 20 
+
+set.seed(88)
+clt_sample_1 = sample(x = ASD_State_SPED_2016$Prevalence, size = clt_n, replace = FALSE)
+clt_sample_1
+```
+
+```{r}
+plot(density(clt_sample_1), col="darkgrey", lwd=2) 
+hist(clt_sample_1, probability = T, add = T)
+```
+
+```{r}
+# Sample mean Prevalence
+mean(clt_sample_1)
+
+# *Population* mean Prevalence
+mean(ASD_State_SPED_2016$Prevalence)
+```
+
+**1. Calculate Confidence Interval of mean estimation: <span style="color:blue">CI using Z (Standard Normal) distribution</span>**
+
+```{r}
+# ----------------------------------
+# CI using Z (Standard Normal) distribution
+# ----------------------------------
+# sample mean
+sample_mean = mean(clt_sample_1)
+sample_mean
+```
+
+```{r}
+# sample size n
+sample_size_n = length(clt_sample_1)
+sample_size_n
+```
+
+```{r}
+# sample standard deviation
+sample_sd = sd(clt_sample_1)
+sample_sd
+```
+
+```{r}
+# sample standard error
+sample_se = sample_sd / sqrt(sample_size_n)
+sample_se
+```
+
+```{r}
+# 95% quantile (z score)
+z_score = qnorm(p = 0.975)
+z_score
+```
+
+```{r}
+# ?qnorm
+```
+
+```{r}
+# CI using Z distribution
+sample_ci = z_score * sample_se
+sample_ci
+```
+
+```{r}
+# Lower CI: mean + CI
+sample_mean - sample_ci
+
+# Upper CI: mean + CI
+sample_mean + sample_ci
+
+# Display
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  
+    sample_mean - sample_ci, '\tMean : ', 
+    sample_mean, '\tUpper CI : ',  
+    sample_mean + sample_ci)
+```
+
+**<span style="color:blue">[ ? ]</span> Is the population mean in this CI range?**
+
+
+**2. Calculate Confidence Interval of mean estimation: <span style="color:blue">CI using T distribution</span>**
+
+```{r}
+# ----------------------------------
+# CI using T distribution
+# ----------------------------------
+# sample mean
+sample_mean = mean(clt_sample_1)
+sample_mean
+# sample size n
+sample_size_n = length(clt_sample_1)
+sample_size_n
+# sample standard deviation
+sample_sd = sd(clt_sample_1)
+sample_sd
+# sample standard error
+sample_se = sample_sd / sqrt(sample_size_n)
+sample_se
+```
+
+```{r}
+# 95% quantile (t score)
+t_score = qt(p = 0.975, df = sample_size_n - 1)
+t_score
+```
+
+```{r}
+# ?qt
+```
+
+```{r}
+# CI using T distribution
+sample_ci = t_score * sample_se
+sample_ci
+
+# Lower CI: mean + CI
+sample_mean - sample_ci
+
+# Upper CI: mean + CI
+sample_mean + sample_ci
+
+# Display
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  
+    sample_mean - sample_ci, '\tMean : ', 
+    sample_mean, '\tUpper CI : ',  
+    sample_mean + sample_ci)
+```
+
+**<span style="color:blue">[ ? ]</span> Is the population mean in this CI range?**
+
+
+**<span style="color:blue">[ ? ]</span> Compare CIs of Z and T distribution, which CI has wider range? Is it reasonable?**
+
+```{r}
+# Alternatively, calculate CI using t.test() function
+t.test(clt_sample_1, conf.level = 0.95)
+```
+
+```{r}
+# Two group hypothesis test : sample mean vs. population mean
+t.test(clt_sample_1, conf.level = 0.95, mu = mean(ASD_State_SPED_2016$Prevalence))
+```
+
+<div class="alert alert-danger alertdanger" style="margin-top: 20px">
+    <h3>
+        Quiz:
+    </h3>
+    <p>
+        Obtain CI using smaller/larger sample size (clt_n) at 99% confidence. Compare CI width.
+    </p>
+    <p>
+        Observe: larger sample size, narrower the CI (more confident at xx% level)
+    </p>
+</div>
+
+```{r}
+# Write your code below and press Shift+Enter to execute 
+
+```
+
+<!-- #region -->
+Double-click <b>here</b> for the solution.
+
+<!-- The answer is below:
+
+# Write your code below and press Shift+Enter to execute 
+# Try 5, 20, 40, larger sample size, narrower the CI (more confident at xx% level)
+# clt_n = 20
+
+
+-->
+<!-- #endregion -->
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Confidence Interval (CI) - Proportion Estimation & Its CI
+    </h3>
+</div>
+
+
+
+**Use a <span style="color:blue">Sample statistic (e.g. proportioin)</span> to estimate a <span style="color:blue">population statistic (e.g. proportioin)</span>. And quantitatively calculate the confidence of the estimation.**
+
+```{r}
+# ----------------------------------
+# Use a sample of one US. State's ASD prevalence (proportion) to estimate:
+# Prevalence of THAT US. State's ALL Children (the *Population*) [Source SPED, Year 2016] 
+# ----------------------------------
+
+# No. Children with ASD
+ASD  <- ASD_State_SPED$Numerator_ASD[ASD_State_SPED$Year == 2016]
+#
+str(ASD)
+```
+
+```{r}
+# No. Children with ASD of first US. State (AL-Alabama)
+ASD[1]
+```
+
+```{r}
+# No. Children surveyed
+Children  <- ASD_State_SPED$Denominator[ASD_State_SPED$Year == 2016]
+#
+str(Children)
+```
+
+```{r}
+# No. Children surveyed of first US. State (AL-Alabama)
+Children[1]
+```
+
+**1. Calculate Confidence Interval of proportion estimation: <span style="color:blue">CI using Z score interval  (standard normal distribution)</span>**
+
+```{r}
+# ----------------------------------
+# CI using Z score interval  (standard normal distribution)
+# https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+# ----------------------------------
+
+# sample proportion of first US. State (AL-Alabama) in year 2016 of source SPED
+sample_proportion = ASD[1] / Children[1]
+sample_proportion # p
+1- sample_proportion # q = 1 - p
+```
+
+```{r}
+# sample size n
+sample_size_n = Children[1]
+sample_size_n
+```
+
+```{r}
+# 95% quantile (z score)
+z_score = qnorm(p = 0.975)
+z_score
+```
+
+```{r}
+sample_ci = z_score * sqrt(sample_proportion * (1 - sample_proportion) / sample_size_n)
+sample_ci
+```
+
+```{r}
+# Lower CI: mean + CI
+sample_proportion - sample_ci
+
+# Upper CI: mean + CI
+sample_proportion + sample_ci
+
+# Display
+cat('\t< Confidence Interval >\n',  '\tLower CI : ',  
+    sample_proportion - sample_ci, '\tMean : ', 
+    sample_proportion, '\tUpper CI : ',  
+    sample_proportion + sample_ci)
+
+```
+
+```{r}
+# Display * 1000 -> Prevalence
+cat('\t< Confidence Interval (Prevalence) >\n',  '\tLower CI : ',  
+    1000*(sample_proportion - sample_ci), '\tMean : ', 
+    1000*sample_proportion, '\tUpper CI : ',  
+    1000*(sample_proportion + sample_ci))
+
+```
+
+**<span style="color:blue">[ Tips ]</span> Based above calculation upon [ Source: SPED ] [ Year: 2016 ] data, we have 95% confidence that: The actual AL-Alabama state level ASD prevalence (if ALL childrens in Alabama state were surveyed) would be in the above calculated CI range 95% times.** 
+
+Or, asumming there are 100 different Alabama states exist in 100 parallel universes, we obtained 100 actual prevelance proportions. 95 of them will likely fall into the CI range.
+
+
+**2. Calculate Confidence Interval of proportion estimation: <span style="color:blue">CI using Wilson score interval</span>**
+
+```{r}
+# ----------------------------------
+# CI using Wilson score interval
+# https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
+# ----------------------------------
+
+sample_proportion # = ASD[1] / Children[1]
+
+# Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD[1], Children[1], conf.level = 0.95) 
+
+# Pearson's chi-squared test = Wilson score interval - wilson
+prop.test(ASD[1], Children[1], conf.level = 0.95, correct = FALSE) 
+```
+
+<div class="alert alert-danger alertdanger" style="margin-top: 20px">
+    <h3>
+        Quiz:
+    </h3>
+    <p>
+        Obtain CI of Male.Prevalence propotion [ Source: ADDM] [ Year: 2014 ] at 99% confidence.
+    </p>
+</div>
+
+```{r}
+# Write your code below and press Shift+Enter to execute 
+
+```
+
+Double-click <b>here</b> for the solution.
+
+<!-- The answer is below:
+
+# Write your code below and press Shift+Enter to execute 
+#
+# ------------------------------------
+# In order to calculate proportion CI, we need to know below four numbers of difference children group:
+# ------------------------------------
+# ASD_Male_numb
+# Children_Male_numb
+# ASD_Female_numb
+# Children_Female_numb
+
+# ------------------------------------
+# Known facts:
+# ------------------------------------
+
+cat('# ------------------------------------
+# Known facts:
+# ------------------------------------\n')
+
+# ADDM 2014 National level
+ASD_National_ADDM$Prevalence[ASD_National_ADDM$Year == 2014]
+ASD_National_ADDM$Male.Prevalence[ASD_National_ADDM$Year == 2014]
+ASD_National_ADDM$Female.Prevalence[ASD_National_ADDM$Year == 2014]
+
+# ADDM 2014 State level
+ASD_State_ADDM$Denominator[ASD_State_ADDM$Year == 2014]
+ASD_State_ADDM$Numerator_ASD[ASD_State_ADDM$Year == 2014]
+ASD_State_ADDM$Numerator_NonASD[ASD_State_ADDM$Year == 2014]
+
+# ADDM 2014 National level (sum up state level numbers)
+sum(ASD_State_ADDM$Denominator[ASD_State_ADDM$Year == 2014])
+sum(ASD_State_ADDM$Numerator_ASD[ASD_State_ADDM$Year == 2014])
+sum(ASD_State_ADDM$Numerator_NonASD[ASD_State_ADDM$Year == 2014])
+
+# Tally health check for Prevalence proportion
+ASD_National_ADDM$Prevalence[ASD_National_ADDM$Year == 2014] == round(1000 * sum(ASD_State_ADDM$Numerator_ASD[ASD_State_ADDM$Year == 2014]) / sum(ASD_State_ADDM$Denominator[ASD_State_ADDM$Year == 2014]), 1)
+
+# ------------------------------------
+# Establish relationships/formulas
+# ------------------------------------
+# Formula 1:
+# ASD_Male_numb + ASD_Female_numb = sum(ASD_State_ADDM$Numerator_ASD[ASD_State_ADDM$Year == 2014]) = 5478
+
+# Formula 2:
+# ASD_Male_numb / Children_Male_numb = ASD_National_ADDM$Male.Prevalence[ASD_National_ADDM$Year == 2014]/1000 = 26.6/1000
+
+# Formula 3:
+# ASD_Female_numb / Children_Female_numb = ASD_National_ADDM$Female.Prevalence[ASD_National_ADDM$Year == 2014]/1000 = 6.6/1000
+
+# Formula 4:
+# Children_Male_numb + Children_Female_numb = sum(ASD_State_ADDM$Denominator[ASD_State_ADDM$Year == 2014]) = 325483
+
+# ------------------------------------
+# Results
+# ------------------------------------
+Children_Female_numb = 153843.195876288659794
+ASD_Female_numb = 6.6 * Children_Female_numb / 1000
+Children_Male_numb = sum(ASD_State_ADDM$Denominator[ASD_State_ADDM$Year == 2014]) - Children_Female_numb
+ASD_Male_numb = sum(ASD_State_ADDM$Numerator_ASD[ASD_State_ADDM$Year == 2014]) - ASD_Female_numb
+
+# Rounding to integer
+ASD_Male_numb = round(ASD_Male_numb, 0)
+ASD_Female_numb = round(ASD_Female_numb, 0)
+Children_Male_numb = round(Children_Male_numb, 0)
+Children_Female_numb = round(Children_Female_numb, 0)
+
+# Tally health check:
+ASD_Male_numb + ASD_Female_numb == sum(ASD_State_ADDM$Numerator_ASD[ASD_State_ADDM$Year == 2014])
+Children_Male_numb + Children_Female_numb == sum(ASD_State_ADDM$Denominator[ASD_State_ADDM$Year == 2014])
+round(1000 * ASD_Male_numb / Children_Male_numb, 1) == ASD_National_ADDM$Male.Prevalence[ASD_National_ADDM$Year == 2014]
+round(1000 * ASD_Female_numb / Children_Female_numb, 1) == ASD_National_ADDM$Female.Prevalence[ASD_National_ADDM$Year == 2014]
+
+cat('# ------------------------------------
+# Results:
+# ------------------------------------\n')
+
+# There is a slight discrepancy in Male.Prevalence. 
+# This is likely due to the 'rounding to one decimal' of: National level Prevalence, State level Male and Female Prevalence in two original ASD data set.
+cat('\nRe-calculated Male.Prevalvence  : ', round(1000 * ASD_Male_numb / Children_Male_numb, 1)) # Male.Prevalvence is under valued: 26
+cat('\nRe-calculated Female.Prevalence : ', round(1000 * ASD_Female_numb / Children_Female_numb, 1)) # Female.Prevalence is correct: 6.6
+
+# We would accept above calculation and tally check, to proceed below CI calculation.
+
+# Display
+cat('\nASD_Male_numb        : ', ASD_Male_numb)
+cat('\nASD_Female_numb      : ', ASD_Female_numb)
+cat('\nChildren_Male_numb   : ', Children_Male_numb)
+cat('\nChildren_Female_numb : ', Children_Female_numb)
+
+# ------------------------------------
+# proportion test (with continuity correction) to obtain CI for Male.Prevalence propotion at 99% confidence:
+# ------------------------------------
+# Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD_Male_numb, Children_Male_numb, conf.level = 0.99) 
+
+-->
+
+
+<div class="alert alert-danger alertdanger" style="margin-top: 20px">
+    <h3>
+        Quiz:
+    </h3>
+    <p>
+        Obtain CI of Female.Prevalence propotion [ Source: ADDM] [ Year: 2014 ] at 99% confidence.
+    </p>
+    <p>
+        Then Compare CI range with Male children's CI range. Which gender has statistically higer ASD prevalence/proportion?
+    </p>
+</div>
+
+```{r}
+# Write your code below and press Shift+Enter to execute 
+
+```
+
+Double-click <b>here</b> for the solution.
+
+<!-- The answer is below:
+
+# Write your code below and press Shift+Enter to execute 
+#
+ASD_Female_numb
+Children_Female_numb
+ASD_Female_numb / Children_Female_numb
+#
+# ------------------------------------
+# proportion test (with continuity correction) to obtain CI for Female.Prevalence propotion at 99% confidence:
+# ------------------------------------
+# Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(ASD_Female_numb, Children_Female_numb, conf.level = 0.99) 
+
+# ------------------------------------
+# Two group proportion test (with continuity correction)
+# ------------------------------------
+# Yates' chi-squared test = Wilson score interval with continuity correction - prop.test
+prop.test(c(ASD_Male_numb, ASD_Female_numb), c(Children_Male_numb, Children_Female_numb), conf.level = 0.99) 
+
+-->
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+    </a>
+</div>
+
+
+
+### Excellent! You have completed the workshop notebook!
+
+
+**Connect with the author:**
+
+This notebook was written by [GU Zhan (Sam)](https://sg.linkedin.com/in/zhan-gu-27a82823 "GU Zhan (Sam)").
+
+[Sam](https://www.iss.nus.edu.sg/about-us/staff/detail/201/GU_Zhan "GU Zhan (Sam)") is currently a lecturer in [Institute of Systems Science](https://www.iss.nus.edu.sg/ "NUS-ISS") in [National University of Singapore](http://www.nus.edu.sg/ "NUS"). He devotes himself into pedagogy & andragogy, and is very passionate in inspiring next generation of artificial intelligence lovers and leaders.
+
+
+
+Copyright &copy; 2020 GU Zhan
+
+This notebook and its source code are released under the terms of the [MIT License](https://en.wikipedia.org/wiki/MIT_License "Copyright (c) 2020 GU ZHAN").
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+    </a>
+</div>
+
+
+
+## <span style="color:blue">Appendices</span>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Interactive workshops: < Learning R inside R > using swirl() (in R/RStudio)
+    </h3>
+</div>
+
+
+
+https://github.com/telescopeuser/S-SB-Workshop
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="https://github.com/dd-consulting">
+         <img src="../reference/GZ_logo.png" width="60" align="right">
+    </a>
+</div>
+
+
+
+---
