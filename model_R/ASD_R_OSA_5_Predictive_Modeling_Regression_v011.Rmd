@@ -86,6 +86,8 @@ https://www.cdc.gov/ncbddd/autism/data/index.html
 
 * ## Linear Model: Model Evaluation: Train/Test, K-Fold Cross Validation, Confusion Matrix
 
+* ## Linear Model: Prevent Overfitting by Regularization Methods
+
 * ## Workshop Submission
 
 * ## Appendices
@@ -1303,7 +1305,7 @@ pR2(fit_model_LR_Risk4)[4]
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <p>
-        McFadden $R^2$ = 0.6122
+        McFadden $R^2$ = 0.6035
     </p>
 </div>
 
@@ -1529,13 +1531,41 @@ mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
 sqrt(mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2))
 ```
 
----
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <a href="">
+         <img src="" width="750" align="center">
+    </a>
+</div>
 
 
-**Enhanced MLR using Regularization: L1 Lasso**
+
+
+## <span style="color:blue">Linear Model: Prevent Overfitting by Regularization Methods</span>
+
+
+
+<div class="alert alert-block alert-info" style="margin-top: 20px">
+    <h3>
+    Linear Model: Prevent Overfitting by Regularization Methods - L1 Lasso Regression & L2 Ridge regression
+    </h3>
+</div>
+
+
+
+https://towardsdatascience.com/l1-and-l2-regularization-methods-ce25e7fc831c
+
+* L1 Lasso Regression (Least Absolute Shrinkage and Selection Operator) adds “absolute value of magnitude” of coefficient as penalty term to the loss function.
+
+* L2 Ridge regression adds “squared magnitude” of coefficient as penalty term to the loss function. 
+
+The key difference between these techniques is that L1 Lasso shrinks the less important feature’s coefficient to zero thus, removing some feature altogether. So, this works well for feature selection in case we have a huge number of features.
+
 
 
 https://towardsdatascience.com/create-predictive-models-in-r-with-caret-12baf9941236
+
+
+**Enhanced MLR using Regularization: L1 Lasso**
 
 ```{r}
 if(!require(elasticnet)){install.packages("elasticnet")}
