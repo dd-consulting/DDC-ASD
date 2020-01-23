@@ -1531,6 +1531,44 @@ mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
 sqrt(mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2))
 ```
 
+**<span style="color:blue">Calculate $R^2$ for entire train set (all folds)</span>** https://stackoverflow.com/questions/25691127/r-squared-on-test-data
+
+```{r}
+caret_model_MLR_Pred_Train <- predict(caret_model_MLR, caret_trainset)
+
+SS.total      <- sum((caret_trainset$Prevalence-mean(caret_trainset$Prevalence))^2)
+SS.residual   <- sum(residuals(caret_model_MLR)^2)
+SS.regression <- sum((caret_model_MLR_Pred_Train-mean(caret_trainset$Prevalence))^2)
+
+# fraction of variability explained by the model
+cat("\nTrain R^2 fraction of variability explained by the model :", SS.regression/SS.total )
+
+# caret_model_MLR_L2
+
+```
+
+**<span style="color:blue">Calculate $R^2$ for test set</span>** https://stackoverflow.com/questions/25691127/r-squared-on-test-data
+
+```{r}
+# True y values:
+# head(caret_testset$Prevalence)
+
+# Predicated y values (y hat):
+# head(caret_model_MLR_Pred)
+
+SS.total      <- sum((caret_testset$Prevalence - mean(caret_testset$Prevalence))^2)
+SS.residual   <- sum((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
+SS.regression <- sum((caret_model_MLR_Pred - mean(caret_testset$Prevalence))^2)
+
+# NOT the fraction of variability explained by the model
+test.rsq <- 1 - SS.residual/SS.total  
+# cat("\nNOT Test fraction of variability explained by the model :", test.rsq )
+
+# fraction of variability explained by the model
+cat("\nTest R^2 fraction of variability explained by the model :", SS.regression/SS.total )
+
+```
+
 <div class="alert alert-block alert-info" style="margin-top: 20px">
     <a href="">
          <img src="" width="750" align="center">
@@ -1610,6 +1648,44 @@ mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
 sqrt(mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2))
 ```
 
+**<span style="color:blue">Calculate $R^2$ for entire train set (all folds)</span>** https://stackoverflow.com/questions/25691127/r-squared-on-test-data
+
+```{r}
+caret_model_MLR_Pred_Train <- predict(caret_model_MLR_L1, caret_trainset)
+
+SS.total      <- sum((caret_trainset$Prevalence-mean(caret_trainset$Prevalence))^2)
+SS.residual   <- sum(residuals(caret_model_MLR_L1)^2)
+SS.regression <- sum((caret_model_MLR_Pred_Train-mean(caret_trainset$Prevalence))^2)
+
+# fraction of variability explained by the model
+cat("\nTrain R^2 fraction of variability explained by the model :", SS.regression/SS.total )
+
+# caret_model_MLR_L2
+
+```
+
+**<span style="color:blue">Calculate $R^2$ for test set</span>** https://stackoverflow.com/questions/25691127/r-squared-on-test-data
+
+```{r}
+# True y values:
+# head(caret_testset$Prevalence)
+
+# Predicated y values (y hat):
+# head(caret_model_MLR_Pred)
+
+SS.total      <- sum((caret_testset$Prevalence - mean(caret_testset$Prevalence))^2)
+SS.residual   <- sum((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
+SS.regression <- sum((caret_model_MLR_Pred - mean(caret_testset$Prevalence))^2)
+
+# NOT the fraction of variability explained by the model
+test.rsq <- 1 - SS.residual/SS.total  
+# cat("\nNOT Test fraction of variability explained by the model :", test.rsq )
+
+# fraction of variability explained by the model
+cat("\nTest R^2 fraction of variability explained by the model :", SS.regression/SS.total )
+
+```
+
 ---
 
 
@@ -1651,6 +1727,44 @@ mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
 ```{r}
 # RMSE
 sqrt(mean((caret_testset$Prevalence - caret_model_MLR_Pred)^2))
+```
+
+**<span style="color:blue">Calculate $R^2$ for entire train set (all folds)</span>** https://stackoverflow.com/questions/25691127/r-squared-on-test-data
+
+```{r}
+caret_model_MLR_Pred_Train <- predict(caret_model_MLR_L2, caret_trainset)
+
+SS.total      <- sum((caret_trainset$Prevalence-mean(caret_trainset$Prevalence))^2)
+SS.residual   <- sum(residuals(caret_model_MLR_L2)^2)
+SS.regression <- sum((caret_model_MLR_Pred_Train-mean(caret_trainset$Prevalence))^2)
+
+# fraction of variability explained by the model
+cat("\nTrain R^2 fraction of variability explained by the model :", SS.regression/SS.total )
+
+# caret_model_MLR_L2
+
+```
+
+**<span style="color:blue">Calculate $R^2$ for test set</span>** https://stackoverflow.com/questions/25691127/r-squared-on-test-data
+
+```{r}
+# True y values:
+# head(caret_testset$Prevalence)
+
+# Predicated y values (y hat):
+# head(caret_model_MLR_Pred)
+
+SS.total      <- sum((caret_testset$Prevalence - mean(caret_testset$Prevalence))^2)
+SS.residual   <- sum((caret_testset$Prevalence - caret_model_MLR_Pred)^2)
+SS.regression <- sum((caret_model_MLR_Pred - mean(caret_testset$Prevalence))^2)
+
+# NOT the fraction of variability explained by the model
+test.rsq <- 1 - SS.residual/SS.total  
+# cat("\nNOT Test fraction of variability explained by the model :", test.rsq )
+
+# fraction of variability explained by the model
+cat("\nTest R^2 fraction of variability explained by the model :", SS.regression/SS.total )
+
 ```
 
 <div class="alert alert-block alert-info" style="margin-top: 20px">
