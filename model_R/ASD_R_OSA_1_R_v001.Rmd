@@ -50,7 +50,7 @@ https://www.cdc.gov/ncbddd/autism/data/index.html
 
 Doctors cited better awareness among parents and preschool teachers, leading to early referrals for diagnosis.
 
-https://www.gov.sg/news/content/today-online-more-preschoolers-diagnosed-with-developmental-issues
+https://www.todayonline.com/singapore/more-preschoolers-diagnosed-developmental-issues
 
 ![](../reference/SG_ASD/SG_ASD_01.png)
 
@@ -904,7 +904,7 @@ boxplot(ASD_National$Prevalence ~ ASD_National$Source,
         Quiz:
     </h3>
     <p>
-        Set noth=TRUE to above boxplot. Are there overlapping among four data sources?
+        Set notch=TRUE to above boxplot. Are there overlapping among four data sources?
     </p>
 </div>
 
