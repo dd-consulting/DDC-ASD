@@ -47,7 +47,7 @@
 #
 # Doctors cited better awareness among parents and preschool teachers, leading to early referrals for diagnosis.
 #
-# https://www.gov.sg/news/content/today-online-more-preschoolers-diagnosed-with-developmental-issues
+# https://www.todayonline.com/singapore/more-preschoolers-diagnosed-developmental-issues
 #
 # ![](../reference/SG_ASD/SG_ASD_01.png)
 #
@@ -58,10 +58,7 @@
 # https://www.pathlight.org.sg/
 
 # <div class="alert alert-block alert-info" style="margin-top: 20px">
-#     <a href="">
-#     </a>
 # </div>
-#
 
 # # Workshop Objective: 
 #
@@ -83,8 +80,6 @@
 #
 
 # <div class="alert alert-block alert-info" style="margin-top: 20px">
-#     <a href="">
-#     </a>
 # </div>
 
 # ## <span style="color:blue">Hypothesis Test</span>
@@ -503,7 +498,7 @@ dif_lower_ci = mean(mn_all$newborns)-mean(fn_all$newborns) - qt(p = 0.975, df = 
 cat("\nDifference's Lower CI:", dif_lower_ci)
 
 # Visualise CIs: Male & Female
-plot(density(fn_all$newborns), col="orange", xlab="Prevalence", main="PDF", lwd=2)
+plot(density(fn_all$newborns), col="orange", xlab="New Born", main="PDF", lwd=2)
 lines(density(mn_all$newborns), col="blue", lwd=2)
 # Overlay Male CI
 abline(v= mean(mn_all$newborns), col="blue", lwd=2, lty=1)
@@ -515,7 +510,7 @@ abline(v=fn_upper_ci, col="orange", lwd=2, lty=3)
 abline(v=fn_lower_ci, col="orange", lwd=2, lty=3)
 
 # Visualise CIs: Difference between Male and Female
-plot(density(mn_all$newborns-fn_all$newborns), col="cyan", xlab="Prevalence Difference", 
+plot(density(mn_all$newborns-fn_all$newborns), col="cyan", xlab="New Born Difference", 
      main="PDF", lwd=2, lty=1, xlim=c(0,3000))
 # Overlay Difference's CI
 abline(v=mean(mn_all$newborns)-mean(fn_all$newborns), col="darkgrey", lwd=2, lty=1)
@@ -572,7 +567,7 @@ dif_lower_ci = mean(mn_all$newborns)-mean(fn_all$newborns) - qt(p = 0.975, df = 
 cat("\nDifference's Lower CI:", dif_lower_ci)
 
 # Visualise CIs:
-plot(density(mn_all$newborns-fn_all$newborns), col="cyan", xlab="Prevalence Difference", 
+plot(density(mn_all$newborns-fn_all$newborns), col="cyan", xlab="New Born Difference", 
      main="PDF", lwd=2, lty=1, xlim=c(0,3000))
 # Overlay Difference's CI
 abline(v=mean(mn_all$newborns)-mean(fn_all$newborns), col="darkgrey", lwd=2, lty=1)
@@ -649,7 +644,7 @@ dif_lower_ci = mean(mn_all$newborns-fn_all$newborns) - qt(p = 0.975, df = cal_df
 cat("\ndif_lower_ci:", dif_lower_ci)
 
 # Visualise CIs:
-plot(density(mn_all$newborns-fn_all$newborns), col="cyan", xlab="Prevalence", 
+plot(density(mn_all$newborns-fn_all$newborns), col="cyan", xlab="New Born Difference", 
      main="PDF", lwd=2, lty=1, xlim=c(0,3000), ylim=c(0,0.01))
 # Overlay CI
 abline(v= mean(mn_all$newborns-fn_all$newborns), col="darkgrey", lwd=2, lty=1)
@@ -717,10 +712,7 @@ par(mfrow=c(1, 1))
 # -->
 
 # <div class="alert alert-block alert-info" style="margin-top: 20px">
-#     <a href="">
-#     </a>
 # </div>
-#
 
 # ### Excellent! You have completed the workshop notebook!
 
@@ -755,10 +747,7 @@ par(mfrow=c(1, 1))
 #
 
 # <div class="alert alert-block alert-info" style="margin-top: 20px">
-#     <a href="">
-#     </a>
 # </div>
-#
 
 # ## <span style="color:blue">Appendices</span>
 #
@@ -770,6 +759,7 @@ par(mfrow=c(1, 1))
 # </div>
 
 # https://github.com/telescopeuser/S-SB-Workshop
+#
 
 # <div class="alert alert-block alert-info" style="margin-top: 20px">
 #     <a href="https://github.com/dd-consulting">
